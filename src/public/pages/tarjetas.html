@@ -1,0 +1,212 @@
+<div data-ng-controller="tarjetasController">
+    <!--INICIA SECCION PARA LISTAR TARJETAS-->
+    <div class="page-section-heading">
+        <button ng-if="verTarjetas==true" ng-click="agregarTarjeta()" class="btn btn-primary">
+            <em class="fa fa-plus"></em> Agregar</button>
+        <button ng-if="verFormAgregarTarjeta==true" ng-click="agregarAtarjetas()" class="btn btn-primary">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verFormEditarTarjeta==true" ng-click="editarAtarjeta()" class="btn btn-info">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verTransacciones==true" ng-click="volverDetallesTarjeta()" class="btn btn-success">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+    </div>
+    <div ng-if="verTarjetas==true" >
+            
+            <div class="panel panel-default">
+            <!-- Progress table -->
+            <div class="table-responsive">
+                <table class="table v-middle">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Codigo</th>
+                        <th>Cliente</th>
+                        <th>Saldo</th>
+                        <th>Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="responsive-table-body">
+                    <tr ng-repeat="Tarjeta in tarjetas">
+                        <td></td>
+                    <td>{{Tarjeta.codigo_rfid}}</td>
+                    <td>{{Tarjeta.razon_social}}</td>
+                    <td>{{Tarjeta.saldo}}</td>
+                    <td>{{Tarjeta.estado}}</td>
+                    <td class="text-right">
+                        <a ng-click="detallesTarjeta(Tarjeta)" class="btn btn-default btn-xs" 
+                            data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
+                        <a ng-click="alertEliminarTarjeta(Tarjeta.id_Tarjeta)" class="btn btn-danger btn-xs" 
+                            data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+            <div ng-if="totalTarjetas>tarjetasPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasTarjetas">
+                    <a type="button" ng-click="listarTarjetas(pagina)">{{pagina+1}}</a>
+                </li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA LISTAR TARJETAS-->
+    
+    <!--INICIA SECCION PARA AGREGAR O EDITAR TARJETA-->
+    <div ng-if="verFormAgregarTarjeta==true || verFormEditarTarjeta==true" class="panel panel-default">
+        <div>
+            <h5 class="text-center">{{accion}}</h5>
+        </div> 
+        <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Código RFID</label>
+                <div class="col-sm-9">
+                    <input ng-model="formTarjeta.codigo_rfid" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Saldo</label>
+                <div class="col-sm-9">
+                <input ng-model="formTarjeta.saldo" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Estado</label>
+                <div class="col-sm-9">
+                <input ng-model="formTarjeta.estado" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Comentario</label>
+                <div class="col-sm-9">
+                <textarea ng-model="formTarjeta.comentario" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+        </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formTarjeta.id_tarjeta)" class="btn btn-info">Actualizar</button>
+            <button ng-click="volverTarjetas()" class="btn btn-info">Cerrar</button>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA AGREGAR O EDITAR TARJETA-->
+
+    <!--INICIA PAGINA PARA DETALLES DE UNA TARJETA-->
+    <div ng-if="verTarjeta==true" class="panel panel-default">
+
+        <div class="panel panel-body">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="/images/tarjetas/logoTarjeta.png" 
+                        width="200px" height="400px" style="border: 1px solid; padding: 1px">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="col-md-12">
+                            <div id="id_Tarjeta_edit" hidden="true"></div>
+                            <div class="card" style="margin-bottom: 20px">
+                                <div class="card-header">
+                                    Detalles
+                                </div>
+                            </div>
+                            <div class="card" style="margin-bottom: 20px;">
+                                <div class="row">
+                                    <div class="col-md-6 p-3">
+                                        <b>Código:</b>  <span>{{tarjeta.codigo_rfid}}</span><br>
+                                        <b>Cliente: </b> <span>{{tarjeta.razon_social}} </span><br>
+                                        <b>Saldo: </b> <span>{{tarjeta.saldo}} </span><br>
+                                        <b>Estado:  </b> <span>{{tarjeta.estado}}</span><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submits">
+                                <button  class="btn btn-success" ng-click="agregarAtarjetas()">
+                                    <em class="fa fa-arrow-left"></em> Volver</button>
+                                <button  class="btn btn-info" ng-click="editarTarjeta(tarjeta)">
+                                    <em class="fa fa-pencil"></em> Editar</button>
+                                <button  class="btn btn-warning" ng-click="listarTransacciones(tarjeta.id_tarjeta, 0)">
+                                    <em class="fa fa-pencil"></em> Transacciones</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <h3>
+                                Seccion del cliente
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA DETALLES DE UNA Tarjeta-->
+
+    <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA Tarjeta-->
+    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+        <div ng-if="transacciones" class="card">
+            <div class="card-header">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">    
+                    <thead>
+                        <tr>
+                            <!--<th>Id transacción</th>-->
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Código RFID</th>
+                            <!--<th>Energía inicio [Wh]</th>
+                            <th>Energía fin [Wh]</th>-->
+                            <th>Energía consumida [kWh]</th>
+                            <th>Estado</th>
+                            <th>Razón</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr ng-repeat="transaccion in transacciones">
+                                <!--<td>{{transaccion.id_transaccion}}</td>-->
+                                <td>{{transaccion.fecha}}</td>
+                                <td>{{transaccion.hora_inicio}}</td>
+                                <td>{{transaccion.codigo_rfid}}</td>
+                                <!--<td>{{transaccion.energia_inicio}}</td>
+                                <td>{{transaccion.energia_fin}}</td>-->
+                                <td>{{transaccion.energiaConsumida}}</td>
+                                <td>{{transaccion.estado}}</td>
+                                <td>{{transaccion.razon}}</td>
+                                <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
+                                title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
+                            </tr>   
+                    </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+
+            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasTransacciones">
+                    <a type="button" ng-click="listarTransacciones(Tarjeta.id_Tarjeta, pagina)">
+                            {{pagina+1}}
+                    </a>
+                </li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+            <div class="card card-body text-center">
+                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA AGREGAR NUEVA Tarjeta-->
+
+</div>

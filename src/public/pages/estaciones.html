@@ -1,0 +1,283 @@
+<div data-ng-controller="estacionesController">
+    <!--INICIA SECCION PARA LISTAR ESTACIONES-->
+    <div class="page-section-heading">
+        <button ng-if="verEstaciones==true" ng-click="agregarEstacion()" class="btn btn-primary">
+            <em class="fa fa-plus"></em> Agregar</button>
+        <button ng-if="verFormAgregarEstacion==true" ng-click="agregarAestaciones()" class="btn btn-primary">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verFormEditarEstacion==true" ng-click="editarAestacion()" class="btn btn-info">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verTransacciones==true" ng-click="volverDetallesEstacion()" class="btn btn-success">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+    </div>
+    <div ng-if="verEstaciones==true" >
+            
+            <div class="panel panel-default">
+            <!-- Progress table -->
+            <div class="table-responsive">
+                <table class="table v-middle">
+                <thead>
+                    <tr>
+                    <th width="20">
+                        <div class="checkbox checkbox-single margin-none">
+                        <input id="checkAll" data-toggle="check-all" data-target="#responsive-table-body" type="checkbox" checked>
+                        <label for="checkAll">Check All</label>
+                        </div>
+                    </th>
+                    <th>Codigo</th>
+                    <th>Nombre</th>
+                    <th>Ubicacion</th>
+                    <th># Conectores</th>
+                    <th>Estado</th>
+                    <th>Conexion</th>
+                    <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="responsive-table-body">
+                    <tr ng-repeat="estacion in estaciones">
+                    <td>
+                        <div class="checkbox checkbox-single">
+                            <input ng-model="estacion.check" id="checkbox1" type="checkbox" checked>
+                            <label for="checkbox1">Label</label>
+                        </div>
+                    </td>
+                    <td>{{estacion.codigoEstacion}}</td>
+                    <td>{{estacion.nombreEstacion}}</td>
+                    <td>Cuenca, Ec<a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></td>
+                    <td class="text-center">{{estacion.cantidadConectores}}</td>
+                    <td>{{estacion.estado}}</td>
+                    <td>
+                        <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <a ng-click="detallesEstacion(estacion)" class="btn btn-default btn-xs" 
+                            data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
+                        <a ng-click="alertEliminarEstacion(estacion.id_estacion)" class="btn btn-danger btn-xs" 
+                            data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+            <div ng-if="totalEstaciones>estacionesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasEstaciones"><a href="#">hola</a></li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA LISTAR ESTACIONES-->
+    
+    <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
+    <div ng-if="verFormAgregarEstacion==true || verFormEditarEstacion==true" class="panel panel-default">
+        <div>
+            <h5 class="text-center">{{accion}}</h5>
+            <!--<button ng-click="volverEstaciones()" class="btn btn-info media-left">
+                <em class="fa fa-hand-o-left"></em> Volver</button><br>-->
+        </div> 
+        <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
+                <div class="col-sm-9">
+                    <input ng-model="formEstacion.codigoEstacion" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.nombreEstacion" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.cantidadConectores" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.potenciaMaxima" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.potenciaMinima" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.corrienteMaxima" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.corrienteMinima" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.voltajeMaximo" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.voltajeMinimo" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Comentario</label>
+                <div class="col-sm-9">
+                <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+        </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formEstacion.id_estacion)" class="btn btn-info">Actualizar</button>
+            <button ng-click="volverEstaciones()" class="btn btn-info">Cerrar</button>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA AGREGAR O EDITAR ESTACION-->
+
+    <!--INICIA PAGINA PARA DETALLES DE UNA ESTACION-->
+    <div ng-if="verEstacion==true" class="panel panel-default">
+        <div class="panel panel-body">
+            <div class="card-header text-center">
+                <h3 style="font-family: sans-serif;"> {{estacion.nombreEstacion}}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 text-center">
+                        <img src="/images/estaciones/logoEstacion.png" 
+                        width="200px" height="400px" style="border: 1px solid; padding: 1px">
+                    </div>
+                    <div class="col-md-9 text-center">
+                        <div id="id_estacion_edit" hidden="true"></div>
+                        <div class="card" style="margin-bottom: 20px">
+                            <div class="card-header">
+                                Detalles
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center p-3">
+                                    <b>Código:</b> <span style="padding-right: 30px">{{estacion.codigoEstacion}}</span>
+                                    <b>Nombre:</b><span style="padding: 3px">{{estacion.nombreEstacion}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 20px;">
+                            <div class="card-header">
+                                Caracteristicas Técnicas
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 text-center p-3">
+                                    <b>N° conectores:</b>  <label>{{estacion.cantidadConectores}}</label><br>
+                                    <b>Cargas Simultaneas: </b> <label>{{estacion.cargasSimultaneas}} </label><br>
+                                    <b>Potencia Mínima: </b> <label>{{estacion.potenciaMinima}} </label><br>
+                                    <b>Potencia Máxima:  </b> <label>{{estacion.potenciaMaxima}}</label><br>
+                                </div>
+                                <div class="col-md-6 text-center p-3">
+                                    <b>Voltaje Mínimo:   </b> <label>{{estacion.voltajeMinimo}}</label><br>
+                                    <b>Voltaje Máximo:   </b> <label>{{estacion.voltajeMaximo}}</label><br>
+                                    <b>Corriente Mínima:</b>  <label>{{estacion.corrienteMinima}}</label><br>
+                                    <b>Corriente Máxima: </b> <label>{{estacion.corrienteMaxima}} </label><br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submits">
+                            <button  class="btn btn-success" id="toStationsDetails" ng-click="agregarAestaciones()">
+                                <em class="fa fa-arrow-left"></em> Volver</button>
+                            <button  class="btn btn-info" ng-click="editarEstacion(estacion)">
+                                <em class="fa fa-pencil"></em> Editar</button>
+                            <button  class="btn btn-warning" ng-click="listarTransacciones(estacion.id_estacion, 0)">
+                                <em class="fa fa-pencil"></em> Transacciones</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA DETALLES DE UNA ESTACION-->
+
+    <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
+    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+        <div ng-if="transacciones" class="card">
+            <div class="card-header">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">    
+                    <thead>
+                        <tr>
+                            <!--<th>Id transacción</th>-->
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Código RFID</th>
+                            <!--<th>Energía inicio [Wh]</th>
+                            <th>Energía fin [Wh]</th>-->
+                            <th>Energía consumida [kWh]</th>
+                            <th>Estado</th>
+                            <th>Razón</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr ng-repeat="transaccion in transacciones">
+                                <!--<td>{{transaccion.id_transaccion}}</td>-->
+                                <td>{{transaccion.fecha}}</td>
+                                <td>{{transaccion.hora_inicio}}</td>
+                                <td>{{transaccion.codigo_rfid}}</td>
+                                <!--<td>{{transaccion.energia_inicio}}</td>
+                                <td>{{transaccion.energia_fin}}</td>-->
+                                <td>{{transaccion.energiaConsumida}}</td>
+                                <td>{{transaccion.estado}}</td>
+                                <td>{{transaccion.razon}}</td>
+                                <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
+                                title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
+                            </tr>   
+                    </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+
+            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasTransacciones">
+                    <a type="button" ng-click="listarTransacciones(estacion.id_estacion, pagina)">
+                            {{pagina+1}}
+                    </a>
+                </li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+            <div class="card card-body text-center">
+                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA AGREGAR NUEVA ESTACION-->
+
+</div>

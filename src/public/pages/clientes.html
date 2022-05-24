@@ -1,0 +1,295 @@
+<div data-ng-controller="clientesController">
+    <!--INICIA SECCION PARA LISTAR clientes-->
+    <div class="page-section-heading">
+        <button ng-if="verClientes==true" ng-click="agregarCliente()" class="btn btn-primary">
+            <em class="fa fa-plus"></em> Agregar Cliente</button>
+        <button ng-if="verFormAgregarCliente==true" ng-click="agregarAclientes()" class="btn btn-primary">
+            <em class="fa fa-hand-o-left"></em> Volver a Clientes</button>
+        <button ng-if="verFormEditarCliente==true" ng-click="editarAcliente()" class="btn btn-info">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verTransacciones==true" ng-click="volverDetallesCliente()" class="btn btn-success">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+    </div>
+    <div ng-if="verClientes==true" >
+            
+            <div class="panel panel-default">
+            <!-- Progress table -->
+            <div class="table-responsive">
+                <table class="table v-middle">
+                <thead>
+                    <tr>
+                    <th width="20">
+                        <div class="checkbox checkbox-single margin-none">
+                        <input id="checkAll" data-toggle="check-all" data-target="#responsive-table-body" type="checkbox" checked>
+                        <label for="checkAll">Check All</label>
+                        </div>
+                    </th>
+                    <th>R.U.C.</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Correo Electrónico</th>
+                    <th>Tarjeta</th>
+                    <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="responsive-table-body">
+                    <tr ng-repeat="cliente in clientes">
+                    <td>
+                        <div class="checkbox checkbox-single">
+                            <input ng-model="cliente.check" id="checkbox1" type="checkbox" checked>
+                            <label for="checkbox1">Label</label>
+                        </div>
+                    </td>
+                    <td>{{cliente.ruc}}</td>
+                    <td>{{cliente.razon_social}}</td>
+                    <td>{{cliente.telefono}}</td>
+                    <td>{{cliente.direccion}}</td>
+                    <td>{{cliente.email}}</td>
+                    <td ng-if="cliente.tarjetas.length>0">
+                        <span ng-repeat="tarjeta in cliente.tarjetas">{{tarjeta.codigo_rfid}}<br></span>
+                    </td>
+                    <td ng-if="cliente.tarjetas.length==0">Sin asignar</td>
+                    <td class="text-right">
+                        <a ng-click="detallesCliente(cliente)" class="btn btn-default btn-xs" 
+                            data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
+                        <a ng-click="alertEliminarCliente(cliente.id_cliente)" class="btn btn-danger btn-xs" 
+                            data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+            <div ng-if="totalclientes>clientesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasclientes"><a href="#">hola</a></li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA LISTAR clientes-->
+    
+    <!--INICIA SECCION PARA AGREGAR O EDITAR cliente-->
+    <div ng-if="verFormAgregarCliente==true || verFormEditarCliente==true" class="panel panel-default">
+        <div>
+            <h5 class="text-center">{{accion}}</h5>
+            <!--<button ng-click="volverClientes()" class="btn btn-info media-left">
+                <em class="fa fa-hand-o-left"></em> Volver</button><br>-->
+        </div> 
+        <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Identificación</label>
+                <div class="col-sm-9">
+                    <input ng-model="formCliente.ruc" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Razon Social</label>
+                <div class="col-sm-9">
+                <input ng-model="formCliente.razon_social" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Ciduad</label>
+                <div class="col-sm-9">
+                <input ng-model="formCliente.ciudad" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Dirección</label>
+                <div class="col-sm-9">
+                <input ng-model="formCliente.direccion" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Teléfono</label>
+                <div class="col-sm-9">
+                <input ng-model="formCliente.telefono" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Correo Electrónico</label>
+                <div class="col-sm-9">
+                <input ng-model="formCliente.email" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Comentario</label>
+                <div class="col-sm-9">
+                    <textarea ng-model="formCliente.comentario" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+        </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formCliente.id_cliente)" class="btn btn-info">Actualizar</button>
+            <button ng-click="volverClientes()" class="btn btn-info">Cerrar</button>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA AGREGAR O EDITAR cliente-->
+
+    <!--INICIA PAGINA PARA DETALLES DE UNA cliente-->
+    <div ng-if="verCliente==true" class="panel panel-default">
+        <div class="panel panel-body">
+            <div class="card-header text-center">
+                <h3 style="font-family: sans-serif;"> {{cliente.nombrecliente}}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="/images/clientes/logoCliente.png" 
+                        width="200px" height="200px" style="border: 1px solid; padding: 1px">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="col-md-12">
+                            <div id="id_cliente_edit" hidden="true"></div>
+                            <div class="card" style="margin-bottom: 20px">
+                                <div class="card-header">
+                                    <h4>DETALLES DEL CLIENTE</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="margin-bottom: 20px;">
+                                <div class="row">
+                                    <div class="col-md-6 p-3">
+                                        <b>Identificación:</b>  <span>{{cliente.ruc}}</span><br>
+                                        <b>Nombre: </b> <span>{{cliente.razon_social}} </span><br>
+                                        <b>telefono: </b> <span>{{cliente.telefono}} </span><br>
+                                        <b>Ciudad:  </b> <span>{{cliente.ciudad}}</span><br>
+                                        <b>Dirección:  </b> <span>{{cliente.direccion}}</span><br>
+                                        <b>Correo Electrónico:  </b> <span>{{cliente.email}}</span><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submits">
+                                <button  class="btn btn-success" id="toStationsDetails" ng-click="agregarAclientes()">
+                                    <em class="fa fa-arrow-left"></em> Volver</button>
+                                <button  class="btn btn-info" ng-click="editarCliente(cliente)">
+                                    <em class="fa fa-pencil"></em> Editar Cliente</button>
+                                <button  class="btn btn-warning" ng-click="listarTransacciones(cliente.id_cliente, 0)">
+                                    <em class="fa fa-pencil"></em> Transacciones</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!--INICIA SECCION DE TARJETAS DEL CLIENTE-->
+                <div class="col-md-12" >
+                    <hr>
+                    <div class="col-md-12 text-center">
+                            <h4><b>TARJETAS</b></h4>
+                    </div>
+                    <!-- Progress table -->
+                    <div ng-if="cliente.tarjetas.length>0" class="table-responsive col-md-12">
+                        <table class="table v-middle" style="width: 95%">
+                        <thead>
+                            <tr>
+                            <th>Cóodigo RFID</th>
+                            <th>Saldo</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsive-table-body">
+                            <tr ng-repeat="tarjeta in cliente.tarjetas">
+                            <td>{{tarjeta.codigo_rfid}}</td>
+                            <td>{{tarjeta.saldo}}</td>
+                            <td>{{tarjeta.estado}}</td>
+                            <td class="text-right" >
+                                <a ng-click="desvincularTarjeta(cliente.id_cliente, tarjeta.id_tarjeta)" class="btn btn-danger btn-xs" 
+                                    data-placement="top" title="Desvincular"><i class="fa fa-times"></i></a>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <!-- // Progress table -->
+                    <!--INICIA SECCION ASIGNAR TARJETA AL CLIENTE-->
+                    <div class="col-md-12 text-center">
+                        <div class="col-md-12">
+                            <h3>Asignar Tarjeta</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <label>Buscar</label>
+                            <input ng-model="tarjetaSeleccionada" 
+                                typeahead="tarjeta as tarjeta.busqueda for tarjeta in tarjetas | filter: {'busqueda':$viewValue}"
+                                typeahead-on-select="activarAsignar()" >
+                        </div>
+                        <div ng-if="botonAsignarTarjeta==true" class="col-md-12">
+                            ID: <span>{{tarjetaSeleccionada.id_tarjeta}}</span><br>
+                            Cóodigo RFID: <span>{{tarjetaSeleccionada.codigo_rfid}}</span><br>
+                            Saldo: <span>{{tarjetaSeleccionada.saldo}}</span><br>
+                            <button ng-click="asignarTarjeta(cliente.id_cliente, tarjetaSeleccionada.id_tarjeta)" 
+                            class="btn btn-info">Asignar</button>
+                        </div>
+                    </div>
+                    <!--TERMINA SECCION ASIGNAR TARJETA AL CLIENTE-->
+                </div>
+                <!--TERMINA SECCION DE TARJETAS DEL CLIENTE-->
+                
+                
+
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA DETALLES DE UNA cliente-->
+
+    <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA cliente-->
+    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+        <div ng-if="transacciones" class="card">
+            <div class="card-header">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">    
+                    <thead>
+                        <tr>
+                            <th>Identificación</th>
+                            <th>Razón Social</th>   
+                            <th>Ciudad</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Correo Electrónico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr ng-repeat="transaccion in transacciones">
+                                <td>{{transaccion.ruc}}</td>
+                                <td>{{transaccion.razon_social}}</td>
+                                <td>{{transaccion.ciudad}}</td>
+                                <td>{{transaccion.direccion}}</td>
+                                <td>{{transaccion.telefono}}</td>
+                                <td>{{transaccion.email}}</td>
+                            </tr>   
+                    </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+
+            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasTransacciones">
+                    <a type="button" ng-click="listarTransacciones(cliente.id_cliente, pagina)">
+                            {{pagina+1}}
+                    </a>
+                </li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+            <div class="card card-body text-center">
+                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA AGREGAR NUEVA cliente-->
+
+</div>
