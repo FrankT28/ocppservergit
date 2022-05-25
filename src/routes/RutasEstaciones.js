@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../database');
 const { isLoggedIn } = require('../lib/seguro.js');
-var Plotly = require('plotly')("DemoAccount", "lr1c37zw81");
+//var Plotly = require('plotly')("DemoAccount", "lr1c37zw81");
 const multer = require('multer');
 const path = require('path');
 
