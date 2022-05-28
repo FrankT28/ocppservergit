@@ -10,7 +10,8 @@ const {isLoggedIn} = require('../lib/seguro');
 
 
 
-router.get('/', (req, res) =>{
+router.get('/login', (req, res) =>{
+	console.log('Se vuelve a pedir ruta inicio')
 	//let rutaIndex = path.join(__dirname, '/../public/pages/login.html');
 	let rutaIndex = path.join(__dirname, '/../public/pages/login.html');
 	console.log('se pide el archivo: ' + rutaIndex)
