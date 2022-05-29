@@ -155,22 +155,30 @@ module.exports = function(server){
             socket.write(response.join('\r\n') + '\r\n\r\n' );
 
         }else{
-            console.log('La estacion no ha sido agregada aun');
-            //socket.end('HTTP/1.1 400 Bad Request');
-            clientes.set('temporal', socket);
-            clientenav = clientes.get(0);
-            const acceptKey = req.headers['sec-websocket-key'];
-            const protocol = req.headers['sec-websocket-protocol'];
-
-            var resp = {'tipo': 'UnautorizedClient', 'element':'firstWsHandshake', 'texto': url_est, 
-            'acceptKey': acceptKey, 'protocol': protocol}
-            if(clientenav){
-                clientenav.write(funciones.constructReply(resp, 0x1));
+            if(url_est=='navegador'){
+                console.log('El navegador quiere conectarse')
+                response = responseHeaders(req);
+                clave = 0;
+                socket.write(response.join('\r\n') + '\r\n\r\n' );
             }else{
-                console.log('Navegador no conectado')
-            }
 
-            return;
+                console.log('La estacion no ha sido agregada aun');
+                //socket.end('HTTP/1.1 400 Bad Request');
+                clientes.set('temporal', socket);
+                clientenav = clientes.get(0);
+                const acceptKey = req.headers['sec-websocket-key'];
+                const protocol = req.headers['sec-websocket-protocol'];
+
+                var resp = {'tipo': 'UnautorizedClient', 'element':'firstWsHandshake', 'texto': url_est, 
+                'acceptKey': acceptKey, 'protocol': protocol}
+                if(clientenav){
+                    clientenav.write(funciones.constructReply(resp, 0x1));
+                }else{
+                    console.log('Navegador no conectado')
+                }
+
+                return;
+            }
         }
      
         console.log('Estado del socket: ' + socket.readyState);
@@ -205,13 +213,13 @@ module.exports = function(server){
                     Respuestas = await ffs.funcionesnuevas(message);
                     PayloadResponse = Respuestas[0];
                     PayloadResponseNav = Respuestas[1];
-                    PayloadResponseApk = Respuestas[2];
+                    PayloadResponseApk = Respuestas[2]; 
                     console.log('                                            ');
                     let CallResult = [CallResultId, UniqueId, PayloadResponse]; 
                     console.log('Respuesta a enviar al punto de carga: ')
                     console.log(CallResult);
                     socket.write(funciones.constructReply(CallResult, opCode));
-
+                     
                     console.log('este es el payload response')
                     console.log(PayloadResponseNav)
 
@@ -336,125 +344,25 @@ module.exports = function(server){
                         }else if(message.tipo=='ChangeConfiguration'){
 
                             PayloadRequest = {"key": 
-                            [  'AllowOfflineTxForUnknownId', //si contiene
+                            [  'AllowOfflineTxForUnknownId',
                                'AuthorizationCacheEnabled',
                                'AuthorizeRemoteTxRequests',
-                               //'BlinkRepeat',
                                'ClockAlignedDataInterval',
                                'ConnectionTimeOut',
                                'ConnectorPhaseRotation',
-                               //'ConnectorPhaseRotationMaxLength',
                                'GetConfigurationMaxKeys',
                                'HeartbeatInterval',
-                               //'LightIntensity',
                                'LocalAuthorizeOffline',
                                'LocalPreAuthorize', 
-                               //'MaxEnergyOnInvalidId',
                                'MeterValuesAlignedData',
-                               //'MeterValuesAlignedDataMaxLength',
                                'MeterValuesSampledData',
-                               //'MeterValuesSampledDataMaxLength',
                                'MeterValueSampleInterval',
-                               //'MinimumStatusDuration',
                                'NumberOfConnectors',
-                               //'ResetRetries',
                                'StopTransactionOnEVSideDisconnect',
-                               
-                               //'StopTransactionOnInvalidId', //si funciona
-                               //'StopTxnAlignedData',
-                               //'StopTxnAlignedDataMaxLength',
-                              // 'StopTxnSampledData' // si funciona
-                               //'StopTxnSampledDataMaxLength',
-                               //'SupportedFeatureProfiles'// si funciona
-                               //'SupportedFeatureProfilesMaxLength',
-                               //'TransactionMessageAttempts' //si funciona
-
-                               //'TransactionMessageRetryInterval', si funciona 
-
-                               //'UnlockConnectorOnEVSideDisconnect', //si funciona
-                               //'WebSocketPingInterval' //si funciona
-                               //'LocalAuthListEnabled' // si funciona
-                               
-                               //'LocalAuthListMaxLength' // si funciona
-                               //'SendLocalListMaxLength'// si funciona
-                               //'ReserveConnectorZeroSupported' //si funciona pero da contradicciones con la pagina
-                               //'ChargeProfileMaxStackLevel'//requerido pero no se reconoce por la estacion
-                               //'ChargingScheduleAllowedChargingRateUnit'//requerido pero no se reconoce por la estacion
-                               //'ChargingScheduleMaxPeriods' //requerido pero no se reconoce por la estacion
-                               //'ConnectorSwitch3to1PhaseSupported'
-                               //'MaxChargingProfilesInstalled' // si funciona
-                               
-
-
-                               
-                                //csEndPoint
-                                //isLittleEndian
-                                //csVerifyCert
-                                //csAcceptUnknownSelfSigned
-                                //cbId
-                                //cbUseOcppTSync
-                                //cbUsePartialEnergy
-                                //cbUsePartialEnergyMeterVal
-                                //cbUseJson
-                                //cbStopIfConcurrentTx
-                                //cbConnTimeOut
-                                //cbCacheListMaxLength
-
-                                //cbRequireUserConfirmation
-                                //PlugAndChargeEnabled
-                                //PlugAndChargeUID
-                                //MeterValuesOnlyOnChargingStatus
-                                //AllowOfflineTxForUnknownId
-                                //AuthorizationCacheEnabled
-                                //AuthorizeRemoteTxRequests
-                                //ConnectionTimeOut
-                                //GetConfigurationMaxKeys
-                                //HeartbeatInterval
-                                //LocalAuthorizeOffline
-                                //LocalPreAuthorize
-                                
-                                //MeterValuesSampledData
-                                //MeterValueSampleInterval
-                                //StopTxnSampledData
-                                //NumberOfConnectors
-                                //ConnectorPhaseRotation
-                                //StopTransactionOnEVSideDisconnect
-                                //StopTransactionOnInvalidId
-                                //SupportedFeatureProfiles
-                                //TransactionMessageAttempts
-                                //TransactionMessageRetryInterval
-                                //UnlockConnectorOnEVSideDisconnect
-                                //WebSocketPingInterval
-                                
-                                //LocalAuthListEnabled
-                                //LocalAuthListMaxLength
-                                //SendLocalListMaxLength
-                                //ReserveConnectorZeroSupported
-                                //SupportedFileTransferProtocols
-                                //MaxChargingProfilesInstalled
-                                //pwStdHost
-                                //pwStdUser
-                                //pwStdPassword
-                                //pwStdUserEdit
-                                //pwStdPasswordEdit
-                                //pwStdPort
-
-                                //psiUser
-                                //psiPassword
-                                //psiAdminUser"
-                                //psiAdminPassword
-                                //psiLoglevel
-                                //psiPort
-                                //ClockAlignedDataInterval
-                                //MeterValuesAlignedData
-                                
-
                            ]
-                        
                         };
 
                             var OIBCS = [2, 'CC', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
                        PayloadRequest1={"key":[
                                 'csEndPoint',

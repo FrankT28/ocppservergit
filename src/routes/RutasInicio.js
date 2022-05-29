@@ -8,7 +8,26 @@ const pool = require('../database');
 const nbd = pool.config.connectionConfig.database;
 const {isLoggedIn} = require('../lib/seguro');
 
+router.get('/home/usuarios/informacion/', async(req, res) =>{
+	var data = {};
+	console.log('Se vuelve a pedir ruta inicio')
+	let sql = "SELECT * FROM usuarios";
+	let usuarios = await pool.query(sql);
+	data.usuarios = usuarios;
+	console.log('usuarios');
+	console.log(usuarios);
+	res.send(data);
+}) 
 
+router.post('/home/usuarios/agregar/', async(req, res) =>{
+	var data = {};
+	let username = req.body.username;
+	let password = req.body.password;
+	let sql = "INSERT INTO usuarios VALUES(null,?,?)"
+	let result = await pool.query(sql, [username, password]);
+	data.success = true;
+	res.send(data);
+})
 
 router.get('/', (req, res) =>{
 	console.log('Se vuelve a pedir ruta inicio')

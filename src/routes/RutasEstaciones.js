@@ -19,6 +19,13 @@ router.get('/home/estaciones/archivo', async(req, res) => {
 */
 
 /********************************************************************************************/
+async function estadoEstacion(id){
+	let sql = "SELECT estado_est_espanol FROM estados_estaciones WHERE id_estado_est=?";
+	let result = await pool.query(sql, [id]);
+	let estado = result[0].estado_est_espanol;
+	return estado
+}
+/********************************************************************************************/
 router.get('/home/estaciones/informacion', async(req, res) => {
 	var data = {};
 	let sql1 = "SELECT COUNT(*) as total FROM estaciones";
@@ -26,8 +33,11 @@ router.get('/home/estaciones/informacion', async(req, res) => {
 	totalEstaciones = totalEstaciones[0].total;
 	data.totalEstaciones = totalEstaciones;
 
-	let sql2 = "SELECT * FROM estaciones WHERE id_estacion!=0;"; 
+	let sql2 = "SELECT * FROM estaciones es, estado_estacion ee WHERE es.id_estacion!=0 AND es.id_estacion=ee.id_estacion;"; 
 	let estaciones = await pool.query(sql2); 
+	for(var i=0; i<estaciones.length; i++){
+		estaciones[i].estado = await estadoEstacion(estaciones[i].id_estado_est);
+	}
 	data.estaciones = estaciones;
 	data.success = true;
 	res.send(data);
@@ -44,6 +54,7 @@ router.post('/home/estaciones/agregar', async(req, res) => {
 	console.log(req.body)
 	var ce = req.body.codigoEstacion;
 	var ns = req.body.nombreEstacion;
+	var ubi = req.body.ubicacion;
 	var cc = req.body.cantidadConectores;
 	var cs = req.body.cargasSimultaneas;
 
@@ -55,8 +66,8 @@ router.post('/home/estaciones/agregar', async(req, res) => {
 	var vmin = req.body.voltajeMinimo
 	var comentario = req.body.comentario
 
-	var insert = 'INSERT INTO estaciones VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?);';
-	const subirEstacion = await pool.query(insert, [ce, ns, cc, cs, pmin, pmax, vmin, vmax, cmin, cmax, 3, cs ]);
+	var insert = 'INSERT INTO estaciones VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?,?);';
+	const subirEstacion = await pool.query(insert, [ce, ns, ubi, cc, cs, pmin, pmax, vmin, vmax, cmin, cmax, 3, cs ]);
 
 	
 	if(comentario.length>0){
@@ -140,6 +151,7 @@ router.post('/home/estaciones/editar/:id', async(req, res) => {
 	var id = req.params.id;
 	var ce = req.body.codigoEstacion
 	var ne = req.body.nombreEstacion
+	var ubi = req.body.ubicacion
 	var cc = req.body.cantidadConectores
 	var cs = req.body.cargasSimultaneas
 
@@ -153,6 +165,7 @@ router.post('/home/estaciones/editar/:id', async(req, res) => {
 	var update = 'UPDATE estaciones ';
 	var set = 'SET codigoEstacion="' + ce + 
 	'", nombreEstacion="' + ne + 
+	'", ubicacion="' + ubi + 
 	'", cantidadConectores="' + cc + 
 	'", cargasSimultaneas="' + cs + 
 

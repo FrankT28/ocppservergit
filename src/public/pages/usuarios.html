@@ -1,0 +1,235 @@
+<div data-ng-controller="usuariosController">
+    <!--INICIA SECCION PARA LISTAR usuarios-->
+    <div class="page-section-heading">
+        <button ng-if="verUsuarios==true" ng-click="agregarUsuario()" class="btn btn-primary">
+            <em class="fa fa-plus"></em> Agregar Usuario</button>
+        <button ng-if="verFormAgregarUsuario==true" ng-click="agregarAusuarios()" class="btn btn-primary">
+            <em class="fa fa-hand-o-left"></em> Volver a usuarios</button>
+        <button ng-if="verFormEditarUsuario==true" ng-click="editarAUsuario()" class="btn btn-info">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verTransacciones==true" ng-click="volverDetallesUsuario()" class="btn btn-success">
+            <em class="fa fa-hand-o-left"></em> Volver</button>
+    </div>
+    <div ng-if="verUsuarios==true" >
+            
+            <div class="panel panel-default">
+            <!-- Progress table -->
+            <div class="table-responsive">
+                <table class="table v-middle">
+                <thead>
+                    <tr>
+                    <th style="width:33%">ID</th>
+                    <th style="width:33%">USERNAME</th>
+                    <th style="width:33%">PASSWORD</th>
+                    </tr>
+                </thead>
+                <tbody id="responsive-table-body">
+                    <tr ng-repeat="Usuario in usuarios">
+                    <td>{{Usuario.id_usuario}}</td>
+                    <td>{{Usuario.username}}</td>
+                    <td>{{Usuario.password}}</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+            <div ng-if="totalusuarios>usuariosPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasusuarios"><a href="#">hola</a></li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA LISTAR usuarios-->
+    
+    <!--INICIA SECCION PARA AGREGAR O EDITAR Usuario-->
+    <div ng-if="verFormAgregarUsuario==true || verFormEditarUsuario==true" class="panel panel-default">
+        <div>
+            <h5 class="text-center">{{accion}}</h5>
+        </div> 
+        <div class="panel-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Username</label>
+                <div class="col-sm-9">
+                <input ng-model="formUsuario.username" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Password</label>
+                <div class="col-sm-9">
+                <input ng-model="formUsuario.password" class="form-control">
+                </div>
+            </div>
+        </form>
+        </div>
+        <div class="panel-footer text-right">
+            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formUsuario.id_usuario)" class="btn btn-info">Actualizar</button>
+            <button ng-click="volverusuarios()" class="btn btn-info">Cerrar</button>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA AGREGAR O EDITAR Usuario-->
+
+    <!--INICIA PAGINA PARA DETALLES DE UNA Usuario-->
+    <div ng-if="verUsuario==true" class="panel panel-default">
+        <div class="panel panel-body">
+            <div class="card-header text-center">
+                <h3 style="font-family: sans-serif;"> {{Usuario.nombreUsuario}}</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="/images/usuarios/logoUsuario.png" 
+                        width="200px" height="200px" style="border: 1px solid; padding: 1px">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="col-md-12">
+                            <div id="id_Usuario_edit" hidden="true"></div>
+                            <div class="card" style="margin-bottom: 20px">
+                                <div class="card-header">
+                                    <h4>DETALLES DEL Usuario</h4>
+                                </div>
+                            </div>
+                            <div class="card" style="margin-bottom: 20px;">
+                                <div class="row">
+                                    <div class="col-md-6 p-3">
+                                        <b>Identificación:</b>  <span>{{Usuario.ruc}}</span><br>
+                                        <b>Nombre: </b> <span>{{Usuario.razon_social}} </span><br>
+                                        <b>telefono: </b> <span>{{Usuario.telefono}} </span><br>
+                                        <b>Ciudad:  </b> <span>{{Usuario.ciudad}}</span><br>
+                                        <b>Dirección:  </b> <span>{{Usuario.direccion}}</span><br>
+                                        <b>Correo Electrónico:  </b> <span>{{Usuario.email}}</span><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submits">
+                                <button  class="btn btn-success" id="toStationsDetails" ng-click="agregarAusuarios()">
+                                    <em class="fa fa-arrow-left"></em> Volver</button>
+                                <button  class="btn btn-info" ng-click="editarUsuario(Usuario)">
+                                    <em class="fa fa-pencil"></em> Editar Usuario</button>
+                                <button  class="btn btn-warning" ng-click="listarTransacciones(Usuario.id_Usuario, 0)">
+                                    <em class="fa fa-pencil"></em> Transacciones</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!--INICIA SECCION DE TARJETAS DEL Usuario-->
+                <div class="col-md-12" >
+                    <hr>
+                    <div class="col-md-12 text-center">
+                            <h4><b>TARJETAS</b></h4>
+                    </div>
+                    <!-- Progress table -->
+                    <div ng-if="Usuario.tarjetas.length>0" class="table-responsive col-md-12">
+                        <table class="table v-middle" style="width: 95%">
+                        <thead>
+                            <tr>
+                            <th>Cóodigo RFID</th>
+                            <th>Saldo</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsive-table-body">
+                            <tr ng-repeat="tarjeta in Usuario.tarjetas">
+                            <td>{{tarjeta.codigo_rfid}}</td>
+                            <td>{{tarjeta.saldo}}</td>
+                            <td>{{tarjeta.estado}}</td>
+                            <td class="text-right" >
+                                <a ng-click="desvincularTarjeta(Usuario.id_Usuario, tarjeta.id_tarjeta)" class="btn btn-danger btn-xs" 
+                                    data-placement="top" title="Desvincular"><i class="fa fa-times"></i></a>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <!-- // Progress table -->
+                    <!--INICIA SECCION ASIGNAR TARJETA AL Usuario-->
+                    <div class="col-md-12 text-center">
+                        <div class="col-md-12">
+                            <h3>Asignar Tarjeta</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <label>Buscar</label>
+                            <input ng-model="tarjetaSeleccionada" 
+                                typeahead="tarjeta as tarjeta.busqueda for tarjeta in tarjetas | filter: {'busqueda':$viewValue}"
+                                typeahead-on-select="activarAsignar()" >
+                        </div>
+                        <div ng-if="botonAsignarTarjeta==true" class="col-md-12">
+                            ID: <span>{{tarjetaSeleccionada.id_tarjeta}}</span><br>
+                            Cóodigo RFID: <span>{{tarjetaSeleccionada.codigo_rfid}}</span><br>
+                            Saldo: <span>{{tarjetaSeleccionada.saldo}}</span><br>
+                            <button ng-click="asignarTarjeta(Usuario.id_Usuario, tarjetaSeleccionada.id_tarjeta)" 
+                            class="btn btn-info">Asignar</button>
+                        </div>
+                    </div>
+                    <!--TERMINA SECCION ASIGNAR TARJETA AL Usuario-->
+                </div>
+                <!--TERMINA SECCION DE TARJETAS DEL Usuario-->
+                
+                
+
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA DETALLES DE UNA Usuario-->
+
+    <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA Usuario-->
+    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+        <div ng-if="transacciones" class="card">
+            <div class="card-header">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">    
+                    <thead>
+                        <tr>
+                            <th>Identificación</th>
+                            <th>Razón Social</th>   
+                            <th>Ciudad</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Correo Electrónico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr ng-repeat="transaccion in transacciones">
+                                <td>{{transaccion.ruc}}</td>
+                                <td>{{transaccion.razon_social}}</td>
+                                <td>{{transaccion.ciudad}}</td>
+                                <td>{{transaccion.direccion}}</td>
+                                <td>{{transaccion.telefono}}</td>
+                                <td>{{transaccion.email}}</td>
+                            </tr>   
+                    </tbody>
+                </table>
+            </div>
+            <!-- // Progress table -->
+
+            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                <ul class="pagination">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li ng-repeat="pagina in paginasTransacciones">
+                    <a type="button" ng-click="listarTransacciones(Usuario.id_Usuario, pagina)">
+                            {{pagina+1}}
+                    </a>
+                </li>
+                <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+            <div class="card card-body text-center">
+                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA PAGINA PARA AGREGAR NUEVA Usuario-->
+
+</div>

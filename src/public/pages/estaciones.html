@@ -18,34 +18,22 @@
                 <table class="table v-middle">
                 <thead>
                     <tr>
-                    <th width="20">
-                        <div class="checkbox checkbox-single margin-none">
-                        <input id="checkAll" data-toggle="check-all" data-target="#responsive-table-body" type="checkbox" checked>
-                        <label for="checkAll">Check All</label>
-                        </div>
-                    </th>
-                    <th>Codigo</th>
-                    <th>Nombre</th>
-                    <th>Ubicacion</th>
-                    <th># Conectores</th>
-                    <th>Estado</th>
-                    <th>Conexion</th>
-                    <th class="text-right">Acciones</th>
+                    <th style="width: 14%">Codigo</th>
+                    <th style="width: 20%">Nombre</th>
+                    <th style="width: 18%">Ubicacion <a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></th>
+                    <th style="width: 10%"># Conectores</th>
+                    <th style="width: 10%">Estado</th>
+                    <th style="width: 10%">Conexion</th>
+                    <th style="width: 8%" class="text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="responsive-table-body">
                     <tr ng-repeat="estacion in estaciones">
-                    <td>
-                        <div class="checkbox checkbox-single">
-                            <input ng-model="estacion.check" id="checkbox1" type="checkbox" checked>
-                            <label for="checkbox1">Label</label>
-                        </div>
-                    </td>
                     <td>{{estacion.codigoEstacion}}</td>
                     <td>{{estacion.nombreEstacion}}</td>
-                    <td>Cuenca, Ec<a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></td>
+                    <td>{{estacion.ubicacion}}</td>
                     <td class="text-center">{{estacion.cantidadConectores}}</td>
-                    <td>{{estacion.estado}}</td>
+                    <td id="status{{estacion.id_estacion}}">{{estacion.estado}}</td>
                     <td>
                         <div class="progress">
                         <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
@@ -93,6 +81,12 @@
                 <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
                 <div class="col-sm-9">
                 <input ng-model="formEstacion.nombreEstacion" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Ubicación</label>
+                <div class="col-sm-9">
+                <input ng-model="formEstacion.ubicacion" class="form-control">
                 </div>
             </div>
             <div class="form-group">
@@ -233,8 +227,8 @@
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Código RFID</th>
-                            <!--<th>Energía inicio [Wh]</th>
-                            <th>Energía fin [Wh]</th>-->
+                            <th>Energía inicio [Wh]</th>
+                            <th>Energía fin [Wh]</th>
                             <th>Energía consumida [kWh]</th>
                             <th>Estado</th>
                             <th>Razón</th>
@@ -249,7 +243,7 @@
                                 <!--<td>{{transaccion.energia_inicio}}</td>
                                 <td>{{transaccion.energia_fin}}</td>-->
                                 <td>{{transaccion.energiaConsumida}}</td>
-                                <td>{{transaccion.estado}}</td>
+                                <td id="status1">{{transaccion.estado}}</td>
                                 <td>{{transaccion.razon}}</td>
                                 <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
                                 title="eliminar"> <em class="fa fa-trash"></em></a></td>-->

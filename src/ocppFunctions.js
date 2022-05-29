@@ -35,13 +35,15 @@ async function AuthorizeResponse(crfid){
 }
 
 
-function StatusNotificationResponse(Payload){
-    console.log('Esto es pyload functions');
+async function StatusNotificationResponse(Payload){
+    console.log('Esto es pyload en status notification');
     console.log(Payload);
+    let status = Payload.status;
     const currentDate = new Date();
     //PayloadResponse = {"status": "Accepted", "currentDate": currentDate};
     PayloadResponse = {};
-    PayloadResponseNav = {'tipo': 'status', 'texto':Payload.status};
+    let estado = await updateStateStation(1, status)
+    PayloadResponseNav = {'tipo': 'status', 'texto': estado};
     return [PayloadResponse, PayloadResponseNav];
 }
 
@@ -68,7 +70,21 @@ async function validarTarjeta(codigo){
     return id_tarjeta;
 }
 /***********************************************************************/
+async function updateStateStation(id, estadoIngles){
+    console.log('estadoIngles: ' + estadoIngles)
+    let sql = "SELECT id_estado_est, estado_est_espanol FROM estados_estaciones WHERE estado_est_ingles=?";
+    let result = await pool.query(sql, [estadoIngles]);
+    let id_estado_est = result[0].id_estado_est;
+    let estado_est_espanol = result[0].estado_est_espanol;
+    
+    sql = "UPDATE estado_estacion SET id_estado_est=? WHERE id_estacion=?";
+    result = await pool.query(sql, [id_estado_est, id]);
+    return estado_est_espanol;
+}
+/***********************************************************************/
 async function StartTransactionResponse(Payload){
+    console.log('payload en start transaction');
+    console.log(Payload);
     let idTag = Payload.idTag;
     let meterStart = Payload.meterStart;
     let connectorId = Payload.connectorId;

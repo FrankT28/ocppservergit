@@ -6727,7 +6727,8 @@ require('./_timeline');
         'pages.estaciones',
         'pages.tarjetas',
         'pages.clientes',
-        'pages.transacciones'
+        'pages.transacciones',
+        'pages.usuarios'
     ]);
 
     var app = angular.module('app')
@@ -6786,7 +6787,7 @@ require('./_timeline');
                     })
                     .state('pages.estaciones', {
                         url: '/estaciones',
-                        templateUrl: 'pages/estaciones.html',
+                        templateUrl: 'pages/estaciones.html?v=1',
                         controller: 'estacionesController'
                     })
                     .state('pages.tarjetas', {
@@ -6803,6 +6804,11 @@ require('./_timeline');
                         url: '/transacciones',
                         templateUrl: 'pages/transacciones.html',
                         controller: 'transaccionesController'
+                    })
+                    .state('pages.usuarios', {
+                        url: '/usuarios',
+                        templateUrl: 'pages/usuarios.html',
+                        controller: 'usuariosController'
                     })
                     .state('pages.chat', {
                         url: '/chat',
