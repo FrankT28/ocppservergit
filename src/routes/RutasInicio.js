@@ -10,26 +10,29 @@ const {isLoggedIn} = require('../lib/seguro');
 
 
 
-router.get('/login', (req, res) =>{
+router.get('/', (req, res) =>{
 	console.log('Se vuelve a pedir ruta inicio')
 	//let rutaIndex = path.join(__dirname, '/../public/pages/login.html');
-	let rutaIndex = path.join(__dirname, '/../public/pages/login.html');
-	console.log('se pide el archivo: ' + rutaIndex)
-	res.sendFile(rutaIndex);
+	//let rutaIndex = path.join(__dirname, '/../public/pages/login.html');
+	res.sendFile(path.join(__dirname, '/../index.html'));
+	//console.log('se pide el archivo: ' + rutaIndex)
+	//res.sendFile(rutaIndex);
 })
 
 router.post('/', async(req, res) =>{
+	var data = {};
 	let username = req.body.username;
 	let password = req.body.password;
 	let sql = "SELECT id_usuario FROM usuarios WHERE username=? AND password=?";
 	let result = await pool.query(sql,[username, password]);
 	if(result.length>0){
-		console.log('Existe el usuario')
-		res.sendFile(path.join(__dirname, '/../index.html'));
+		console.log('Existe el usuario');
+		data.success = true;
 	}else{
-		console.log('login fail')
-		res.sendFile(path.join(__dirname, '/../public/pages/login.html'));
+		data.success = false;
+		console.log('login fail');
 	}
+	res.send(data);
 })
 
 router.get('/Estaciones.html', (req, res) =>{

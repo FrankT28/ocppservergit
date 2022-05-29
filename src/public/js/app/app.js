@@ -6723,6 +6723,7 @@ require('./_timeline');
         'ui.utils',
         'ui.jq',
         //DESDE AQUI AGREGO LOS NUEVOS MODULOS, LOS DE ARRIBA YA ESTABAN
+        'pages.login',
         'pages.estaciones',
         'pages.tarjetas',
         'pages.clientes',
@@ -6763,7 +6764,7 @@ require('./_timeline');
             function ($stateProvider, $urlRouterProvider) {
 
                 $urlRouterProvider
-                    .otherwise('/pages/dashboard');
+                    .otherwise('/pages/login');
 
                 $stateProvider
                     .state('pages', {
@@ -6777,6 +6778,11 @@ require('./_timeline');
                         controller: ['$scope', function($scope){
                             $scope.app.settings.htmlClass = 'st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2';
                         }]
+                    })
+                    .state('pages.login', {
+                        url: '/login',
+                        templateUrl: 'pages/login.html',
+                        controller: 'loginController'
                     })
                     .state('pages.estaciones', {
                         url: '/estaciones',
@@ -6833,6 +6839,7 @@ require('./_timeline');
                             $scope.app.settings.htmlClass = 'login';
                         }]
                     });
+                    
 
                 $stateProvider
                     .state('essentials', {

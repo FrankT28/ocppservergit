@@ -1,6 +1,5 @@
-<link href="css/vendor/all.css" rel="stylesheet">
 
-<div class="container-fluid">
+<div class="container-fluid" data-ng-controller="loginController">
   <div class="brand-logo text-center">
     <br>
     <br>
@@ -20,17 +19,17 @@
             Invalid User or Password
           </div>
 
-          <form role="form" method="post" action="/">
+          <form role="form" ng-submit="login()">
                     <div class="form-group ">
                         <div class="input-group ">
                             <span class="input-group-addon "><i class="fa fa-user "></i></span>
-                            <input type="text " class="form-control " name="username" placeholder="Username ">
+                            <input type="text " class="form-control " ng-model="formLogin.username" placeholder="Username ">
                         </div>
                     </div>
                     <div class="form-group ">
                         <div class="input-group ">
                             <span class="input-group-addon "><i class="fa fa-shield "></i></span>
-                            <input  type="password " class="form-control " name="password" placeholder="Password ">
+                            <input  type="password " class="form-control " ng-model="formLogin.password" placeholder="Password ">
                         </div>
                     </div>
                     <div class="text-center ">
