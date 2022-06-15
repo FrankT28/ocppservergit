@@ -90,7 +90,7 @@ WARNING: Respond.js doesn't work if you view the page via file://-->
 <body>
   <div class="st-container">
     <!-- Fixed navbar -->
-    <div ng-if="$state.current.name != 'pages.login'" class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div  class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
           <div class="navbar-header">
             <a href="#sidebar-menu" data-toggle="sidebar-menu" data-effect="st-effect-3" class="toggle pull-left visible-xs"><i class="fa fa-bars"></i></a>
@@ -230,6 +230,7 @@ WARNING: Respond.js doesn't work if you view the page via file://-->
                   <img src="images/people/110/guy-6.jpg" alt="" class="img-circle" /> Bill<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
+
                   <li><a href="#"><i class="fa fa-user"></i>Profile</a></li>
                   <li><a href="#"><i class="fa fa-wrench"></i>Settings</a></li>
                   <li><a href="#"><i class="fa fa-sign-out"></i>Logout</a></li>
@@ -278,7 +279,7 @@ WARNING: Respond.js doesn't work if you view the page via file://-->
     <!--termina fixed navbar-->
     <div class="st-pusher">
       <!-- Sidebar component with st-effect-3 (set on the toggle button within the navbar) -->
-      <div ng-if="$state.current.name != 'pages.login'" class="sidebar left sidebar-size-2 sidebar-offset-0 sidebar-skin-dark sidebar-visible-desktop" id=sidebar-menu data-type=collapse>
+      <div  class="sidebar left sidebar-size-2 sidebar-offset-0 sidebar-skin-dark sidebar-visible-desktop" id=sidebar-menu data-type=collapse>
         <div class="split-vertical">
           <div class="sidebar-block tabbable tabs-icons">
             <ul class="nav nav-tabs">
@@ -320,7 +321,7 @@ WARNING: Respond.js doesn't work if you view the page via file://-->
       <!--INICIA INYECCION DE CONTENIDO DE OTROS HTMLS A TRAVES DE ANGULAR-->
     </div>
     <!-- Footer -->
-    <footer ng-if="$state.current.name != 'pages.login'" class="footer">
+    <footer  class="footer">
       <strong>Software desarrollado por TLRG</strong> v1.0.0 &copy; Copyright 2022
     </footer>
     <!-- // Footer -->
