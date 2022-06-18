@@ -36,6 +36,7 @@ router.get('/', (req, res) =>{
 	res.sendFile(path.join(__dirname, '/../index.html'));
 	//console.log('se pide el archivo: ' + rutaIndex)
 	//res.sendFile(rutaIndex);
+	//res.send('hola');
 })
 
 router.post('/', async(req, res) =>{

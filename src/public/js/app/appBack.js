@@ -6765,13 +6765,13 @@ require('./_timeline');
             function ($stateProvider, $urlRouterProvider) {
 
                 $urlRouterProvider
-                    .otherwise('/login');
+                    .otherwise('/pages/dashboard');
 
                 $stateProvider
                     .state('pages', {
                         abstract: true,
                         url: '/pages',
-                        templateUrl: 'pages/common.html'
+                        template: '<div ui-view class="ui-view-main"/>'
                     })
                     .state('pages.dashboard', {
                         url: '/dashboard',
