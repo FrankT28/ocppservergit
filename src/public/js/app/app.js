@@ -7150,15 +7150,15 @@ require('./_timeline');
     "use strict";
 
     angular.module('app')
-        .controller('AppCtrl', [ '$scope', '$state',
-            function ($scope, $state) {
+        .controller('AppCtrl', [ '$scope', '$state', '$rootScope',
+            function ($scope, $state, $rootScope) {
 
                 $scope.app = {
                     settings: {
                         htmlClass: ''
                     }
                 };
-
+                //$rootScope.username = 'Frank';
                 $scope.$state = $state;
 
             } ]);

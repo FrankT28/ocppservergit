@@ -1,6 +1,6 @@
 angular.module("login", [])
-.controller("loginController", ['$scope', '$http', '$state',
-    function loginController($scope, $http, $state){
+.controller("loginController", ['$scope', '$http', '$state', '$rootScope',
+    function loginController($scope, $http, $state, $rootScope){	
 		/*=========================================================================*/
 		function parametrar(obj) {
 			var p = [];
@@ -21,6 +21,7 @@ angular.module("login", [])
 				console.log('respuesta de login');
 				console.log(data);
 				if(data.success==true){
+					$rootScope.username = $scope.formLogin.username;
 					$state.go('pages.dashboard');
 				}else{
 					$state.go('login');

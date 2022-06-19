@@ -23,7 +23,7 @@
                     <th style="width: 18%">Ubicacion <a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></th>
                     <th style="width: 10%"># Conectores</th>
                     <th style="width: 10%">Estado</th>
-                    <th style="width: 10%">Conexion</th>
+                    <th style="width: 10%" class="text-center">Conexion</th>
                     <th style="width: 8%" class="text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -34,11 +34,8 @@
                     <td>{{estacion.ubicacion}}</td>
                     <td class="text-center">{{estacion.cantidadConectores}}</td>
                     <td id="status{{estacion.id_estacion}}">{{estacion.estado}}</td>
-                    <td>
-                        <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
-                        </div>
-                        </div>
+                    <td class="text-center">
+                        <span ng-style="{'color': estacion.estado_conexio=='ok' ? 'green': 'red'}" class="fa fa-circle"></span>
                     </td>
                     <td class="text-right">
                         <a ng-click="detallesEstacion(estacion)" class="btn btn-default btn-xs" 

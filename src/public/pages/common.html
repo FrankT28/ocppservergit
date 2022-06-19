@@ -1,4 +1,5 @@
 
+<html lang="en" data-ng-app="app" ng-controller="AppCtrl" class="ng-class:app.settings.htmlClass">
 
 <body>
   <div class="st-container">
@@ -7,7 +8,9 @@
       <div class="container-fluid">
           <div class="navbar-header">
             <a href="#sidebar-menu" data-toggle="sidebar-menu" data-effect="st-effect-3" class="toggle pull-left visible-xs"><i class="fa fa-bars"></i></a>
+            <!--
             <a ng-hide="$state.includes('layouts')" href="#sidebar-chat" data-toggle="sidebar-menu" class="toggle pull-right"><i class="fa fa-comments"></i></a>
+            -->
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
@@ -17,6 +20,8 @@
             <a ui-sref="pages.dashboard" class="navbar-brand hidden-xs navbar-brand-primary">SGEC </a>
           </div>
           <div class="navbar-collapse collapse" id="collapse">
+            <!--
+
             <form class="navbar-form navbar-left hidden-xs" role="search">
               <div class="search-2">
                 <div class="input-group">
@@ -27,16 +32,17 @@
                 </div>
               </div>
             </form>
+            -->
             <ul class="nav navbar-nav navbar-right">
               <!-- notifications -->
               <li class="dropdown notifications updates hidden-xs hidden-sm">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="badge badge-primary">4</span>
+                  <span class="badge badge-primary">{{notificaciones.total}}</span>
                 </a>
                 <ul class="dropdown-menu" role="notification">
                   <li class="dropdown-header">Notificationes</li>
-                  <li class="media">
+                  <li ng-repeat="notif in notificaciones" class="media">
                     <div class="pull-right">
                       <span class="label label-success">Vieja</span>
                     </div>
@@ -49,141 +55,22 @@
                       <span class="text-caption text-muted">5 mins ago</span>
                     </div>
                   </li>
-                  <li class="media">
-                    <div class="pull-right">
-                      <span class="label label-success">New</span>
-                    </div>
-                    <div class="media-left">
-                      <img src="images/people/50/guy-6.jpg" alt="people" class="img-circle" width="30">
-                    </div>
-                    <div class="media-body">
-                      <a href="#">Bill</a> posted <a href="#">a comment</a> on Adrian's recent <a href="#">post</a>.
-                      <br/>
-                      <span class="text-caption text-muted">3 hrs ago</span>
-                    </div>
-                  </li>
-                  <li class="media">
-                    <div class="media-left">
-                      <span class="icon-block s30 bg-grey-200"><i class="fa fa-plus"></i></span>
-                    </div>
-                    <div class="media-body">
-                      <a href="#">Mary D.</a> and <a href="#">Michelle</a> are now friends.
-                      <p>
-                        <span class="text-caption text-muted">1 day ago</span>
-                      </p>
-                      <a href="">
-                        <img class="width-30 img-circle" src="images/people/50/woman-6.jpg" alt="people">
-                      </a>
-                      <a href="">
-                        <img class="width-30 img-circle" src="images/people/50/woman-3.jpg" alt="people">
-                      </a>
-                    </div>
-                  </li>
                 </ul>
               </li>
               <!-- // END notifications -->
-              <!-- messages -->
-              <li class="dropdown notifications hidden-xs hidden-sm">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-envelope-o"></i>
-  
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="media">
-                    <div class="media-left">
-                      <a href="#">
-                        <img class="media-object thumb" src="images/people/50/guy-2.jpg" alt="people">
-                      </a>
-                    </div>
-                    <div class="media-body">
-                      <div class="pull-right">
-                        <span class="label label-default">5 min</span>
-                      </div>
-                      <h5 class="media-heading">Adrian D.</h5>
-  
-                      <p class="margin-none">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    </div>
-                  </li>
-                  <li class="media">
-                    <div class="media-left">
-                      <a href="#">
-                        <img class="media-object thumb" src="images/people/50/woman-7.jpg" alt="people">
-                      </a>
-                    </div>
-  
-                    <div class="media-body">
-                      <div class="pull-right">
-                        <span class="label label-default">2 days</span>
-                      </div>
-                      <h5 class="media-heading">Jane B.</h5>
-                      <p class="margin-none">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    </div>
-                  </li>
-                  <li class="media">
-                    <div class="media-left">
-                      <a href="#">
-                        <img class="media-object thumb" src="images/people/50/guy-8.jpg" alt="people">
-                      </a>
-                    </div>
-  
-                    <div class="media-body">
-                      <div class="pull-right">
-                        <span class="label label-default">3 days</span>
-                      </div>
-                      <h5 class="media-heading">Andrew M.</h5>
-                      <p class="margin-none">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-              <!-- // END messages -->
+              
               <!-- user -->
               <li class="dropdown user">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img src="images/people/110/guy-6.jpg" alt="" class="img-circle" /> Bill<span class="caret"></span>
+                  <i class="fa fa-user"></i> {{username}}<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="#"><i class="fa fa-user"></i>Profile</a></li>
-                  <li><a href="#"><i class="fa fa-wrench"></i>Settings</a></li>
-                  <li><a href="#"><i class="fa fa-sign-out"></i>Logout</a></li>
+                  <li><a href="#"><i class="fa fa-user"></i>Mi perfil</a></li>
+                  <li><a href="#"><i class="fa fa-wrench"></i>Configuraciones</a></li>
+                  <li><a href="#/login"><i class="fa fa-sign-out"></i>Salir</a></li>
                 </ul>
               </li>
               <!-- // END user -->
-              <!-- country flags -->
-              <li class="dropdown flags">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img src="images/flags/Flag_of_the_United_States.svg" alt="United States" />
-                  <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu min-width-none" role="menu">
-                  <li class="active text-center">
-                    <a href="#">
-                      <img src="images/flags/Flag_of_the_United_States.svg" alt="United States" />
-                    </a>
-                  </li>
-                  <li class="text-center">
-                    <a href="#">
-                      <img src="images/flags/Flag_of_France.svg" alt="France" />
-                    </a>
-                  </li>
-                  <li class="text-center">
-                    <a href="#">
-                      <img src="images/flags/Flag_of_Germany.svg" alt="Germany" />
-                    </a>
-                  </li>
-                  <li class="text-center">
-                    <a href="#">
-                      <img src="images/flags/Flag_of_Romania.svg" alt="Romania" />
-                    </a>
-                  </li>
-                  <li class="text-center">
-                    <a href="#">
-                      <img src="images/flags/Flag_of_Poland.svg" alt="Poland" />
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- // END country flags -->
             </ul>
           </div>
       </div>
@@ -240,3 +127,4 @@
   </div>
 
 </body>
+</html>
