@@ -232,7 +232,8 @@ module.exports = function(server){
                     }else{
                         console.log('APK no conectado');
                     }
-
+                    console.log('clientes: ');
+                    console.log(clientes.keys())
                     /*************Respuesta para navegador****************/
                     if(PayloadResponseNav){ 
                         clientenav = clientes.get(0);
@@ -247,7 +248,7 @@ module.exports = function(server){
                         } 
                     }
 
-                    
+                     
                 }else if (MessageTypeId==3){
                     clientenav = clientes.get(0);
                     console.log('Se ha recibido un MessageTypeId igual a 3!')
