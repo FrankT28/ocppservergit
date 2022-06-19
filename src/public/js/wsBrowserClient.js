@@ -1,4 +1,5 @@
-const ws = new WebSocket('ws://localhost:3000/navegador');
+//const ws = new WebSocket('ws://localhost:3000/navegador');
+const ws = new WebSocket('ws://serverocpp.herokuapp.com/navegador');
 
 function chconfiguration(stationId, keyOp, boxvalue){    
     var PayloadRequest = JSON.stringify({"tipo": "ChConfiguration", "stationId": stationId, "key":keyOp, "valor":document.getElementById(boxvalue).value});
