@@ -276,14 +276,21 @@ async function StopTransactionConf(Payload){
     //var transactionId = Payload.transactionId;
     let estado = 'Finalizada' 
     let transactionId = Payload.transactionId;
-
+    //transactionId = 154;
+    console.log('transid');
+    console.log(transactionId)
     let hora_fin = Payload.timestamp;
     var sql = 'SELECT energiaInicio FROM transacciones WHERE id_transaccion=?;';
+    console.log('sql' + sql)
     let meterStart = await pool.query(sql, transactionId);
     console.log('Esto es meter start');
     console.log(meterStart);
     let meterStop = Payload.meterStop;
-    let ec = parseInt(meterStop,10) - parseInt(meterStart[0].energiaInicio,10);
+    if(meterStart.length>0){
+        let ec = parseInt(meterStop,10) - parseInt(meterStart[0].energiaInicio,10);
+    }else{
+        let ec = parseInt(meterStop,10);
+    }
     ec = ec;
     console.log(ec);
     let razon = Payload.reason;

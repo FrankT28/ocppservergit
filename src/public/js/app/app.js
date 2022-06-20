@@ -7160,7 +7160,31 @@ require('./_timeline');
                 };
                 //$rootScope.username = 'Frank';
                 $scope.$state = $state;
+                /*=========================================================================*/
+                //SECCION PARA EXCELS
+                /*=========================================================================*/
+                function arrayOfArrays(array){
+                    let final = [];
+                    let cabeceras = Object.keys(array[0]);
 
+                    final.push(cabeceras);
+                    for(var i=0; i<array.length; i++){
+                        final.push(Object.values(array[i]));
+                    }
+                    console.log('final')
+                    console.log(final)
+                    return final;
+                }
+                /*=========================================================================*/
+                $rootScope.excel = function(array, sheetName, bookName){
+                    let aoa = arrayOfArrays(array);
+                    let opts = {};
+                    var workbook = XLSX.utils.book_new();
+                    workbook.SheetNames.push(sheetName);
+                    let worksheet = XLSX.utils.aoa_to_sheet(aoa, opts)
+                    workbook.Sheets[sheetName] = worksheet;
+                    XLSX.writeFile(workbook, bookName + ".xlsb");
+                }
             } ]);
 
 })();

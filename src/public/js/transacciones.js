@@ -1,6 +1,6 @@
 	angular.module("pages.transacciones", ['ui.bootstrap'])
-	.controller("transaccionesController", ['$scope', '$http', 
-		function transaccionesController($scope, $http){
+	.controller("transaccionesController", ['$scope', '$http', '$rootScope',
+		function transaccionesController($scope, $http, $rootScope){
 		//NO BORRAR ESTA LINEA, NO SE QUE HACE PERO SIRVE PARA NO DESCUADRAR LOS HTML.
 		$scope.app.settings.htmlClass = 'st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2';
 		/*=========================================================================*/
@@ -12,6 +12,11 @@
 		$scope.verFormAgregarTransaccion = false;
 		$scope.verFormEditarTransaccion = false;
 		$scope.transaccionesPorPagina = 10;
+		/*=========================================================================*/
+		$scope.excel = function(){
+			//EL SEGUNDO PARA METRO ES EL NOMBRE DEL SHEET, EL TERCERO DEL WORKBOOK
+			$rootScope.excel($scope.transacciones, 'transacciones', 'transacciones');
+		}
 		/*=========================================================================*/
 		function paginacion(total){
 			console.log('total: ' + total)

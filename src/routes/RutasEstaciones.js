@@ -194,8 +194,8 @@ router.post('/home/estaciones/gestionar/:id', async(req, res) => {
 	const datosEstacion = {
 		ide, v1, v2, v3
 	};
-	console.log('Estos son los parámetros: ');
-	console.log(datosEstacion);
+	/*console.log('Estos son los parámetros: ');
+	console.log(datosEstacion);*/
 	res.render('EstacionesGestionar.hbs',  {datosEstacion: datosEstacion, 'menu': 'si'}); 
 });
 

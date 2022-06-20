@@ -1,11 +1,28 @@
-angular.module("pages.tarjetas", [])
-.controller("tarjetasController", ['$scope', '$http', 
-	function tarjetasController($scope, $http){
+angular.module("pages.tarjetas", ['angular-js-xlsx'])
+.controller("tarjetasController", ['$scope', '$http', '$rootScope',
+	function tarjetasController($scope, $http, $rootScope){
 	console.log('se ha llamado a tarjetas js')
 	$scope.formTarjeta = {};
 	$scope.verTarjetas = true;
 	$scope.verFormAgregarTarjeta = false;
 	$scope.tarjetasPorPagina = 10;
+	
+	/*=========================================================================*/
+	$scope.excel = function(){
+		//EL SEGUNDO PARA METRO ES EL NOMBRE DEL SHEET, EL TERCERO DEL WORKBOOK
+		$rootScope.excel($scope.tarjetas, 'tarjetas', 'tarjetas');
+	}
+	/*=========================================================================*/
+	$scope.read = function (workbook) {
+		console.log('Se esta leyendo')
+	/* DO SOMETHING WITH workbook HERE */
+	console.log(workbook);
+	}
+
+	$scope.error = function (e) {
+	/* DO SOMETHING WHEN ERROR IS THROWN */
+	console.log(e);
+	}
 	/*=========================================================================*/
 	function paginacion(total){
 		var paginas = [];

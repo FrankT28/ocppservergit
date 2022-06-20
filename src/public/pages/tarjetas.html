@@ -10,12 +10,21 @@
         <button ng-if="verTransacciones==true" ng-click="volverDetallesTarjeta()" class="btn btn-success">
             <em class="fa fa-hand-o-left"></em> Volver</button>
     </div>
-    <div ng-if="verTarjetas==true" >
-            
-            <div class="panel panel-default">
+
+
+    <div>
+        <js-xls onread="read" onerror="error">Excel</js-xls>
+    </div>
+
+    <div>
+        <button ng-click="excel()" class="btn btn-success">Exportar</button>
+    </div>
+
+    <div ng-if="verTarjetas==true">
+        <div class="panel panel-default">
             <!-- Progress table -->
             <div class="table-responsive">
-                <table class="table v-middle">
+                <table class="table v-middle" id="tablaTarjetas">
                 <thead>
                     <tr>
                         <th></th>
