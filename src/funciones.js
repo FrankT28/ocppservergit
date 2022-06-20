@@ -29,9 +29,13 @@ function parseMessage (buffer) {
     console.log('payloadlength');
     console.log(payloadLength);
 
+    console.log('buffer size');
+    console.log(Buffer.byteLength(buffer));
+
+
     const data = Buffer.alloc(payloadLength);
     if (isMasked) {
-      for (let i = 0, j = 0; i < payloadLength; ++i, j = i % 4) {
+      for (let i = 0, j = 0; i < payloadLength && i<8; ++i, j = i % 4) {
         const shift = j == 3 ? 0 : (3 - j) << 3; 
         const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
         const source = buffer.readUInt8(currentOffset++);
