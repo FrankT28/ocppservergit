@@ -1,19 +1,20 @@
 function parseMessage (buffer) {
   const firstByte = buffer.readUInt8(0);
   const opCode = firstByte & 0xF;
-  const fin = firstByte & 0x80;
+  const fin = (firstByte >>> 7) & 0x1;
+  console.log('bit fin: ' + fin)
   console.log('opcode: ' + opCode)
 
   if (opCode === 0x8) 
      return null; 
   if (opCode === 0x1 || opCode === 0x9) {
     const secondByte = buffer.readUInt8(1); 
-    const isMasked = Boolean((secondByte >>> 7) & 0x1); 
+    const isMasked = Boolean((secondByte >>> 7) & 0x1);
     let currentOffset = 2; let payloadLength = secondByte & 0x7F; 
     
     if (payloadLength > 125) { 
       if (payloadLength === 126) { 
-        payloadLength = buffer.readUInt16BE(currentOffset); 
+        payloadLength = buffer.readUInt16BE(currentOffset);
         currentOffset += 2; 
       } else {  
         throw new Error('Large payloads not currently implemented'); 
@@ -27,6 +28,7 @@ function parseMessage (buffer) {
     }
     console.log('payloadlength');
     console.log(payloadLength);
+
     const data = Buffer.alloc(payloadLength);
     if (isMasked) {
       for (let i = 0, j = 0; i < payloadLength; ++i, j = i % 4) {
