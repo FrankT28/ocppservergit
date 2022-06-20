@@ -2,9 +2,7 @@ function parseMessage (buffer) {
   const firstByte = buffer.readUInt8(0);
   const opCode = firstByte & 0xF;
   const fin = firstByte & 0x80;
-  console.log('bit fin: ' + fin);
-  console.log('este es el opcode')
-  console.log(opCode)
+  console.log('opcode: ' + opCode)
 
   if (opCode === 0x8) 
      return null; 
@@ -27,13 +25,14 @@ function parseMessage (buffer) {
       maskingKey = buffer.readUInt32BE(currentOffset);
       currentOffset += 4;
     }
-
+    console.log('payloadlength');
+    console.log(payloadLength);
     const data = Buffer.alloc(payloadLength);
     if (isMasked) {
       for (let i = 0, j = 0; i < payloadLength; ++i, j = i % 4) {
         const shift = j == 3 ? 0 : (3 - j) << 3; 
         const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
-        const source = buffer.readUInt8(currentOffset++); 
+        const source = buffer.readUInt8(currentOffset++);
         data.writeUInt8(mask ^ source, i); 
       }
     } else {        
