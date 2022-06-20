@@ -4,7 +4,6 @@ const path = require('path');
 
 const passport = require('passport');
 const pool = require('../database');
-const XLSX = require('xlsx');
 //console.log(pool);
 const nbd = pool.config.connectionConfig.database;
 const {isLoggedIn} = require('../lib/seguro');
