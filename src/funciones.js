@@ -32,7 +32,7 @@ function parseMessage (buffer) {
     console.log('buffer size');
     console.log(Buffer.byteLength(buffer));
 
-
+ 
     const data = Buffer.alloc(payloadLength);
     if (isMasked) {
       for (let i = 0, j = 0; i < payloadLength && i<8; ++i, j = i % 4) {
