@@ -39,23 +39,24 @@ for(const prop in results){
     }
 }
 
-console.log('Esta es mi IP: ');
+/*console.log('Esta es mi IP: ');
 console.log(miIp);
 
 const FtpSrv = require('ftp-srv');
-
+*/
 
 /*const miIp = '192.168.222.201';
 const miIpLocal = '192.168.1.20';*/
 //miIp = '192.168.222.201';
-const uriFTP = 'ftp://'+miIp+':21/';
+/*const uriFTP = 'ftp://'+miIp+':21/';
 //const uriFTP = 'ftp://192.168.222.201:21/';
 //const uriFTP = 'ftp://192.168.1.10:21/';
 const ftpServer = new FtpSrv({'url': uriFTP,
 'greeting': 'Saludo de bienvenida desde servidor OCPP'});
 const blacklist = [];
-const whitelist = ['DIR', 'PWD', 'CWD', 'TYPE', 'PASV', 'PORT', 'LIST', 'STOR'];
+const whitelist = ['DIR', 'PWD', 'CWD', 'TYPE', 'PASV', 'PORT', 'LIST', 'STOR'];*/
 
+/*
 ftpServer.on('login', (data, resolve, reject) => {
 
     console.log('login en servidor FTP')
@@ -71,7 +72,7 @@ ftpServer.on('login', (data, resolve, reject) => {
 
 ftpServer.listen()
 .then(() => { console.log('Servidor FTP escuchando') });
-
+*/
 
 var generateAcceptValue = function (acceptKey) {
     return crypto
