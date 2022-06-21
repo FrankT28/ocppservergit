@@ -38,14 +38,13 @@ function parseMessage (buffer) {
       for (let i = 0, j = 0; i < payloadLength && i<Buffer.byteLength(buffer); ++i, j = i % 4) {
         const shift = j == 3 ? 0 : (3 - j) << 3; 
         const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
-        const source = '';
         try {
-          source = buffer.readUInt8(currentOffset++);
+          const source = buffer.readUInt8(currentOffset++);
+          data.writeUInt8(mask ^ source, i); 
         } catch (error) {
           console.log('El error es el siguiente')
           console.error(error);
         }
-        data.writeUInt8(mask ^ source, i); 
       }
     } else {        
       buffer.copy(data, 0, currentOffset++);
