@@ -1,4 +1,6 @@
 function parseMessage (buffer) {
+  console.log('buffer');
+  console.log(buffer)
   const firstByte = buffer.readUInt8(0);
   const opCode = firstByte & 0xF;
   const fin = (firstByte >>> 7) & 0x1;
@@ -12,7 +14,7 @@ function parseMessage (buffer) {
     const isMasked = Boolean((secondByte >>> 7) & 0x1);
     let currentOffset = 2; let payloadLength = secondByte & 0x7F; 
     
-    if (payloadLength > 125) { 
+    if (payloadLength > 125) {  
       if (payloadLength === 126) { 
         payloadLength = buffer.readUInt16BE(currentOffset);
         currentOffset += 2; 
@@ -38,13 +40,8 @@ function parseMessage (buffer) {
       for (let i = 0, j = 0; i < payloadLength && i<Buffer.byteLength(buffer); ++i, j = i % 4) {
         const shift = j == 3 ? 0 : (3 - j) << 3; 
         const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
-        try {
-          const source = buffer.readUInt8(currentOffset++);
-          data.writeUInt8(mask ^ source, i); 
-        } catch (error) {
-          console.log('El error es el siguiente')
-          console.error(error);
-        }
+        const source = buffer.readUInt8(currentOffset++);
+        data.writeUInt8(mask ^ source, i);  
       }
     } else {        
       buffer.copy(data, 0, currentOffset++);

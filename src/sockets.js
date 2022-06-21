@@ -3,7 +3,7 @@ const { urlencoded, text } = require('express');
 //const { url } = require('inspector');
 const { type } = require('os');
 const pool = require('./database.js');
-const funciones = require('./funciones.js');
+const funciones = require('./funciones1.js');
 var clientes = new Map();
 const ffs = require('./ocppFunctions');
 const ffsnav = require('./ocppFunctionsServer');
@@ -16,7 +16,7 @@ const results = Object.create(null); // Or just '{}', an empty object
 
 
 
-
+/*
 for (const name of Object.keys(nets)) {
     for (const net of nets[name]) {
         // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
@@ -38,7 +38,7 @@ for(const prop in results){
         miIp = results[prop][0];
     }
 }
-
+*/
 /*console.log('Esta es mi IP: ');
 console.log(miIp);
 
@@ -130,8 +130,83 @@ function getByValue(map, searchValue) {
     }
 }
 
+const getParsedBuffer = buffer => {
+    const firstByte = buffer.readUInt8(0);
+    const opCode = firstByte & 0xF;
+    const fin = (firstByte >>> 7) & 0x1;
+
+    const secondByte = buffer.readUInt8(1); 
+    const isMasked = Boolean((secondByte >>> 7) & 0x1);
+    console.log('ismkased');
+    console.log(isMasked)
+    let currentOffset = 2; let payloadLength = secondByte & 0x7F; 
+    
+    if (payloadLength > 125) {  
+        if (payloadLength === 126) { 
+            // whenever I want to read X bytes I simply check if I really can read X bytes
+            if (currentOffset + 2 > buffer.length) {
+                return { payload: null, bufferRemainingBytes: buffer };
+            }
+            payloadLength = buffer.readUInt16BE(currentOffset);
+            currentOffset += 2;
+        }
+    }
+
+    
+    
+    let maskingKey;
+    if (isMasked) {
+      maskingKey = buffer.readUInt32BE(currentOffset);
+      currentOffset += 4;
+    }
+    
+    // in 99% of cases this will prevent the ERR_OUT_OF_RANGE error to happen
+    if (currentOffset + payloadLength > buffer.length) {
+      console.log('[misalignment between WebSocket frame and NodeJs Buffer]\n');
+      return { payload: null, bufferRemainingBytes: buffer };
+    }
+  
+    payload = Buffer.alloc(payloadLength);
+  
+    if (isMasked) {
+        console.log('entra a ismasked')
+      // ......... I skip masked code as it's too long and not masked shows the idea same way
+      for (let i = 0, j = 0; i < payloadLength; ++i, j = i % 4) {
+          const shift = j == 3 ? 0 : (3 - j) << 3; 
+          const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
+          const source = buffer.readUInt8(currentOffset++);
+          payload.writeUInt8(mask ^ source, i);  
+      }
+    } else {
+      for (let i = 0; i < payloadLength; i++) {
+        payload.writeUInt8(buffer.readUInt8(currentOffset++), i);
+      }
+    }
+  
+    // it could also happen at this point that we already have a valid WebSocket payload
+    // but there are still some bytes remaining in the buffer
+    // we need to copy all unused bytes and return them as bufferRemainingBytes
+    bufferRemainingBytes = Buffer.alloc(buffer.length - currentOffset);
+    //                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ this value could be >= 0
+    for (let i = 0; i < bufferRemainingBytes.length; i++) {
+      bufferRemainingBytes.writeUInt8(buffer.readUInt8(currentOffset++), i);
+    }
+  
+    
+
+    return { payload, bufferRemainingBytes };
+  }
+
+
+const debugBuffer = (bufferName, buffer) => {
+    const length = buffer ? buffer.length : '---';
+  
+    //console.log(`:: DEBUG - ${bufferName} | ${length} | `, buffer, '\n');
+  };
+
 module.exports = function(server){
     server.on('upgrade',  async(req, socket) => { 
+        let bufferToParse = Buffer.alloc(0); // at the beginning we just start with 0 bytes
         var url_est = req.url.substring(1,req.url.length);
         console.log('                                           ');
         console.log('------------------------------------------------------');
@@ -142,8 +217,6 @@ module.exports = function(server){
             socket.end('HTTP/1.1 400 Bad Request');
             return;
         }; 
-        
-        
         let query = 'SELECT id_estacion FROM estaciones WHERE codigoEstacion="' + url_est + '";';
         let estaciones = await pool.query(query);
         console.log('resultado sql de estaciones');
@@ -188,538 +261,52 @@ module.exports = function(server){
         };
 
         socket.on("data", async(buffer) => {
-            
-            const lista = funciones.parseMessage(buffer);
-            //lista = [mensaje, codigo_operacion]
-            if (lista==null){
-                return;
-            };
+            /*==========================================================================*/
+            //INICIA CODIGO NUEVO
+            /*==========================================================================*/
+            let parsedBuffer;
 
-            var message = lista[0]; 
-            
-            console.log('                                      ');
-            console.log('El servidor ha recibido datos----------------------------------------------------------------------');
-            const opCode = lista[1];
-            const CallId = 2;
-            const CallResultId = 3;
-            const CallErrorId = 4;
+            // concat 'past' bytes with the 'current' bytes
+            bufferToParse = Buffer.concat([bufferToParse, buffer]);
 
-            if (opCode === 0x1 ) {
-                const MessageTypeId = message[0];
-                const UniqueId = message[1];
-                var PayloadResponse;
+            do {
+                parsedBuffer = getParsedBuffer(bufferToParse);
+          
+                // the output of the debugBuffer calls will be on the screenshot later
+                debugBuffer('buffer', buffer);
+                debugBuffer('bufferToParse', bufferToParse);
+                debugBuffer('parsedBuffer.payload', parsedBuffer.payload);
+                debugBuffer('parsedBuffer.bufferRemainingBytes', parsedBuffer.bufferRemainingBytes);
+          
+                bufferToParse = parsedBuffer.bufferRemainingBytes;
+          
+                if (parsedBuffer.payload) {
 
-                if (MessageTypeId==2){ 
-                    /*************Respuesta para punto de carga*************** */
-                    Respuestas = await ffs.funcionesnuevas(message);
-                    PayloadResponse = Respuestas[0];
-                    PayloadResponseNav = Respuestas[1];
-                    PayloadResponseApk = Respuestas[2]; 
-                    console.log('                                            ');
-                    let CallResult = [CallResultId, UniqueId, PayloadResponse]; 
-                    console.log('Respuesta a enviar al punto de carga: ')
-                    console.log(CallResult);
-                    socket.write(funciones.constructReply(CallResult, opCode));
-                     
-                    console.log('este es el payload response')
-                    console.log(PayloadResponseNav)
-
-                    /*************Respuesta para APK****************/
-                    console.log('respuesta para apk: ');
-                    console.log(PayloadResponseApk);
-                    var clienteApk = clientes.get(2);
-                    if(clienteApk && PayloadResponseApk){
-                        clienteApk.write(funciones.constructReply(PayloadResponseApk, opCode))
-                    }else{
-                        console.log('APK no conectado');
-                    }
-                    console.log('clientes: ');
-                    console.log(clientes.keys())
-                    /*************Respuesta para navegador****************/
-                    if(PayloadResponseNav){ 
-                        clientenav = clientes.get(0);
-                        if(clientenav){
-                            var id_est = getByValue(clientes, socket);
-                            PayloadResponseNav.boton = PayloadResponseNav.tipo + id_est;
-                            console.log('Respuesta a enviar al navegador: ')
-                            console.log(PayloadResponseNav);
-                            clientenav.write(funciones.constructReply(PayloadResponseNav, opCode))
-                        }else{
-                            console.log('Navegador no conectado');
-                        } 
-                    }
-
-                     
-                }else if (MessageTypeId==3){
-                    clientenav = clientes.get(0);
-                    console.log('Se ha recibido un MessageTypeId igual a 3!')
-                    console.log(message[2]);
-                    console.log('Este es el uniqueID');
-                    console.log(message[1]);
-                    var Response = {
-                        'texto': message[2],
-                        //'texto': JSON.stringify(message[2]),
-                        'tipo': 'recibidos',
-                        'boton': 'stationResponse',
-                        'unid': UniqueId
-                    };
-                    clientenav.write(funciones.constructReply(Response, opCode));   
-                }else if (MessageTypeId==4){
-                    clientenav = clientes.get(0);
-                    console.log('Se ha recibido un MessageTypeId igual a 4!, que significa algun error')
-                    console.log(message[2]);
-                    var Response = {
-                        'texto': JSON.stringify(message[2]),
-                        'tipo': 'recibidos',
-                        'boton': 'stationResponse'
-                    };
-                    clientenav.write(funciones.constructReply(Response, opCode));
-                }else{
-                    console.log('Se ha recibido un mensaje desde navegador!')
-                    console.log(message);
-                    var stationId = message.stationId;
-                    if(message.auth=='chatapphdfgjd34534hjdfk'){
-                        console.log('mensaje desde apk auth chatapphdfgjd34534hjdfk')
-                        message.tipo = 'remoteStopTransaction';
-                        stationId = 1;
-                    }
-                    var stationClient = clientes.get(stationId);    
-
-                    if(stationClient!=undefined){
-
-                        if(message.tipo=='acceptWsHandshake'){
-                            console.log('navegador solicita aceptar la conexion')
-                            var temporalClient = clientes.get('temporal');
-                            const acceptKey = message.acceptKey;
-                            const protocol = message.protocol;
-                            response = responseHeaders1(acceptKey, protocol);
-                            temporalClient.write(response.join('\r\n') + '\r\n\r\n' );
-                            //temporalClient.write(funciones.constructReply(response, 0x1));
-                        }else if(message.tipo=='ReserveNow'){
-                            //PayloadRequest = {"connectorId": 1,"expiryDate":"2022-02-28T11:10:00.000Z","idTag":"7240E49A","reservationId":100};
-                            PayloadRequest = {"connectorId": message.connectorId,"expiryDate":message.expiryDate,"idTag":message.idTag,"reservationId":message.reservationId};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            console.log(OIBCS);
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='CancelReservation'){
-                            PayloadRequest = {"reservationId": 100};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='RemoteStartTransaction'){
-                            perfilcarga={
-                                    "chargingProfileId": 1,
-                                    "stackLevel": 1,
-                                    "chargingProfilePurpose": "TxProfile",
-                                    "chargingProfileKind": "Absolute",
-                                    "recurrencyKind": "Daily",
-                                    //"validFrom": '2022-03-11T13:10:00.000Z',
-                                    //"validTo": '2022-03-11T13:45:00.000Z',
-                                    "chargingSchedule": {
-                                        //"duration": 100,
-                                        "startSchedule": '2022-03-11T13:47:00.000Z',
-                                        "chargingRateUnit": "A",
-                                        "chargingSchedulePeriod": [{"startPeriod": 0, "limit": 18, "numberPhases": 3}]
-                                        //"minChargingRate": 0.4
-                                    }
-                                
-                            }
-                            PayloadRequest = {"connectorId":message.Conector, "idTag":message.idtag};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            console.log(OIBCS)
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-                        }else if(message.tipo=='RemoteStopTransaction'){
-                            PayloadRequest = {"idTag":message.idtag};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-                        }else if(message.tipo=='ChangeAvailability'){
-                            PayloadRequest = {"connectorId":message.Conector, "type":message.Estado};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='ClearCache'){
-                            
-                            PayloadRequest = {};
-                            var OIBCS = [2, 'Cl', message.tipo,PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-                        }else if(message.tipo=='ChangeConfiguration'){
-
-                            PayloadRequest = {"key": 
-                            [  'AllowOfflineTxForUnknownId',
-                               'AuthorizationCacheEnabled',
-                               'AuthorizeRemoteTxRequests',
-                               'ClockAlignedDataInterval',
-                               'ConnectionTimeOut',
-                               'ConnectorPhaseRotation',
-                               'GetConfigurationMaxKeys',
-                               'HeartbeatInterval',
-                               'LocalAuthorizeOffline',
-                               'LocalPreAuthorize', 
-                               'MeterValuesAlignedData',
-                               'MeterValuesSampledData',
-                               'MeterValueSampleInterval',
-                               'NumberOfConnectors',
-                               'StopTransactionOnEVSideDisconnect',
-                           ]
-                        };
-
-                            var OIBCS = [2, 'CC', 'GetConfiguration', PayloadRequest];
-
-                       PayloadRequest1={"key":[
-                                'csEndPoint',
-                                'isLittleEndian',
-                                'csVerifyCert',
-                                'csAcceptUnknownSelfSigned',
-                                'cbId',
-                                'cbUseOcppTSync',
-                                'cbUsePartialEnergy',
-                                'cbUsePartialEnergyMeterVal',
-                                'cbUseJson',
-                                'cbStopIfConcurrentTx',
-                                'cbConnTimeOut',
-                                'cbCacheListMaxLength'
-                            ]};
-
-                            //var OIBCS = [2, 'CC12', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                            //console.log(OIBCS)
-                            
-                           /* const myTimeout =setTimeout(function(){
-
-                                
-                            
-                                
-                            }, 5000);
-
-                            clearTimeout(myTimeout);*/
-
-
-
-
-                           PayloadRequest2={"key":[
-                                'cbRequireUserConfirmation',
-                                'PlugAndChargeEnabled',
-                                'PlugAndChargeUID',
-                                'MeterValuesOnlyOnChargingStatus',
-                                'AllowOfflineTxForUnknownId',
-                                'AuthorizationCacheEnabled',
-                                'AuthorizeRemoteTxRequests',
-                                'ConnectionTimeOut',
-                                'GetConfigurationMaxKeys',
-                                'HeartbeatInterval',
-                                'LocalAuthorizeOffline',
-                                'LocalPreAuthorize'
-                            ]};
-
-
-
-
-                            //var OIBCS = [2, 'CC22', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                            //console.log(OIBCS)
-
-                            /*const myTimeout2 = setTimeout(function(){
-
-                                var OIBCS = [2, 'CC22', 'GetConfiguration', PayloadRequest];
-                                stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                                console.log(OIBCS)
-                            
-                            }, 5000);*/
-
-                            PayloadRequest3={"key":[
-                                'MeterValuesSampledData',
-                                'MeterValueSampleInterval',
-                                'StopTxnSampledData',
-                                'NumberOfConnectors',
-                                'ConnectorPhaseRotation',
-                                'StopTransactionOnEVSideDisconnect',
-                                'StopTransactionOnInvalidId',
-                                'SupportedFeatureProfiles',
-                                'TransactionMessageAttempts',
-                                'TransactionMessageRetryInterval',
-                                'UnlockConnectorOnEVSideDisconnect',
-                                'WebSocketPingInterval'
-                            ]};
-
-
-                            //var OIBCS = [2, 'CC32', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                            
-                            //console.log(OIBCS)
-                            
-                            /*const myTimeout3 = setTimeout(function(){
-                            
-                                var OIBCS = [2, 'CC32', 'GetConfiguration', PayloadRequest];
-                                stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                                console.log(OIBCS)
-                            
-                            }, 5000);*/
-
-                           PayloadRequest4={"key":[
-                                'LocalAuthListEnabled',
-                                'LocalAuthListMaxLength',
-                                'SendLocalListMaxLength',
-                                'ReserveConnectorZeroSupported',
-                                'SupportedFileTransferProtocols',
-                                'MaxChargingProfilesInstalled',
-                                'pwStdHost',
-                                'pwStdUser',
-                                'pwStdPassword',
-                                'pwStdUserEdit',
-                                'pwStdPasswordEdit',
-                                'pwStdPort'
-                            ]};
-
-                            //var OIBCS = [2, 'CC42', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                            //console.log(OIBCS)
-
-                            /*const myTimeout4 = setTimeout(function(){
-
-                            
-                                var OIBCS = [2, 'CC42', 'GetConfiguration', PayloadRequest];
-                                stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                                console.log(OIBCS)
-                            
-                            }, 5000);*/
-
-                            PayloadRequest5={"key":[
-                                'psiUser',
-                                'psiPassword',
-                                'psiAdminUser',
-                                'psiAdminPassword',
-                                'psiLoglevel',
-                                'psiPort',
-                                'ClockAlignedDataInterval',
-                                'MeterValuesAlignedData'
-                            ]};
-
-                            //PayloadRequest={"key":'csEndPoint',"value":"ws://192.168.222.201:3000"};
-
-                            var OIBCS = [2, 'CC52', 'GetConfiguration', PayloadRequest1];
-                            //var OIBCS = [2, 'CC52', 'ChangeConfiguration', PayloadRequest1];
-                            
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                            console.log(OIBCS)
-
-
-                            /*const myTimeout5 = setTimeout(function (){
-
-                            
-                                var OIBCS = [2, 'CC52', 'GetConfiguration', PayloadRequest];
-                                stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                                console.log(OIBCS)
-                            
-                            }, 5000);*/
-
-                            //PayloadRequest = {"key": ["csEndPoint"]};
-                            //PayloadRequest = {"key": "AllowOfflineTxForUnknownId", "value": 'true'};
-                            
-                            //var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            
-                            //var OIBCS = [2, 'CC', 'GetConfiguration', PayloadRequest];
-                            //stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-                        }else if(message.tipo=='ChConfiguration'){
-                            PayloadRequest = {"key": message.key, "value": message.valor};
-                            var OIBCS = [2, '10', 'ChangeConfiguration', PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        
-                        }else if(message.tipo=='GetCompositeSchedule'){
-                            PayloadRequest = {"connectorId": 3, "duration": 3600, 'chargingRateUnit': 'W'};
-                            var OIBCS = [2, 'abc', message.tipo, PayloadRequest];
-                        }else if(message.tipo=='UnlockConnector'){
-                            PayloadRequest = {"connectorId":message.Conector};
-                            var OIBCS = [2, 'abc', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='SendLocalList'){
-                            PayloadRequest = {
-                                "listVersion": 1,
-                                "localAuthorizationList": [
-                                    {
-                                        "idTag": "7240E49A",
-                                        "idTagInfo": 
-                                            {
-                                                "expiryDate": "2022-02-29T11:10:00.000Z",
-                                                "status": "Accepted"
-                                            }
-                                    }
-                                ],
-                                "updateType": "Differential"
-                            }
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='GetDiagnostics'){
-                            PayloadRequest = {"location": uriFTP};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='ClearChargingProfile'){
-                            PayloadRequest = {};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='GetLocalListVersion'){
-                            PayloadRequest = {};
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='Reset'){
-
-                            PayloadRequest = {'type':message.Type};
-                            
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-
-
-
-                        }else if(message.tipo=='SetChargingProfile'){
-                            PayloadRequest = {
-                                "connectorId": 1,
-                                "csChargingProfiles": {
-                                    "chargingProfileId": 1,
-                                    "transactionId": 1,
-                                    "stackLevel": 1,
-                                    "chargingProfilePurpose": "TxDefaultProfile",
-                                    "chargingProfileKind": "Absolute",
-                                    "recurrencyKind": "Daily",
-                                    "validFrom": '2022-03-06T17:10:00.000Z',
-                                    "validTo": '2022-03-16T17:20:00.000Z',
-                                    "chargingSchedule": {
-                                        "duration": 100,
-                                        "startSchedule": '2022-03-6T10:00:00.000Z',
-                                        "chargingRateUnit": "A",
-                                        "chargingSchedulePeriod": [
-                                            {"startPeriod": 0, "limit": 1, "numberPhases": 3},
-                                            {"startPeriod": 1, "limit": 2, "numberPhases": 3}
-                                        ],
-                                        "minChargingRate": 1
-                                    }
-                                }
-                            }
-                            
-                            var OIBCS = [2, '10', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-                        }else if(message.tipo=='GetConfiguration'){
-                            /*PayloadRequest = {"key": ['SupportedFileTransferProtocols', 
-                            'GetConfigurationMaxKeys',
-                            'MeterValuesSampledData',
-                            'NumberOfConnectors',
-                            'UnlockConnectorOnEVSideDisconnect',
-                            'LocalAuthListEnabled', 
-                            'ChargeProfileMaxStackLevel',
-                            'ChargingScheduleMaxPeriods',
-                            'ConnectorSwitch3to1PhaseSupported',
-                            'MaxChargingProfilesInstalled'
-                            ]};*/
-
-                            //PayloadRequest = {"key": ['LocalPreAuthorize', 
-                            //'LocalAuthorizeOffline',
-                            //'AuthorizationCacheEnabled'
-                            //]}  
-                             PayloadRequest = {"key": 
-                             [  'AllowOfflineTxForUnknownId', //si contiene
-                                'AuthorizationCacheEnabled',
-                                'AuthorizeRemoteTxRequests',
-                                //'BlinkRepeat',
-                                'ClockAlignedDataInterval',
-                                'ConnectionTimeOut',
-                                'ConnectorPhaseRotation',
-                                //'ConnectorPhaseRotationMaxLength',
-                                'GetConfigurationMaxKeys',
-                                'HeartbeatInterval',
-                                //'LightIntensity',
-                                'LocalAuthorizeOffline',
-                                'LocalPreAuthorize', 
-                                //'MaxEnergyOnInvalidId',
-                                'MeterValuesAlignedData',
-                                //'MeterValuesAlignedDataMaxLength',
-                                'MeterValuesSampledData',
-                                //'MeterValuesSampledDataMaxLength',
-                                'MeterValueSampleInterval',
-                                //'MinimumStatusDuration',
-                                'NumberOfConnectors',
-                                //'ResetRetries',
-                                'StopTransactionOnEVSideDisconnect',
-                                'StopTransactionOnInvalidId',
-                                //'StopTxnAlignedData',
-                                //'StopTxnAlignedDataMaxLength',
-                                'StopTxnSampledData',
-                                //'StopTxnSampledDataMaxLength',
-                                //'SupportedFeatureProfiles'//error
-                                //'SupportedFeatureProfilesMaxLength',
-                                //'TransactionMessageAttempts'
-                                'TransactionMessageRetryInterval',
-                                //'UnlockConnectorOnEVSideDisconnect', //error
-                                //'WebSocketPingInterval' //error
-                                //'LocalAuthListEnabled' //error
-                                
-                                //'LocalAuthListMaxLength' // si funciona
-                                //'SendLocalListMaxLength'// si funciona
-                                //'ReserveConnectorZeroSupported' //si funciona
-                                //'ChargeProfileMaxStackLevel'
-                                //'ChargingScheduleAllowedChargingRateUnit'//error
-                                //'ChargingScheduleMaxPeriods'
-                                //'ConnectorSwitch3to1PhaseSupported' //error
-                                //'MaxChargingProfilesInstalled' //error
-
-                            ]}  
-
-                            
-                            var OIBCS = [2, 'GC', message.tipo, PayloadRequest];
-                            stationClient.write(funciones.constructReply(OIBCS, 0x1));
-
-
-
-                        }else{
-                            /*clientenav = clientes.get(0);
-                            PayloadResponse = await ffsnav.funcionesNuevasNav(message, clientes)
-                            console.log('                                            ');
-                            console.log('El servidor respondes-------------------')
-                            let CallResult = [CallResultId, UniqueId, PayloadResponse]; 
-                            console.log(CallResult);
-                            socket.write(funciones.constructReply(CallResult, opCode));*/
-                            console.log('La operacion OCPP solicitada por el navegador aun no ha sido implementada')
+                    const json = parsedBuffer.payload.toString('utf8'); 
+                    function IsJsonString(str) {
+                        var cad;
+                        try {
+                            cad = JSON.parse(str);
+                        } catch (e) {
+                            cad = str;
                         }
+                        return cad;
+                    };
 
-                    }else{
-                        clientenav = clientes.get(0);
-                        var Response = {
-                            'texto': 'No hay una estacion conectada',
-                            'tipo': 'recibidos',
-                            'boton': 'stationResponse'
-                        };
-                        if(clientenav){
-                            clientenav.write(funciones.constructReply(Response, opCode));
-                        }else{
-                            console.log('navegador no conectado');
-                        }
-                    }
-                };
+                    var cadena = IsJsonString(json);
+                    //return [cadena, opCode]
 
-            }else if(opCode === 0x9){
-                console.log('Entra a op9')
-                console.log('Tipo de dato: ping');
-                console.log('Contenido: ');
-                console.log(message);
-                console.log('                                            ');
-                console.log('El servidor responde con un pong: ');
-                console.log(message);
-                socket.write(funciones.constructReply(message, opCode));
-                var textnav;
-                var id_est = getByValue(clientes, socket);
-                let ide = 'ping'+id_est;
-                console.log('id de estacion html ' + ide);
-                textnav = {'tipo':'ping', 'boton':ide, 'texto':'Recibiendo Pings'};
-                
-                cliente = clientes.get(0);
-                console.log('este es el cliente: ');
-                console.log(clientes.keys());
-                
-                if (cliente){
-                    console.log('Si existe el cliente: ')
-                    cliente.write(funciones.constructReply(textnav, 1));
+                    console.log('Esto es parsedbuffer');
+                    console.log(cadena);
+                  // .........
+                  // handle the payload as you like, for example send to other sockets
                 }
-            }
+              } while (parsedBuffer.payload && parsedBuffer.bufferRemainingBytes.length);
+          
+              console.log('----------------------------------------------------------------\n');
+            
+
+            
         });
     }); 
 };
