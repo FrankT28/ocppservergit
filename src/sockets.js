@@ -188,7 +188,7 @@ const getParsedBuffer = buffer => {
     for (let i = 0; i < bufferRemainingBytes.length; i++) {
       bufferRemainingBytes.writeUInt8(buffer.readUInt8(currentOffset++), i);
     }
-    return { payload, bufferRemainingBytes };
+    return { payload, bufferRemainingBytes, opCode };
   }
 
 
@@ -304,8 +304,8 @@ module.exports = function(server){
             
             console.log('                                      ');
             console.log('El servidor ha recibido datos----------------------------------------------------------------------');
-            //const opCode = lista[1];
-            const opCode = 0x1;
+            const opCode = parsedBuffer.opCode;
+            //const opCode = 0x1;
             const CallId = 2;
             const CallResultId = 3;
             const CallErrorId = 4;
