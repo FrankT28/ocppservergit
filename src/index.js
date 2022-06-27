@@ -9,7 +9,7 @@ const flash = require('connect-flash');
 var url = require('url');
 
 
-const {database} = require('./keysLocal');
+const {database} = require('./keys');
 
 
 const serveIndex = require('serve-index');
