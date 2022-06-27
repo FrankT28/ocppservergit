@@ -189,6 +189,7 @@ module.exports = function(server){
                     var message = cadena; 
                     console.log('                                      ');
                     console.log('El servidor ha recibido datos----------------------------------------------------------------------');
+                    console.log(message);
                     const opCode = parsedBuffer.opCode;
                     const CallId = 2;
                     const CallResultId = 3;
@@ -213,7 +214,7 @@ module.exports = function(server){
                             console.log('Respuesta a enviar al punto de carga: ')
                             console.log(CallResult);
                             socket.write(funciones.constructReply(CallResult, opCode));
-                            /*************Respuesta para APK****************/
+                            /*************Respuesta para APK****************
                             console.log('respuesta para apk: ');
                             console.log(PayloadResponseApk);
                             var clienteApk = clientes.get(2);
