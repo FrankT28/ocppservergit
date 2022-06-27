@@ -309,8 +309,8 @@ module.exports = function(server){
                     //AQUI SE VAN A MANEJAR LOS MENSAJES ENVIADOS AL SERVIDOR DEL TIPO PING, YA SEA DESDE UNA ESTACION O UN NAVEGADOR
                     else if(opCode === 0x9){
                         //PRIMERO LE RESPONDEMOS CON UN PONG A QUIEN ENVIO EL PING 
-                        console.log('Se ha recibido un ping');
-                        console.log(message);
+                        //console.log('Se ha recibido un ping');
+                        //console.log(message);
                         socket.write(funciones.constructReply(message, opCode));
                         
                         //LUEGO ENVIAMOS EL DATO DEL PING L NAVEGADOR PARA QUE ACTUALICE LA TABLA DE PINGS
