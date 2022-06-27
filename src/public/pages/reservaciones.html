@@ -1,18 +1,18 @@
-<div data-ng-controller="estacionesController">
-    <!--INICIA SECCION PARA LISTAR ESTACIONES-->
+<div data-ng-controller="reservacionesController">
+    <!--INICIA SECCION PARA LISTAR reservaciones-->
     <div class="page-section-heading">
-            <button ng-if="verEstaciones==true" ng-click="agregarEstacion()" class="btn btn-primary">
+            <button ng-if="verreservaciones==true" ng-click="agregarReservacion()" class="btn btn-primary">
                 <em class="fa fa-plus"></em> Agregar</button>
-            <button ng-if="verEstacion==true" class="btn btn-success" id="toStationsDetails" ng-click="agregarAestaciones()">
-                <em class="fa fa-arrow-left"></em> Volver a estaciones</button>
-            <button ng-if="verFormAgregarEstacion==true" ng-click="agregarAestaciones()" class="btn btn-primary">
-                <em class="fa fa-hand-o-left"></em> Volver a estacion</button>
-            <!--<button ng-if="verFormEditarEstacion==true" ng-click="editarAestacion()" class="btn btn-info">
+            <button ng-if="verReservacion==true" class="btn btn-success" id="toStationsDetails" ng-click="agregarAreservaciones()">
+                <em class="fa fa-arrow-left"></em> Volver a reservaciones</button>
+            <button ng-if="verFormAgregarReservacion==true" ng-click="agregarAreservaciones()" class="btn btn-primary">
+                <em class="fa fa-hand-o-left"></em> Volver a Reservacion</button>
+            <!--<button ng-if="verFormEditarReservacion==true" ng-click="editarAReservacion()" class="btn btn-info">
                 <em class="fa fa-hand-o-left"></em> Volver</button>
-            <button ng-if="verTransacciones==true" ng-click="volverDetallesEstacion()" class="btn btn-success">
+            <button ng-if="verTransacciones==true" ng-click="volverDetallesReservacion()" class="btn btn-success">
                 <em class="fa fa-hand-o-left"></em> Volver</button>-->
     </div>
-    <div ng-if="verEstaciones==true" >
+    <div ng-if="verreservaciones==true" >
         <div class="panel panel-default">
             <!-- Progress table -->
             <div class="table-responsive">
@@ -24,24 +24,24 @@
                     <th style="width: 18%">Ubicacion <a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></th>
                     <th style="width: 10%"># Conectores</th>
                     <th style="width: 10%">Estado</th>
-                    <th style="width: 10%" class="text-center">Conexión</th>
+                    <th style="width: 10%" class="text-center">Conexion</th>
                     <th style="width: 8%" class="text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="responsive-table-body">
-                    <tr ng-repeat="estacion in estaciones" ng-click="detallesEstacion(estacion)">
-                    <td>{{estacion.codigoEstacion}}</td>
-                    <td>{{estacion.nombreEstacion}}</td>
-                    <td>{{estacion.ubicacion}}</td>
-                    <td class="text-center">{{estacion.cantidadConectores}}</td>
-                    <td id="status{{estacion.id_estacion}}">{{estacion.estado}}</td>
+                    <tr ng-repeat="Reservacion in reservaciones" ng-click="detallesReservacion(Reservacion)">
+                    <td>{{Reservacion.codigoReservacion}}</td>
+                    <td>{{Reservacion.nombreReservacion}}</td>
+                    <td>{{Reservacion.ubicacion}}</td>
+                    <td class="text-center">{{Reservacion.cantidadConectores}}</td>
+                    <td id="status{{Reservacion.id_Reservacion}}">{{Reservacion.estado}}</td>
                     <td class="text-center">
-                        <span ng-style="{'color': estacion.conexion=='Conectada' ? 'green': 'red'}" id="ping{{estacion.id_estacion}}" class="fa fa-circle"></span>
+                        <span ng-style="{'color': Reservacion.estado_conexio=='ok' ? 'green': 'red'}" class="fa fa-circle"></span>
                     </td>
                     <td class="text-right">
-                        <a ng-click="detallesEstacion(estacion)" class="btn btn-default btn-xs" 
+                        <a ng-click="detallesReservacion(Reservacion)" class="btn btn-default btn-xs" 
                             data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
-                        <a ng-click="alertEliminarEstacion(estacion.id_estacion)" class="btn btn-danger btn-xs" 
+                        <a ng-click="alertEliminarReservacion(Reservacion.id_Reservacion)" class="btn btn-danger btn-xs" 
                             data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
                     </td>
                     </tr>
@@ -49,29 +49,29 @@
                 </table>
             </div>
             <!-- // Progress table -->
-            <div ng-if="totalEstaciones>estacionesPorPagina" class="panel-footer padding-none text-center">
+            <div ng-if="totalreservaciones>reservacionesPorPagina" class="panel-footer padding-none text-center">
                 <ul class="pagination">
                 <li class="disabled"><a href="#">&laquo;</a></li>
-                <li ng-repeat="pagina in paginasEstaciones"><a href="#">hola</a></li>
+                <li ng-repeat="pagina in paginasreservaciones"><a href="#">hola</a></li>
                 <li><a href="#">&raquo;</a></li>
                 </ul>
             </div>
         </div>
     </div>
-    <!--TERMINA SECCION PARA LISTAR ESTACIONES-->
+    <!--TERMINA SECCION PARA LISTAR reservaciones-->
     
     
 
-    <!--INICIA PAGINA PARA DETALLES DE UNA ESTACION-->
-    <div ng-if="verEstacion==true" class="panel panel-default">
+    <!--INICIA PAGINA PARA DETALLES DE UNA Reservacion-->
+    <div ng-if="verReservacion==true" class="panel panel-default">
         <!-- Tabbable Widget -->
         <div class="tabbable tabs-primary">
             <!-- Tabs -->
             <ul class="nav nav-tabs text-center">
                 <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
-                <li><a href="#color-profile" data-toggle="tab" ng-click="editarEstacion(estacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
+                <li><a href="#color-profile" data-toggle="tab" ng-click="editarReservacion(Reservacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
                 <li><a href="#color-messages" data-toggle="tab"><i class="fa fa-fw fa-envelope"></i> Operaciones OCPP</a></li>
-                <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(estacion.id_estacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
+                <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(Reservacion.id_Reservacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
             </ul>
             <!-- // END Tabs -->
 
@@ -80,24 +80,24 @@
                 <div id="color-home" class="tab-pane active">
                     <div class="panel panel-body">
                         <div class="card-header text-center">
-                            <h3 style="font-family: sans-serif;"> {{estacion.nombreEstacion}}</h3>
+                            <h3 style="font-family: sans-serif;"> {{Reservacion.nombreReservacion}}</h3>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-2 text-center">
-                                    <img src="/images/estaciones/logoEstacion.png" 
+                                    <img src="/images/reservaciones/logoReservacion.png" 
                                     width="200px" height="400px" style="border: 1px solid; padding: 1px">
                                 </div>
                                 <div class="col-md-9 text-center">
-                                    <div id="id_estacion_edit" hidden="true"></div>
+                                    <div id="id_Reservacion_edit" hidden="true"></div>
                                     <div class="card" style="margin-bottom: 20px">
                                         <div class="card-header">
                                             Detalles
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 text-center p-3">
-                                                <b>Código:</b> <span style="padding-right: 30px">{{estacion.codigoEstacion}}</span>
-                                                <b>Nombre:</b><span style="padding: 3px">{{estacion.nombreEstacion}}</span>
+                                                <b>Código:</b> <span style="padding-right: 30px">{{Reservacion.codigoReservacion}}</span>
+                                                <b>Nombre:</b><span style="padding: 3px">{{Reservacion.nombreReservacion}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -107,16 +107,16 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6 text-center p-3">
-                                                <b>N° conectores:</b>  <label>{{estacion.cantidadConectores}}</label><br>
-                                                <b>Cargas Simultaneas: </b> <label>{{estacion.cargasSimultaneas}} </label><br>
-                                                <b>Potencia Mínima: </b> <label>{{estacion.potenciaMinima}} </label><br>
-                                                <b>Potencia Máxima:  </b> <label>{{estacion.potenciaMaxima}}</label><br>
+                                                <b>N° conectores:</b>  <label>{{Reservacion.cantidadConectores}}</label><br>
+                                                <b>Cargas Simultaneas: </b> <label>{{Reservacion.cargasSimultaneas}} </label><br>
+                                                <b>Potencia Mínima: </b> <label>{{Reservacion.potenciaMinima}} </label><br>
+                                                <b>Potencia Máxima:  </b> <label>{{Reservacion.potenciaMaxima}}</label><br>
                                             </div>
                                             <div class="col-md-6 text-center p-3">
-                                                <b>Voltaje Mínimo:   </b> <label>{{estacion.voltajeMinimo}}</label><br>
-                                                <b>Voltaje Máximo:   </b> <label>{{estacion.voltajeMaximo}}</label><br>
-                                                <b>Corriente Mínima:</b>  <label>{{estacion.corrienteMinima}}</label><br>
-                                                <b>Corriente Máxima: </b> <label>{{estacion.corrienteMaxima}} </label><br>
+                                                <b>Voltaje Mínimo:   </b> <label>{{Reservacion.voltajeMinimo}}</label><br>
+                                                <b>Voltaje Máximo:   </b> <label>{{Reservacion.voltajeMaximo}}</label><br>
+                                                <b>Corriente Mínima:</b>  <label>{{Reservacion.corrienteMinima}}</label><br>
+                                                <b>Corriente Máxima: </b> <label>{{Reservacion.corrienteMaxima}} </label><br>
                                             </div>
                                         </div>
                                     </div>
@@ -126,93 +126,93 @@
                     </div>
                 </div>
 
-                <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
+                <!--INICIA SECCION PARA AGREGAR O EDITAR Reservacion-->
                 <div id="color-profile" class="tab-pane">
-                    <div ng-if="verFormEditarEstacion==true" class="panel panel-default"> 
+                    <div ng-if="verFormAgregarReservacion==true || verFormEditarReservacion==true" class="panel panel-default"> 
                         <div class="panel-body">
                         <form class="form-horizontal" role="form">
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
                                 <div class="col-sm-9">
-                                    <input ng-model="formEstacion.codigoEstacion" class="form-control">
+                                    <input ng-model="formReservacion.codigoReservacion" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.nombreEstacion" class="form-control">
+                                <input ng-model="formReservacion.nombreReservacion" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Ubicación</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.ubicacion" class="form-control">
+                                <input ng-model="formReservacion.ubicacion" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.cantidadConectores" class="form-control">
+                                <input ng-model="formReservacion.cantidadConectores" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
+                                <input ng-model="formReservacion.cargasSimultaneas" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.potenciaMaxima" class="form-control">
+                                <input ng-model="formReservacion.potenciaMaxima" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.potenciaMinima" class="form-control">
+                                <input ng-model="formReservacion.potenciaMinima" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.corrienteMaxima" class="form-control">
+                                <input ng-model="formReservacion.corrienteMaxima" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.corrienteMinima" class="form-control">
+                                <input ng-model="formReservacion.corrienteMinima" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.voltajeMaximo" class="form-control">
+                                <input ng-model="formReservacion.voltajeMaximo" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.voltajeMinimo" class="form-control">
+                                <input ng-model="formReservacion.voltajeMinimo" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Comentario</label>
                                 <div class="col-sm-9">
-                                <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                                <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="panel-footer text-right">
                         <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-                        <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formEstacion.id_estacion)" class="btn btn-info">Actualizar</button>
-                        <button ng-click="volverEstaciones()" class="btn btn-info">Cerrar</button>
+                        <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formReservacion.id_Reservacion)" class="btn btn-info">Actualizar</button>
+                        <button ng-click="volverreservaciones()" class="btn btn-info">Cerrar</button>
                     </div>
                 </div>
             </div>
-            <!--TERMINA SECCION PARA AGREGAR O EDITAR ESTACION-->
+            <!--TERMINA SECCION PARA AGREGAR O EDITAR Reservacion-->
 
             <!--INICIA SECCION PARA OPERACIONES OCPP-->
             <div id="color-messages" class="tab-pane">
@@ -245,7 +245,7 @@
                         <div class="form-group">
                             <label class="col-md-12 control-label">Respuesta de la estación</label>
                             <div class="col-md-12">
-                            <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                            <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
                             </div>
                         </div>
                     </div>
@@ -253,7 +253,7 @@
             </div>
             <!--TERMINA SECCION PARA OPERACIONES OCPP-->
             
-            <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
+            <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
             <div id="color-settings" class="tab-pane">
                 <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
                     <div ng-if="transacciones" class="card">
@@ -282,8 +282,8 @@
                                         <td>{{transaccion.fecha}}</td>
                                         <td>{{transaccion.hora_inicio}}</td>
                                         <td>{{transaccion.codigo_rfid}}</td>
-                                        <td>{{transaccion.energiaInicio}}</td>
-                                        <td>{{transaccion.energiaFin}}</td>
+                                        <!--<td>{{transaccion.energia_inicio}}</td>
+                                        <td>{{transaccion.energia_fin}}</td>-->
                                         <td>{{transaccion.energiaConsumida}}</td>
                                         <td id="status1">{{transaccion.estado}}</td>
                                         <td>{{transaccion.razon}}</td>
@@ -299,7 +299,7 @@
                             <ul class="pagination">
                             <li class="disabled"><a href="#">&laquo;</a></li>
                             <li ng-repeat="pagina in paginasTransacciones">
-                                <a type="button" ng-click="listarTransacciones(estacion.id_estacion, pagina)">
+                                <a type="button" ng-click="listarTransacciones(Reservacion.id_Reservacion, pagina)">
                                         {{pagina+1}}
                                 </a>
                             </li>
@@ -314,7 +314,7 @@
                     </div>
                 </div>
             </div>
-            <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
+            <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
         </div>
         <!-- // END Panes -->
 
@@ -323,95 +323,8 @@
 
         
     </div>
-    <!--TERMINA PAGINA PARA DETALLES DE UNA ESTACION-->
+    <!--TERMINA PAGINA PARA DETALLES DE UNA Reservacion-->
 
-    <!--INICIA SECCION PARA AGREGAR ESTACION / ES UNA COPIA DE EDITAR ESTACION-->
-    <div id="color-profile" class="tab-pane">
-        <div ng-if="verFormAgregarEstacion==true" class="panel panel-default"> 
-            <div class="panel-body">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
-                        <div class="col-sm-9">
-                            <input ng-model="formEstacion.codigoEstacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.nombreEstacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Ubicación</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.ubicacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.cantidadConectores" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.potenciaMaxima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.potenciaMinima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.corrienteMaxima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.corrienteMinima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.voltajeMaximo" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.voltajeMinimo" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Comentario</label>
-                        <div class="col-sm-9">
-                        <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="panel-footer text-right">
-                <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-                <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formEstacion.id_estacion)" class="btn btn-info">Actualizar</button>
-                <button ng-click="volverEstaciones()" class="btn btn-info">Cerrar</button>
-            </div>
-        </div>
-    </div>
-    <!--TERMINA SECCION PARA AGREGAR O EDITAR ESTACION-->
     
 
 </div>

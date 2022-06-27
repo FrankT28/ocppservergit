@@ -28,9 +28,9 @@ function formatDate (input) {
 router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) => {
 	var data = {};
 	let totalTransacciones = await pool.query('SELECT COUNT(*) as total FROM transacciones;'); 
-	let desde = parseInt(req.params.desde);
+	let desde = parseInt(req.params.desde); 
 	let cuantos = parseInt(req.params.cuantos);
-	let sql = 'SELECT tr.*, ta.codigo_rfid, cl.razon_social FROM transacciones tr, tarjetas ta, clientes cl WHERE tr.id_tarjeta=ta.id_tarjeta AND ta.id_cliente=cl.id_cliente ORDER BY id_transaccion DESC LIMIT ?, ?';
+	let sql = 'SELECT tr.*, ta.codigo_rfid, cl.razon_social, es.codigoEstacion FROM transacciones tr, tarjetas ta, clientes cl, estaciones es WHERE tr.id_tarjeta=ta.id_tarjeta AND ta.id_cliente=cl.id_cliente AND tr.id_estacion=es.id_estacion ORDER BY id_transaccion DESC LIMIT ?, ?';
 	var transacciones = await pool.query(sql, [desde, cuantos]); 
 
 	for (var i=0; i<transacciones.length; i++){

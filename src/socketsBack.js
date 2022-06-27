@@ -4,12 +4,14 @@ const { type } = require('os');
 const pool = require('./database.js');
 const funciones = require('./funciones.js');
 var clientes = new Map();
-const path = require('path');
-const { networkInterfaces } = require('os');
 const ocppClient = require('./ocppStationOperations');
 const ocppServer = require('./ocppServerOperations');
+const path = require('path');
+const { networkInterfaces } = require('os');
 
-/*=================================================================================================*/
+const nets = networkInterfaces();
+const results = Object.create(null);
+
 var generateAcceptValue = function (acceptKey) {
     return crypto
     .createHash('sha1')
@@ -17,7 +19,6 @@ var generateAcceptValue = function (acceptKey) {
     .digest('base64');
 };
 
-/*=================================================================================================*/
 var responseHeaders = function(req){
     const acceptKey = req.headers['sec-websocket-key'];
     const hash = generateAcceptValue(acceptKey);
@@ -40,7 +41,6 @@ var responseHeaders = function(req){
     return response;
 }
 
-/*=================================================================================================*/
 function getByValue(map, searchValue) {
     for (let [key, value] of map.entries()) {
       if (value === searchValue)
@@ -48,17 +48,18 @@ function getByValue(map, searchValue) {
     }
 }
 
-/*=================================================================================================*/
 const getParsedBuffer = buffer => {
     const firstByte = buffer.readUInt8(0);
     const opCode = firstByte & 0xF;
     const fin = (firstByte >>> 7) & 0x1;
+
     const secondByte = buffer.readUInt8(1); 
     const isMasked = Boolean((secondByte >>> 7) & 0x1);
     let currentOffset = 2; let payloadLength = secondByte & 0x7F; 
     
     if (payloadLength > 125) {
         if (payloadLength === 126) {
+            // whenever I want to read X bytes I simply check if I really can read X bytes
             if (currentOffset + 2 > buffer.length) {
                 return { payload: null, bufferRemainingBytes: buffer };
             }
@@ -73,6 +74,7 @@ const getParsedBuffer = buffer => {
       currentOffset += 4;
     } 
     
+    // in 99% of cases this will prevent the ERR_OUT_OF_RANGE error to happen
     if (currentOffset + payloadLength > buffer.length) {
       console.log('[misalignment between WebSocket frame and NodeJs Buffer]\n');
       return { payload: null, bufferRemainingBytes: buffer };
@@ -81,6 +83,7 @@ const getParsedBuffer = buffer => {
     payload = Buffer.alloc(payloadLength);
   
     if (isMasked) {
+      // ......... I skip masked code as it's too long and not masked shows the idea same way
       for (let i = 0, j = 0; i < payloadLength; ++i, j = i % 4) {
           const shift = j == 3 ? 0 : (3 - j) << 3; 
           const mask = (shift == 0 ? maskingKey : (maskingKey >>> shift)) & 0xFF;
@@ -92,7 +95,12 @@ const getParsedBuffer = buffer => {
         payload.writeUInt8(buffer.readUInt8(currentOffset++), i);
       }
     }
+  
+    // it could also happen at this point that we already have a valid WebSocket payload
+    // but there are still some bytes remaining in the buffer
+    // we need to copy all unused bytes and return them as bufferRemainingBytes
     bufferRemainingBytes = Buffer.alloc(buffer.length - currentOffset);
+    //                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ this value could be >= 0
     for (let i = 0; i < bufferRemainingBytes.length; i++) {
       bufferRemainingBytes.writeUInt8(buffer.readUInt8(currentOffset++), i);
     }
@@ -100,11 +108,13 @@ const getParsedBuffer = buffer => {
 }
 
 
-/*=================================================================================================*/
 const debugBuffer = (bufferName, buffer) => {
     const length = buffer ? buffer.length : '---';
+    //console.log(`:: DEBUG - ${bufferName} | ${length} | `, buffer, '\n');
 };
 
+/*=============================================================================================*/
+//UNIQUE ID: ESTA FUNCION GENERA EL UNIQUEID DEL MENSAJE ENVIADO A LA ESTACION
 /*=============================================================================================*/
 async function getUniqueId(){
     let sql = "SELECT id_mensaje_servidor FROM mensajes_desde_servidor DESC LIMIT 1";
@@ -114,16 +124,11 @@ async function getUniqueId(){
 }
 
 /*=============================================================================================*/
-async function updatePingDb(id){
-    let sql = "UPDATE ping_estacion SET fecha=now(), hora=now() WHERE id_estacion=?";
-    let result = await pool.query(sql, [id]);
-}
-
-
+//AQUI SE EXPORTA EL MODULO SOCKET
 /*=============================================================================================*/
 module.exports = function(server){
     server.on('upgrade',  async(req, socket) => { 
-        let bufferToParse = Buffer.alloc(0);
+        let bufferToParse = Buffer.alloc(0); // at the beginning we just start with 0 bytes
         var url_est = req.url.substring(1,req.url.length);
         console.log('                                           ');
         console.log('------------------------------------------------------');
@@ -147,8 +152,6 @@ module.exports = function(server){
                 response = responseHeaders(req);
                 clave = 0;
                 socket.write(response.join('\r\n') + '\r\n\r\n' );
-            }else{
-                return; 
             }
         }
      
@@ -156,20 +159,28 @@ module.exports = function(server){
             clientes.set(clave, socket);
         };
 
-        /*=============================================================================================*/
-        //UNA VEZ QUE SE HA ESTABLECIDO LA CONEXION, EL SERVIDOR SE PONE A LA ESCUCHA DE MENSAJES "data"
         socket.on("data", async(buffer) => {
+            /*==========================================================================*/
+            //INICIA CODIGO NUEVO
+            /*==========================================================================*/
             let parsedBuffer;
+
+            // concat 'past' bytes with the 'current' bytes
             bufferToParse = Buffer.concat([bufferToParse, buffer]);
+
             do {
                 parsedBuffer = getParsedBuffer(bufferToParse);
+          
+                // the output of the debugBuffer calls will be on the screenshot later
                 debugBuffer('buffer', buffer);
                 debugBuffer('bufferToParse', bufferToParse);
                 debugBuffer('parsedBuffer.payload', parsedBuffer.payload);
                 debugBuffer('parsedBuffer.bufferRemainingBytes', parsedBuffer.bufferRemainingBytes);
+          
                 bufferToParse = parsedBuffer.bufferRemainingBytes;
           
                 if (parsedBuffer.payload) {
+
                     const json = parsedBuffer.payload.toString('utf8'); 
                     function IsJsonString(str) {
                         var cad;
@@ -202,7 +213,8 @@ module.exports = function(server){
 
                         if (MessageTypeId==2){
 
-                            //AQUI FALTA IMPLEMENTAR EL CASO CallErrorId = 4, QUE ES CUANDO EL REQUEST HECHO DESDE UNA ESTACION DA UN ERROR
+                            //AQUI FALTA IMPLEMENTAR EL CASO CallErrorId = 4, QUE ES CUANDO 
+                            //EL REQUEST HECHO DESDE UNA ESTACION DA UN ERROR
                             /*************Respuesta para punto de carga*************** */
                             Respuestas = await ocppClient.processOcppRequest(message);
                             PayloadResponse = Respuestas[0];
@@ -254,7 +266,8 @@ module.exports = function(server){
                         }
 
                         /***********************************************************/
-                        //ESTE CASO SE DA CUANDO EL SERVIDOR HACE UN REQUEST A LA ESTACION Y SE DA UN ERROR
+                        //ESTE CASO SE DA CUANDO EL SERVIDOR HACE UN REQUEST A LA ESTACION
+                        //Y SE DA UN ERROR
                         else if (MessageTypeId==4){
                             clientenav = clientes.get(0);
                             console.log('Se ha recibido un MessageTypeId igual a 4!, que significa algun error')
@@ -276,7 +289,9 @@ module.exports = function(server){
                             var stationClient = clientes.get(stationId);    
                             CallResultId = 2;
                             if(stationClient!=undefined){
+
                                 let uniqueId = getUniqueId();
+
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
@@ -307,23 +322,25 @@ module.exports = function(server){
                 
                     //AQUI SE VAN A MANEJAR LOS MENSAJES ENVIADOS AL SERVIDOR DEL TIPO PING, YA SEA DESDE UNA ESTACION O UN NAVEGADOR
                     else if(opCode === 0x9){
-                        //PRIMERO LE RESPONDEMOS CON UN PONG A QUIEN ENVIO EL PING 
-                        console.log('Se ha recibido un ping');
+                        console.log('Entra a op9')
+                        console.log('Tipo de dato: ping');
+                        console.log('El servidor responde con un pong: ');
                         console.log(message);
                         socket.write(funciones.constructReply(message, opCode));
-                        
-                        //LUEGO ENVIAMOS EL DATO DEL PING L NAVEGADOR PARA QUE ACTUALICE LA TABLA DE PINGS
+                        var textnav;
                         var id_est = getByValue(clientes, socket);
                         let ide = 'ping'+id_est;
-                        let textnav = {'tipo':'ping', 'boton':ide, 'texto':'Recibiendo Pings'};
-                        clienteNav = clientes.get(0);
-                        if (clienteNav){
-                            console.log('Se envia notificacion de ping al navegador: ')
-                            clienteNav.write(funciones.constructReply(textnav, 1));
+                        console.log('id de estacion html ' + ide);
+                        textnav = {'tipo':'ping', 'boton':ide, 'texto':'Recibiendo Pings'};
+                        
+                        cliente = clientes.get(0);
+                        console.log('este es el cliente: ');
+                        console.log(clientes.keys());
+                        
+                        if (cliente){
+                            console.log('Si existe el cliente: ')
+                            cliente.write(funciones.constructReply(textnav, 1));
                         }
-
-                        //LUEGO ACTUALIZAMOS LA TABLA PING ESTACION CON LA FECHA Y HORA ACTUAL
-                        updatePingDb(id_est);
                     }
                 }
             } while (parsedBuffer.payload && parsedBuffer.bufferRemainingBytes.length);

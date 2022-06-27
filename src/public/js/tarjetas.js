@@ -49,13 +49,13 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
         $http.get('/home/tarjetas/informacion/' + desde + '/' + cuantos + '/')
 		.success(function(data){
 			console.log('data informacion tarjetas: ');
-			$scope.verTarjetas = true;
 			console.log(data);
 			$scope.tarjetas = data.tarjetas;
 			$scope.totalTarjetas = data.totalTarjetas;
 			$scope.verFormEditarTarjeta = false;
 			$scope.verFormAgregarTarjeta = false;
 			$scope.paginasTarjetas = paginacion($scope.totalTarjetas)
+			$scope.verTarjetas = true;
 		})
     }
 	$scope.listarTarjetas(0);

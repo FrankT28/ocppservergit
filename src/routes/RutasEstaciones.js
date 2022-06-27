@@ -26,27 +26,61 @@ async function estadoEstacion(id){
 	return estado
 }
 /********************************************************************************************/
+function formatearFechaYMD(fecha){
+	let mes = fecha.getMonth()+1;
+	dia = ('00' + fecha.getDate()).slice(-2);
+	mes = ('00' + mes).slice(-2);
+	anio = fecha.getFullYear();
+	let fechaFormato = anio + '-' + mes + '-' + dia;
+	return fechaFormato;
+}
+/******************************************************************************/
+function formatDate (input) {
+	var datePart = input.match(/\d+/g),
+	year = datePart[0], // get only two digits
+	month = datePart[1], 
+	day = datePart[2];
+  
+	return day+'-'+month+'-'+year;
+}
+/********************************************************************************************/
 router.get('/home/estaciones/informacion', async(req, res) => {
 	var data = {};
 	let sql1 = "SELECT COUNT(*) as total FROM estaciones";
 	let totalEstaciones = await pool.query(sql1);
 	totalEstaciones = totalEstaciones[0].total;
 	data.totalEstaciones = totalEstaciones;
-
-	let sql2 = "SELECT * FROM estaciones es, estado_estacion ee WHERE es.id_estacion!=0 AND es.id_estacion=ee.id_estacion;"; 
+ 
+	let sql2 = "SELECT es.*, ee.*, pe.fecha fecha_ping, pe.hora hora_ping FROM estaciones es, estado_estacion ee, ping_estacion pe WHERE es.id_estacion!=0 AND es.id_estacion=ee.id_estacion AND es.id_estacion=pe.id_estacion;"; 
 	let estaciones = await pool.query(sql2); 
+	let estacion;
+	let fechaFormato;
 	for(var i=0; i<estaciones.length; i++){
+		estacion = estaciones[i];
 		estaciones[i].estado = await estadoEstacion(estaciones[i].id_estado_est);
+		fechaFormatoYmd = formatearFechaYMD(estaciones[i].fecha_ping);
+		console.log('fechaFormatoYmd: ' + fechaFormatoYmd);
+		estaciones[i].conexion = getEstadoConexion(fechaFormatoYmd, estacion.hora_ping);
 	}
 	data.estaciones = estaciones;
 	data.success = true;
 	res.send(data);
 });
 
-/*router.get('/home/estaciones/agregar', (req, res) => {
-	res.render('EstacionesAgregar.hbs', {'menu': 'si'}); 
-});*/
-
+/********************************************************************************************/
+function getEstadoConexion(fecha, hora){
+	let estado = 'Conectada';
+	let union = fecha + 'T' + hora;
+	union = new Date(union);
+	let previousTimeStamp = union.getTime();	
+	let currentTimestamp = new Date().getTime();
+	let diff = (currentTimestamp - previousTimeStamp)/1000;
+	console.log('diff: ' + diff);
+	if(diff>20){ 
+		estado = 'Desconectada';
+	}
+	return estado;
+}
 /********************************************************************************************/
 router.post('/home/estaciones/agregar', async(req, res) => {
 	var data = {};
@@ -95,7 +129,7 @@ router.get('/home/estaciones/eliminar/:id', async(req, res) => {
 });
 
 
-/********************************************************************************************/
+/********************************************************************************************
 router.get('/home/estaciones/info/:id', async(req, res) => {
 	var ide = req.params.id;
 	let select = 'SELECT * FROM estaciones ';

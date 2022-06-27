@@ -3,11 +3,13 @@ const path = require('path');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session');
-const {database} = require('./keys');
 const passport = require('passport');
 const express = require('express');
 const flash = require('connect-flash');
 var url = require('url');
+
+
+const {database} = require('./keysLocal');
 
 
 const serveIndex = require('serve-index');

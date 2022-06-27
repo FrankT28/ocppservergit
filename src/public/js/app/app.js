@@ -6725,6 +6725,7 @@ require('./_timeline');
         //DESDE AQUI AGREGO LOS NUEVOS MODULOS, LOS DE ARRIBA YA ESTABAN
         'login',
         'pages.estaciones',
+        'pages.reservaciones',
         'pages.tarjetas',
         'pages.clientes',
         'pages.transacciones',
@@ -6765,13 +6766,20 @@ require('./_timeline');
             function ($stateProvider, $urlRouterProvider) {
 
                 $urlRouterProvider
-                    .otherwise('/login');
+                    .otherwise('/pages/dashboard');
 
                 $stateProvider
                     .state('pages', {
                         abstract: true,
                         url: '/pages',
                         templateUrl: 'pages/common.html'
+                    })
+                    .state('pages.dashboard2', {
+                        url: '/dashboard2',
+                        templateUrl: 'pages/dashboard2.html',
+                        controller: ['$scope', function($scope){
+                            $scope.app.settings.htmlClass = 'st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2';
+                        }]
                     })
                     .state('pages.dashboard', {
                         url: '/dashboard',
@@ -6783,32 +6791,37 @@ require('./_timeline');
                     .state('login', {
                         url: '/login',
                         templateUrl: 'pages/login.html',
-                        controller: 'loginController'
+                        //controller: 'loginController'
                     })
                     .state('pages.estaciones', {
                         url: '/estaciones',
-                        templateUrl: 'pages/estaciones.html?v=1',
-                        controller: 'estacionesController'
+                        templateUrl: 'pages/estaciones.html',
+                        //controller: 'estacionesController'
+                    })
+                    .state('pages.reservaciones', {
+                        url: '/reservaciones',
+                        templateUrl: 'pages/reservaciones.html?v=1',
+                        //controller: 'reservacionesController'
                     })
                     .state('pages.tarjetas', {
                         url: '/tarjetas',
                         templateUrl: 'pages/tarjetas.html',
-                        controller: 'tarjetasController'
+                        //controller: 'tarjetasController'
                     })
                     .state('pages.clientes', {
                         url: '/clientes',
                         templateUrl: 'pages/clientes.html',
-                        controller: 'clientesController'
+                        //controller: 'clientesController'
                     })
                     .state('pages.transacciones', {
                         url: '/transacciones',
                         templateUrl: 'pages/transacciones.html',
-                        controller: 'transaccionesController'
+                        //controller: 'transaccionesController'
                     })
                     .state('pages.usuarios', {
                         url: '/usuarios',
                         templateUrl: 'pages/usuarios.html',
-                        controller: 'usuariosController'
+                        //controller: 'usuariosController'
                     })
                     .state('pages.chat', {
                         url: '/chat',

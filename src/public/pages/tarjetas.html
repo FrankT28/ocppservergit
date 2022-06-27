@@ -9,16 +9,15 @@
             <em class="fa fa-hand-o-left"></em> Volver</button>
         <button ng-if="verTransacciones==true" ng-click="volverDetallesTarjeta()" class="btn btn-success">
             <em class="fa fa-hand-o-left"></em> Volver</button>
+        <button ng-if="verTarjetas==true" ng-click="excel()" class="btn btn-success">
+            <em class="fa fa-file-excel-o"></em> Exportar</button>
+        <!--<js-xls onread="read" onerror="error" class="">Excel</js-xls>-->
     </div>
 
 
-    <div>
-        <js-xls onread="read" onerror="error">Excel</js-xls>
-    </div>
+    
 
-    <div>
-        <button ng-click="excel()" class="btn btn-success">Exportar</button>
-    </div>
+    
 
     <div ng-if="verTarjetas==true">
         <div class="panel panel-default">
