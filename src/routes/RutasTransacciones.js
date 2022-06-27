@@ -34,8 +34,6 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 	var transacciones = await pool.query(sql, [desde, cuantos]); 
 
 	for (var i=0; i<transacciones.length; i++){
-		console.log('transaccion: ');
-		console.log(transacciones[i]);
 		//ESTO ES PARA SACAR SOLO LA FECHA Y QUE NO VENGA CON 'T00:00:00Z'
 		transacciones[i].fecha = transacciones[i].fecha.toISOString().split('T')[0];
 		transacciones[i].fecha = formatDate(transacciones[i].fecha);

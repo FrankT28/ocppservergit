@@ -273,14 +273,20 @@ async function stopTransactionResponse(payload){
     let hora_fin = payload.timestamp;
     var sql = 'SELECT energiaInicio FROM transacciones WHERE id_transaccion=?;';
     let meterStart = await pool.query(sql, transactionId);
+    console.log('energia inicio');
+    console.log(meterStart[0].energiaInicio);
     let meterStop = payload.meterStop;
     let ec;
     if(meterStart.length>0){
-        ec = parseInt(meterStop,10) - parseInt(meterStart[0].energiaInicio,10);
+        console.log('si pasa')
+        ec = meterStop - meterStart[0].energiaInicio;
     }else{
-        ec = parseInt(meterStop,10);
+        ec = meterStop;
     }
-    
+
+    console.log('ec: ');
+    console.log(ec);
+        
     let razon = payload.reason;
     const values = [meterStop, ec, estado, razon, transactionId]
     sql = 'UPDATE transacciones SET hora_fin=now(), energiaFin=?, energiaConsumida=?, estado=?, razon=? WHERE id_transaccion=?;'; 
