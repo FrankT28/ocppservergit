@@ -5,10 +5,12 @@
         <button ng-if="verFormAgregarTransaccion==true" ng-click="agregarAtransacciones()" class="btn btn-primary">
             <em class="fa fa-hand-o-left"></em> Volver a transacciones</button>
         <button ng-if="verFormEditarTransaccion==true" ng-click="editarAtransaccion()" class="btn btn-info">
-            <em class="fa fa-hand-o-left"></em> Volver</button>
-        <button ng-if="verTransacciones==true" ng-click="volverDetallesTransaccion()" class="btn btn-success">
-            <em class="fa fa-hand-o-left"></em> Volver</button>
+            <em class="fa fa-hand-o-left"></em> Volver 1</button>
+        <!--<button ng-if="verTransacciones==true" ng-click="volverDetallesTransaccion()" class="btn btn-success">
+            <em class="fa fa-hand-o-left"></em> Volver 2</button>-->
         <button ng-if="verTransacciones==true" ng-click="excel()" class="btn btn-success">Exportar</button>
+        <button ng-if="verTransaccion==true" class="btn btn-success" ng-click="agregarAtransacciones()">
+            <em class="fa fa-arrow-left"></em> Volver 3</button>
     </div>
 
     <!--INICIA SECCION PARA LISTAR TRANSACCIONES-->
@@ -29,8 +31,8 @@
                     <th style="width:8%" class="text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody ng-click="detallesTransaccion(transaccion)" id="responsive-table-body">
-                    <tr ng-repeat="transaccion in transacciones">
+                <tbody id="responsive-table-body">
+                    <tr ng-repeat="transaccion in transacciones" ng-click="detallesTransaccion(transaccion)">
                     <td>{{transaccion.fecha}}</td>
                     <td>{{transaccion.hora_inicio}}</td>
                     <td>{{transaccion.razon_social}}</td>
@@ -67,66 +69,7 @@
             </div>
         </div>
     </div>
-    <!--TERMINA SECCION PARA LISTAR transacciones-->
-    
-    <!--INICIA SECCION PARA AGREGAR O EDITAR Transaccion--
-    <div ng-if="verFormAgregarTransaccion==true || verFormEditarTransaccion==true" class="panel panel-default">
-        <div>
-            <h5 class="text-center">{{accion}}</h5>
-        </div> 
-        <div class="panel-body">
-        <form class="form-horizontal" role="form">
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Identificación</label>
-                <div class="col-sm-9">
-                    <input ng-model="formTransaccion.ruc" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Razon Social</label>
-                <div class="col-sm-9">
-                <input ng-model="formTransaccion.razon_social" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Ciduad</label>
-                <div class="col-sm-9">
-                <input ng-model="formTransaccion.ciudad" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Dirección</label>
-                <div class="col-sm-9">
-                <input ng-model="formTransaccion.direccion" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Teléfono</label>
-                <div class="col-sm-9">
-                <input ng-model="formTransaccion.telefono" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Correo Electrónico</label>
-                <div class="col-sm-9">
-                <input ng-model="formTransaccion.email" class="form-control">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Comentario</label>
-                <div class="col-sm-9">
-                    <textarea ng-model="formTransaccion.comentario" class="form-control" rows="5"></textarea>
-                </div>
-            </div>
-        </form>
-        </div>
-        <div class="panel-footer text-right">
-            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formTransaccion.id_Transaccion)" class="btn btn-info">Actualizar</button>
-            <button ng-click="volverTransacciones()" class="btn btn-info">Cerrar</button>
-        </div>
-    </div>
-    <!--TERMINA SECCION PARA AGREGAR O EDITAR Transaccion-->
+    <!--TERMINA SECCION PARA LISTAR TRANSACCIONES-->
 
     <!--INICIA PAGINA PARA DETALLES DE UNA TRANSACCION-->
     <div ng-if="verTransaccion==true" class="panel panel-default">
@@ -135,11 +78,11 @@
             <!-- Tabs -->
             <ul class="nav nav-tabs text-center">
                 <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
-                <li><a href="#color-profile" data-toggle="tab" ng-click="editarEstacion(estacion)"><i class="fa fa-bar-chart-o"></i> Gráfica</a></li>
+                <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion(transaccion)"><i class="fa fa-bar-chart-o"></i> Gráfica</a></li>
             </ul>
             <!-- // END Tabs -->
 
-            <!-- INICIA PANE DETALLES TRANSACCION -->
+            <!-- INICIA PANEL DETALLES TRANSACCION -->
             <div class="tab-content">
                 <div id="color-home" class="tab-pane active">
                     <div class="panel panel-body">
@@ -149,34 +92,30 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3 text-center">
-                                    <img src="/images/transacciones/logoTransaccion.png" 
-                                    width="200px" height="200px" style="border: 1px solid; padding: 1px">
+                                    <!--<img src="/images/transacciones/logoTransaccion.png" 
+                                    width="200px" height="200px" style="border: 1px solid; padding: 1px">-->
                                 </div>
                                 <div class="col-md-9">
                                     <div class="col-md-12">
                                         <div id="id_Transaccion_edit" hidden="true"></div>
                                         <div class="card" style="margin-bottom: 20px">
                                             <div class="card-header">
-                                                <h4>DETALLES DEL Transaccion</h4>
+                                                <h4>DETALLES DE LA TRANSACCION</h4>
                                             </div>
                                         </div>
                                         <div class="card" style="margin-bottom: 20px;">
                                             <div class="row">
                                                 <div class="col-md-6 p-3">
-                                                    <b>Identificación:</b>  <span>{{transaccion.ruc}}</span><br>
-                                                    <b>Nombre: </b> <span>{{transaccion.razon_social}} </span><br>
-                                                    <b>telefono: </b> <span>{{transaccion.telefono}} </span><br>
-                                                    <b>Ciudad:  </b> <span>{{transaccion.ciudad}}</span><br>
-                                                    <b>Dirección:  </b> <span>{{transaccion.direccion}}</span><br>
-                                                    <b>Correo Electrónico:  </b> <span>{{transaccion.email}}</span><br>
+                                                    <b>Fecha:</b>  <span>{{transaccion.fecha}}</span><br>
+                                                    <b>Hora Inicio: </b> <span>{{transaccion.hora_inicio}} </span><br>
+                                                    <b>Hora Fin: </b> <span>{{transaccion.hora_fin}} </span><br>
+                                                    <b>Duración:  </b> <span>{{transaccion.duracion}}</span><br>
+                                                    <b>Cliente:  </b> <span>{{transaccion.razon_social}}</span><br>
+                                                    <b>Tarjeta:  </b> <span>{{transaccion.codigo_rfid}}</span><br>
+                                                    <b>Energía Consumida:  </b> <span>{{transaccion.energiaConsumida}} [kWh]</span><br>
+                                                    <b>Costo Transacción:  </b> <span>{{transaccion.costoTransaccion}}</span><br>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="submits">
-                                            <button  class="btn btn-success" id="toStationsDetails" ng-click="agregarAtransacciones()">
-                                                <em class="fa fa-arrow-left"></em> Volver</button>
-                                            <button  class="btn btn-info" ng-click="editarTransaccion(Transaccion)">
-                                                <em class="fa fa-pencil"></em> Editar Transaccion</button>
                                         </div>
                                     </div>
                                 </div>
@@ -184,6 +123,22 @@
                         </div>
                     </div>
                 </div>
+
+                <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
+                <div id="color-profile" class="tab-pane">
+                    <div class="row">
+                        <!-- Line chart -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Gráfica de Carga</div>
+                            <div class="panel-body">
+                            <div id="line-chart" data-toggle="morris-chart-line" class="height-250"></div>
+                            </div>
+                        </div>
+                        <!-- // Line chart -->
+                    </div>
+                </div>
+
+
             </div>
             <!-- TERMINA PANE DETALLES TRANSACCION -->
         </div>

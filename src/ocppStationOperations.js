@@ -286,7 +286,7 @@ async function stopTransactionResponse(payload){
 
     console.log('ec: ');
     console.log(ec);
-        
+            
     let razon = payload.reason;
     const values = [meterStop, ec, estado, razon, transactionId]
     sql = 'UPDATE transacciones SET hora_fin=now(), energiaFin=?, energiaConsumida=?, estado=?, razon=? WHERE id_transaccion=?;'; 

@@ -142,7 +142,6 @@ router.get('/home/estaciones/info/:id', async(req, res) => {
 /********************************************************************************************/
 router.get('/home/estaciones/transacciones/:id/:desde/:cuantos', async(req, res) => {
 	var data = {};
-	//console.log('Se ha llamado a transacciones id')
 	var ide = req.params.id;
 	var desde = req.params.desde;
 	var cuantos = req.params.cuantos;
@@ -157,7 +156,6 @@ router.get('/home/estaciones/transacciones/:id/:desde/:cuantos', async(req, res)
 	console.log('sqlSelect: ');
 	console.log(sqlSelect);
 	const transacciones = await pool.query(sqlSelect);
-	//console.log(transacciones);
 	data.success = true;
 	data.transacciones = transacciones;
 	res.send(data);

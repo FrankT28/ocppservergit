@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database');
+var fs = require('fs');
+const path = require('path');
+
 
 function timeConverter(UNIX_timestamp){
 	var a = new Date(UNIX_timestamp);
@@ -30,13 +33,17 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 	let totalTransacciones = await pool.query('SELECT COUNT(*) as total FROM transacciones;'); 
 	let desde = parseInt(req.params.desde); 
 	let cuantos = parseInt(req.params.cuantos);
-	let sql = 'SELECT tr.*, ta.codigo_rfid, cl.razon_social, es.codigoEstacion FROM transacciones tr, tarjetas ta, clientes cl, estaciones es WHERE tr.id_tarjeta=ta.id_tarjeta AND ta.id_cliente=cl.id_cliente AND tr.id_estacion=es.id_estacion ORDER BY id_transaccion DESC LIMIT ?, ?';
+	let sql = 'SELECT tr.*, SUBTIME(tr.hora_fin, tr.hora_inicio) duracion, ta.codigo_rfid, cl.razon_social, es.codigoEstacion FROM transacciones tr, tarjetas ta, clientes cl, estaciones es WHERE tr.id_tarjeta=ta.id_tarjeta AND ta.id_cliente=cl.id_cliente AND tr.id_estacion=es.id_estacion ORDER BY id_transaccion DESC LIMIT ?, ?';
 	var transacciones = await pool.query(sql, [desde, cuantos]); 
 
+	let transaccion;
 	for (var i=0; i<transacciones.length; i++){
+		transaccion = transacciones[i];
 		//ESTO ES PARA SACAR SOLO LA FECHA Y QUE NO VENGA CON 'T00:00:00Z'
-		transacciones[i].fecha = transacciones[i].fecha.toISOString().split('T')[0];
-		transacciones[i].fecha = formatDate(transacciones[i].fecha);
+		transacciones[i].fecha = transaccion.fecha.toISOString().split('T')[0];
+		transacciones[i].fecha = formatDate(transaccion.fecha);
+		transacciones[i].energiaConsumida = transaccion.energiaConsumida/1000;
+		//transacciones[i].duracion = duracionTransaccion(transaccion.hora_fin, transaccion.hora_inicio);
 	};
 
 	data.success = true;
@@ -44,7 +51,68 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 	data.totalTransacciones = totalTransacciones[0].total;
 
 	res.send(data); 
-}); 
+});
+
+/******************************************************************************/
+router.get('/home/transacciones/get_grafica/:id', (req, res)=> { 
+	let id = req.params.id;
+	var matrix = [];
+	try {  
+		var data = fs.readFileSync(path.join(__dirname + '/graficas/' + id + '_energia.txt'), 'utf8');
+		const arr = data.toString().replace(/\r\n/g,'\n').split('\n');
+		let fila;
+		let elemento;
+		for(var i=0; i<arr.length-1; i++) {
+			fila = arr[i];
+			fila = fila.split('Z ');
+			matrix[i] = [];
+			cont=0;
+			var obj = {};
+			for (var j=0; j<fila.length; j++){
+				elemento = fila[j].replace(/ /g,'');
+				if(j==0){
+					elemento = elemento.split('T');
+					cont++;
+					obj.dia = elemento[0];
+					obj.hora = elemento[1].substring(0,8);
+				}else if(j==1) {
+					elemento = parseInt(elemento, 10)/1000;
+					obj.valor = elemento;
+				}
+				cont++;
+				matrix[i] = obj;
+			}
+		}	
+
+		console.log('matrix');
+		console.log(matrix)
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+
+	res.send(matrix);
+});
+
+/******************************************************************************/
+function duracionTransaccion(inicio, fin){
+	console.log('inicio');
+	console.log(inicio);
+
+	console.log('fin');
+	console.log(fin);
+
+	var hora1 = (inicio).split(":");
+	var hora2 = (fin).split(":");
+	var diferencia = '';
+	let horas = parseInt(hora1[0]) - parseInt(hora2[0]);
+	let minutos = parseInt(hora1[1]) - parseInt(hora2[1]);
+	let segundos = parseInt(hora1[2]) - parseInt(hora2[2]);
+
+	diferencia = horas + ':' + minutos + ':' + segundos;
+	console.log('diferencia');
+	console.log(diferencia);
+	return diferencia;
+}
 
 /******************************************************************************/
 async function tarjetaTransaccion(id){

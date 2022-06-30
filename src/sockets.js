@@ -188,7 +188,7 @@ module.exports = function(server){
 
                     var message = cadena; 
                     console.log('                                      ');
-                    console.log('El servidor ha recibido datos----------------------------------------------------------------------');
+                    console.log('El servidor ha recibido datos-------------------------------------------------');
                     console.log(message);
                     const opCode = parsedBuffer.opCode;
                     const CallId = 2;
@@ -211,7 +211,7 @@ module.exports = function(server){
                             PayloadResponseApk = Respuestas[2];
                             console.log('                                            ');
                             let CallResult = [CallResultId, UniqueId, PayloadResponse]; 
-                            console.log('Respuesta a enviar al punto de carga: ')
+                            console.log('Respuesta a enviar al punto de carga: ');
                             console.log(CallResult);
                             socket.write(funciones.constructReply(CallResult, opCode));
                             /*************Respuesta para APK****************
@@ -309,13 +309,12 @@ module.exports = function(server){
                     //AQUI SE VAN A MANEJAR LOS MENSAJES ENVIADOS AL SERVIDOR DEL TIPO PING, YA SEA DESDE UNA ESTACION O UN NAVEGADOR
                     else if(opCode === 0x9){
                         //PRIMERO LE RESPONDEMOS CON UN PONG A QUIEN ENVIO EL PING 
-                        //console.log('Se ha recibido un ping');
-                        //console.log(message);
                         socket.write(funciones.constructReply(message, opCode));
                         
                         //LUEGO ENVIAMOS EL DATO DEL PING L NAVEGADOR PARA QUE ACTUALICE LA TABLA DE PINGS
                         var id_est = getByValue(clientes, socket);
-                        let ide = 'ping'+id_est;
+                        console.log()
+                        let ide = 'ping' + id_est;
                         let textnav = {'tipo':'ping', 'boton':ide, 'texto':'Recibiendo Pings'};
                         clienteNav = clientes.get(0);
                         if (clienteNav){
@@ -328,7 +327,7 @@ module.exports = function(server){
                     }
                 }
             } while (parsedBuffer.payload && parsedBuffer.bufferRemainingBytes.length);
-            console.log('----------------------------------------------------------------\n');
+            console.log('-----------------------------------------------------------------------------------------------------\n');
         });
     }); 
 };

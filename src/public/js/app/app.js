@@ -1488,7 +1488,7 @@ require('./easy-pie/main');
     "use strict";
 
     $.fn.tkMorrisChartBar = function () {
-
+        console.log('se llama a morris')
         if (! this.length) return;
 
         if (! this.attr('id')) return;
@@ -1575,7 +1575,7 @@ require('./easy-pie/main');
 (function ($) {
     "use strict";
 
-    $.fn.tkMorrisChartLine = function () {
+    /*$.fn.tkMorrisChartLine = function () {
 
         if (! this.length) return;
 
@@ -1615,7 +1615,7 @@ require('./easy-pie/main');
             resize: true
         });
 
-    };
+    };*/
 
     $(function () {
 
@@ -7057,14 +7057,14 @@ require('./_timeline');
                     })
                     .state('charts.flot', {
                         url: '/flot',
-                        templateUrl: 'charts/flot.html',
+                        templateUrl: 'pages/flot.html',
                         controller: ['$scope', function($scope){
                             $scope.app.settings.htmlClass = 'st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2';
                         }]
                     })
                     .state('charts.morris', {
                         url: '/morris',
-                        templateUrl: 'charts/morris.html',
+                        templateUrl: 'pages/morris.html',
                         controller: ['$scope', function($scope){
                             $scope.app.settings.htmlClass = 'st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2';
                         }]
