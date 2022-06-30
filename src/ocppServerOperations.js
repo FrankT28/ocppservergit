@@ -321,44 +321,45 @@ async function processOcppRequestFromBrowser(ocppMessageFromBrowser){
     var payloadRequest;
     let Action = ocppMessageFromBrowser[2];
     let payload = ocppMessageFromBrowser[3];
+    let tipo = ocppMessageFromBrowser.tipo;
 
-    if(message.tipo=='CancelReservation'){
+    if(tipo=='CancelReservation'){
         payloadRequest = CancelReservationRequest(payload);
-    }else if(message.tipo=='ChangeAvailability'){
+    }else if(tipo=='ChangeAvailability'){
         payloadRequest = ChangeAvailabilityRequest(payload);
-    }else if(message.tipo=='ChangeConfiguration'){
+    }else if(tipo=='ChangeConfiguration'){
         payloadRequest = ChangeConfigurationRequest(payload);
-    }else if(message.tipo=='ClearCache'){
+    }else if(tipo=='ClearCache'){
         payloadRequest = ClearCache(payload);
-    }else if(message.tipo=='ClearChargingProfile'){
+    }else if(tipo=='ClearChargingProfile'){
         payloadRequest = ClearChargingProfileRequest(payload);
     }else if(Action=='DataTransfer') {
         payloadRequest = DataTransferRequest(payload);
-    }else if(message.tipo=='GetCompositeSchedule'){
+    }else if(tipo=='GetCompositeSchedule'){
         payloadRequest = GetCompositeScheduleRequest(payload);
-    }else if(message.tipo=='GetConfiguration'){
+    }else if(tipo=='GetConfiguration'){
         payloadRequest = GetConfigurationRequest(payload);
-   }else if(message.tipo=='GetDiagnostics'){
+   }else if(tipo=='GetDiagnostics'){
         payloadRequest = GetDiagnosticsRequest(payload);
-    }else if(message.tipo=='GetLocalListVersion'){
+    }else if(tipo=='GetLocalListVersion'){
         payloadRequest = GetLocalListVersionRequest(payload);
-    }else if(message.tipo=='RemoteStartTransaction'){
+    }else if(tipo=='RemoteStartTransaction'){
         payloadRequest = RemoteStartTransactionRequest(payload);
-    }else if(message.tipo=='RemoteStopTransaction'){
+    }else if(tipo=='RemoteStopTransaction'){
         payloadRequest = RemoteStopTransactionRequest(payload);
-    }else if(message.tipo=='ReserveNow'){
+    }else if(tipo=='ReserveNow'){
         payloadRequest = ReserveNowRequest(payload);
-    }else if(message.tipo=='Reset'){
+    }else if(tipo=='Reset'){
         payloadRequest = ResetRequest(payload);
-    }else if(message.tipo=='SendLocalList'){
+    }else if(tipo=='SendLocalList'){
         payloadRequest = SendLocalListRequest(payload);
-    }else if(message.tipo=='SetChargingProfile'){
+    }else if(tipo=='SetChargingProfile'){
         payloadRequest = SetChargingProfileRequest(payload);
-    }else if(message.tipo=='TriggerMessage'){
+    }else if(tipo=='TriggerMessage'){
         payloadRequest = TriggerMessageRequest(payload);
-    }else if(message.tipo=='UnlockConnector'){
+    }else if(tipo=='UnlockConnector'){
         payloadRequest = UnlockConnectorRequest(payload);
-    }else if(message.tipo=='UpdateFirmware'){
+    }else if(tipo=='UpdateFirmware'){
         payloadRequest = UpdateFirmwareRequest(payload);
     }else{
         payloadRequest = NotImplementedRequest(payload);
