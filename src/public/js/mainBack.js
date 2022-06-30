@@ -1,5 +1,7 @@
 const http = new XMLHttpRequest();
 
+
+
 function changeConfiguration(stationId){
 	console.log('stationId: ' + stationId);
 	var PayloadRequest = JSON.stringify({"tipo": "ChangeConfiguration", "stationId": stationId});
@@ -39,7 +41,7 @@ function getCompositeSchedule(stationId){
 
 function cancelReservation(stationId){
 	console.log('stationId: ' + stationId);
-	var PayloadRequest = JSON.stringify({"tipo": "CancelReservation", "stationId": stationId, "reservationId": 100});
+	var PayloadRequest = JSON.stringify({"tipo": "CancelReservation", "stationId": stationId, "reservationId": 1});
 	ws.send(PayloadRequest);
 }
 
@@ -50,29 +52,63 @@ function getDiagnostics(stationId){
 }
 
 function getConfiguration(stationId){
-
+	/*ventana_configuracion.innerHTML=
+	"<div><label>AllowOfflineTxForUnknownId</label></div>"+
+	"<div><label>AuthorizationCacheEnabled</label></div>"+
+	"<div><label>AuthorizeRemoteTxRequests</label></div>"+
+	"<div><label>ClockAlignedDataInterval</label></div>"+
+	"<div><label>ConnectionTimeOut</label></div>"+
+	"<div><label>ConnectorPhaseRotation</label></div>"+
+	"<div><label>GetConfigurationMaxKeys</label></div>"+
+	"<div><label>HeartbeatInterval</label></div>"+
+	"<div><label>LocalAuthorizeOffline</label></div>"+
+	"<div><label>LocalPreAuthorize</label></div>"+
+	"<div><label>MeterValuesAlignedData</label></div>"+
+	"<div><label>MeterValuesSampledData</label></div>"+
+	"<div><label>MeterValueSampleInterval</label></div>"+
+	"<div><label>NumberOfConnectors</label></div>"+
+	"<div><label>StopTransactionOnEVSideDisconnect</label></div>"+
+	"<div><label>StopTransactionOnInvalidId</label></div>"+
+	"<div><label>StopTxnSampledData</label></div>"+
+	"<div><label>TransactionMessageRetryInterval</label></div>"+
+	"<div><label>WebSocketPingInterval</label></div>"+
+	"<div><label>LocalAuthListMaxLength</label></div>"+
+	"<div><label>SendLocalListMaxLength</label></div>"+
+	"<div><label>ReserveConnectorZeroSupported</label></div>";
+	//"<div><label>ConnectorPhaseRotation</label></div>"+
+	//"<div><label>ConnectorPhaseRotation</label></div>"+
+	//"<div><label>ConnectorPhaseRotation</label></div>"+
+	//"<div><label>ConnectorPhaseRotation</label></div>"
+	*/
 	console.log('stationId: ' + stationId);
 	var PayloadRequest = JSON.stringify({"tipo": "GetConfiguration", "stationId": stationId});
 	ws.send(PayloadRequest);
 }
 
 function changeConfiguration(stationId){
+
 	console.log('stationId: ' + stationId);
 	var PayloadRequest = JSON.stringify({"tipo": "ChangeConfiguration", "stationId": stationId});
 	ws.send(PayloadRequest);
-}
-
-function buttons_startRemoteTransaction(){
-	ocultar_bloques();
-	document.getElementById("ventana_startremote").style.display="block";
+	
 
 }
+
+
 
 function buttons_changeAvailability(){
-
-	ocultar_bloques();
-	document.getElementById("ventana_disponibilidad").style.display="block";
-
+	ventana_configuracion.innerHTML= "<div class='custom-control custom-switch'>"+
+	"<input type='checkbox' class='custom-control-input' id='CCS' checked='checked' onchange='ChangeAvailability(1,this.id)'>"+
+	"<label class='custom-control-label' for='CCS'>Conector CCS</label> &nbsp;"+ 
+"</div>"+
+"<div class='custom-control custom-switch'>"+
+"	<input type='checkbox' class='custom-control-input' id='Chademo' checked='checked' onchange='ChangeAvailability(1,this.id)'>"+
+	"<label class='custom-control-label' for='Chademo'>Conector Chademo</label>&nbsp;"+ 
+"</div>"+
+"<div class='custom-control custom-switch'>"+
+	"<input type='checkbox' class='custom-control-input' id='AC' checked='checked' onchange='ChangeAvailability(1,this.id)'>"+
+	"<label class='custom-control-label' for='AC'>Conector AC</label>&nbsp;"+
+"</div>"
 }
 
 
@@ -105,11 +141,20 @@ function ChangeAvailability(stationId,id){
 }
 
 function buttons_unlockConnector(){
-
-	ocultar_bloques();
-	document.getElementById("ventana_desbloqueo").style.display="block";
 	
-
+	ventana_configuracion.innerHTML=
+"<div style='margin-top:10px'>"+
+	"<label>Conector CCS</label>"+	
+	"<button id='UnCCS' onclick='UnlockConnector(1,this.id)' class='btn btn-info'>Desbloquear</button>"+
+"</div>"+
+"<div style='margin-top:10px'>"+
+	"<label>Conector Chademo</label>"+
+	"<button  id='UnChademo' onclick='UnlockConnector(1,this.id)' class='btn btn-info'>Desbloquear</button>"+
+"</div>"+
+"<div style='margin-top:10px'>"+
+	"<label>Conector AC</label>"+
+	"<button id='UnAC' onclick='UnlockConnector(1,this.id)' class='btn btn-info'>Desbloquear</button>"+
+"</div>"
 }
 
 function UnlockConnector(stationId, id){
@@ -118,8 +163,12 @@ function UnlockConnector(stationId, id){
 	console.log('stationId: ' + stationId);
 	if(id=="UnCCS"){
 		idConector=1;
+
+
 	}else if(id=="UnChademo"){
+
 		idConector=2;
+
 	}else if(id=="UnAC"){
 		idConector=3;
 	}
@@ -127,51 +176,23 @@ function UnlockConnector(stationId, id){
 	ws.send(PayloadRequest);
 
 }
+/*
+function buttons_unlockConnector(){
+	var currentDate = new Date();
 
-function remoteStartTransaction(stationId){
-	var idtag=document.getElementById("id_startremote").value;
-	var conector=parseInt(document.getElementById("conector_startremote").value);
-
-	var PayloadRequest = JSON.stringify({"tipo": "RemoteStartTransaction","idtag":idtag,"Conector":conector,"stationId": stationId});
-	ws.send(PayloadRequest);
+	ventana_configuracion.innerHTML=
+	"<p id='parrafo_prueba'></p>"
+"<input type='date' id='start' name='trip-start'"+
+       "value='2018-07-22'"+
+       "min='2018-01-01' max='2018-12-31'>";
+	   parrafo_prueba.innerHTML=currentDate;
 }
 
-function remoteStopTransaction(stationId){
-	var PayloadRequest = JSON.stringify({"tipo": "RemoteStopTransaction","idtag":"7240E49A"});
-	ws.send(PayloadRequest);
-}
-
-function buttons_reset(stationId){
-
-	ocultar_bloques();
-	document.getElementById('ventana_reset').style.display="block";
-
-}
-
-function reset(stationId,id){
-	if (id=='SoftReset'){
-		var PayloadRequest = JSON.stringify({"tipo": "Reset", "Type": 'Soft',"stationId": stationId});
-		ws.send(PayloadRequest);
+*/
 
 
 
-	}
-	else if(id=='HardReset'){
-		var PayloadRequest = JSON.stringify({"tipo": "Reset", "Type": 'Hard',"stationId": stationId});
-		ws.send(PayloadRequest);
 
-
-
-	}
-
-}
-
-function clearCache(stationId){
-	
-	var PayloadRequest = JSON.stringify({"tipo": "ClearCache", "stationId": stationId});
-	ws.send(PayloadRequest);
-
-}
 
 function david(stationId){
 	console.log('stationId: ' + stationId);
@@ -179,64 +200,6 @@ function david(stationId){
 	ws.send(PayloadRequest);
 	
 }
-
-function buttons_reserveNow(stationId){
-	ocultar_bloques();
-	var currentDate = new Date();
-	document.getElementById('ventana_reserva').style.display="block";
-	document.getElementById('fecha_reserva').value=currentDate.toISOString().slice(0,10);
-}
-
-function reserveNow(stationId){
-	
-	//"connectorId": 1,"expiryDate":"2022-02-28T11:10:00.000Z","idTag":"7240E49A","reservationId":100
-
-	var hora_res=document.getElementById('hora_reserva').value;
-	var fecha_res=document.getElementById('fecha_reserva').value;
-	var conector_res=parseInt(document.getElementById('conector_reserva').value);
-	var id_res=document.getElementById('id_reserva').value;
-	var expiracion=fecha_res+"T"+hora_res+":00.000Z";
-
-	console.log('hora reserva')
-	console.log(hora_res)
-	console.log('fecha reserva')
-	console.log(fecha_res)
-	console.log('conector reserva')
-	console.log(conector_res)
-	console.log('id reserva')
-	console.log(id_res)
-
-	console.log(expiracion)
-
-	//var PayloadRequest = {"tipo": "ReserveNow", "stationId": stationId, "connectorId":conector_res, "expiryDate":expiracion, "idTag":id_res, "reservationId":100};
-	var PayloadRequest = JSON.stringify({"tipo": "ReserveNow", "stationId": stationId, "connectorId":conector_res, "expiryDate":expiracion, "idTag":id_res, "reservationId":100});
-	ws.send(PayloadRequest);
-
-}
-
-function buttons_changeConfiguration(){
-	document.getElementById("ventana_cambiarconfiguracion").style.display="block";
-
-	//document.getElementById("box_AllowOfflineTxForUnknownId").value='false'
-
-
-}
-
-function prueba_boton(){
-	document.getElementById("box_AllowOfflineTxForUnknownId").value='false'
-
-}
-
-function ocultar_bloques(){
-	document.getElementById("ventana_cambiarconfiguracion").style.display="none";
-	document.getElementById("ventana_desbloqueo").style.display="none";
-	document.getElementById("ventana_disponibilidad").style.display="none";
-	document.getElementById('ventana_reserva').style.display="none";
-	document.getElementById('ventana_reset').style.display="none";
-	document.getElementById("ventana_startremote").style.display="none";
-
-}
-
 
 function xhr(){
 	console.log('se llama a xhr')
@@ -254,13 +217,8 @@ function fromStationsToRealTime(){
 	document.getElementById('').style.display = 'none';
 	document.getElementById('').style.display = 'block';
 }
-/******************************************************************************
+
 function toStationDetails(id){
-
-	ocultar_bloques();
-	//document.getElementById("ventana_disponibilidad").style.display="none";
-	//document.getElementById('ventana_reserva').style.display="none";
-
 	console.log('datos estacion: ');
 	const url = '/home/estaciones/editar/'+id;
 	http.open("get", url);
@@ -274,7 +232,6 @@ function toStationDetails(id){
 	document.getElementById('stationsDetails').style.display = 'none';
 }
 
-/******************************************************************************/
 function toStationsDetails(){
 	document.getElementById('stationDetails').style.display = 'none';
 	document.getElementById('stationsDetails').style.display = 'block';
@@ -298,14 +255,13 @@ function sendFirstWsResponse(){
 	ws.send(jsons);
 }
 
-/************************************************************************
+
 function setPageAddStation(){
 	console.log('set page add station')
 	document.getElementById('pageAddStation').style.display = 'block';
 	document.getElementById('stationsDetails').style.display = 'none';
 }
 
-/************************************************************************/
 function fromAddToDetailsStations(){
 	console.log('ir a pagina detalles estaciones')
 	document.getElementById('pageAddStation').style.display = 'none';
