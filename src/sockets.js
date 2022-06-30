@@ -109,7 +109,9 @@ const debugBuffer = (bufferName, buffer) => {
 async function getUniqueId(){
     let sql = "SELECT id_mensaje_servidor FROM mensajes_desde_servidor DESC LIMIT 1";
     let result = await pool.query(sql);
-    let id = result[0].id_mensaje_servidor;
+    let id = result[0].id_mensaje_servidor + 1;
+    console.log('Nuevo unique id: ');
+    console.log(id);
     return id;
 }
 
@@ -277,7 +279,7 @@ module.exports = function(server){
                             var stationClient = clientes.get(stationId);    
                             //CallResultId = 2;
                             if(stationClient!=undefined){
-                                //let uniqueId = getUniqueId();
+                                let uniqueId = await getUniqueId();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
