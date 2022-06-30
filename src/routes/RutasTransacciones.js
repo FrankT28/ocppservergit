@@ -58,7 +58,7 @@ router.get('/home/transacciones/get_grafica/:id', (req, res)=> {
 	let id = req.params.id;
 	var matrix = [];
 	try {  
-		var data = fs.readFileSync(path.join(__dirname + '/graficas/' + id + '_energia.txt'), 'utf8');
+		var data = fs.readFileSync(path.join(__dirname + '/graficas/' + id + '_energia	.txt'), 'utf8');
 		const arr = data.toString().replace(/\r\n/g,'\n').split('\n');
 		let fila;
 		let elemento;

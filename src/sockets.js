@@ -281,7 +281,7 @@ module.exports = function(server){
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
-                                PayloadResponseApk = Respuestas[2]; 
+                                PayloadResponseApk = Respuestas[2];
 
                                 //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
@@ -311,9 +311,8 @@ module.exports = function(server){
                         //PRIMERO LE RESPONDEMOS CON UN PONG A QUIEN ENVIO EL PING 
                         socket.write(funciones.constructReply(message, opCode));
                         
-                        //LUEGO ENVIAMOS EL DATO DEL PING L NAVEGADOR PARA QUE ACTUALICE LA TABLA DE PINGS
+                        //LUEGO ENVIAMOS EL DATO DEL PING AL NAVEGADOR PARA QUE ACTUALICE LA TABLA DE PINGS
                         var id_est = getByValue(clientes, socket);
-                        console.log()
                         let ide = 'ping' + id_est;
                         let textnav = {'tipo':'ping', 'boton':ide, 'texto':'Recibiendo Pings'};
                         clienteNav = clientes.get(0);
