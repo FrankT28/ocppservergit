@@ -278,7 +278,8 @@ module.exports = function(server){
                             console.log('Se ha recibido un mensaje desde navegador!')
                             console.log(message);
                             var stationId = message.stationId;
-                            var stationClient = clientes.get(stationId);    
+                            var stationClient = clientes.get(stationId);  
+                            let action = message.tipo;  
                             if(stationClient!=undefined){
                                 console.log('station clientes si esta definido: ');
                                 let uniqueId = await getUniqueId();
@@ -289,7 +290,7 @@ module.exports = function(server){
 
                                 //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
-                                let CallResult = [CallId, uniqueId, PayloadResponse]; 
+                                let CallResult = [CallId, action , uniqueId, PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
