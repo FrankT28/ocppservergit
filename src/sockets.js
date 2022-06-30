@@ -107,7 +107,7 @@ const debugBuffer = (bufferName, buffer) => {
 
 /*=============================================================================================*/
 async function getUniqueId(){
-    let sql = "SELECT id_mensaje_servidor FROM mensajes_desde_servidor DESC LIMIT 1";
+    let sql = "SELECT id_mensaje_servidor FROM mensajes_desde_servidor ORDER BY id_mensaje_servidor DESC LIMIT 1";
     let result = await pool.query(sql);
     let id = result[0].id_mensaje_servidor + 1;
     console.log('Nuevo unique id: ');
