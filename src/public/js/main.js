@@ -131,7 +131,6 @@ function UnlockConnector(stationId, id){
 function remoteStartTransaction(stationId){
 	var idtag=document.getElementById("id_startremote").value;
 	var conector=parseInt(document.getElementById("conector_startremote").value);
-
 	var PayloadRequest = JSON.stringify({"tipo": "RemoteStartTransaction","idtag":idtag,"Conector":conector,"stationId": stationId});
 	ws.send(PayloadRequest);
 }
@@ -142,10 +141,8 @@ function remoteStopTransaction(stationId){
 }
 
 function buttons_reset(stationId){
-
 	ocultar_bloques();
 	document.getElementById('ventana_reset').style.display="block";
-
 }
 
 function reset(stationId,id){

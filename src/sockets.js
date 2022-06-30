@@ -275,7 +275,7 @@ module.exports = function(server){
                             console.log(message);
                             var stationId = message.stationId;
                             var stationClient = clientes.get(stationId);    
-                            CallResultId = 2;
+                            //CallResultId = 2;
                             if(stationClient!=undefined){
                                 let uniqueId = getUniqueId();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
