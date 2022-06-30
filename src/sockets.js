@@ -193,6 +193,8 @@ module.exports = function(server){
                     console.log('El servidor ha recibido datos-------------------------------------------------');
                     console.log(message);
                     const opCode = parsedBuffer.opCode;
+                    console.log('opCode');
+                    console.log(opCode);
                     const CallId = 2;
                     const CallResultId = 3;
                     const CallErrorId = 4;
@@ -277,8 +279,8 @@ module.exports = function(server){
                             console.log(message);
                             var stationId = message.stationId;
                             var stationClient = clientes.get(stationId);    
-                            //CallResultId = 2;
                             if(stationClient!=undefined){
+                                console.log('station clientes si esta definido: ');
                                 let uniqueId = await getUniqueId();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
@@ -287,9 +289,8 @@ module.exports = function(server){
 
                                 //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
-                                console.log('                                            ');
                                 let CallResult = [CallResultId, uniqueId, PayloadResponse]; 
-                                console.log('Respuesta a enviar al punto de carga: ');
+                                console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
                             }else{
