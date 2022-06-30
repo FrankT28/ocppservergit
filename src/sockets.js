@@ -289,7 +289,7 @@ module.exports = function(server){
 
                                 //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
-                                let CallResult = [CallResultId, uniqueId, PayloadResponse]; 
+                                let CallResult = [CallId, uniqueId, PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
