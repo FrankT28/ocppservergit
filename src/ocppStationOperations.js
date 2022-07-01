@@ -1,5 +1,6 @@
 const { response } = require('express');
 const pool = require('./database.js');
+const fs = require('fs');
 
 /*=============================================================================================*/
 //AUTHORIZE
