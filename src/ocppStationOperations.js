@@ -88,7 +88,8 @@ async function meterValuesResponse(payload){
     var energia_inicial=ultTrans0[0].energiaInicio;
     console.log('ultima transaccion');
     console.log(ultTrans0[0])
-    let fecha_hora_inicio=new Date(ultTrans0[0].fecha + 'T' + ultTrans0[0].hora_inicio);
+    //let fecha_hora_inicio=new Date(ultTrans0[0].fecha + 'T' + ultTrans0[0].hora_inicio);
+    let fecha_hora_inicio = ultTrans0[0].fecha + ultTrans0[0].hora_inicio;
     console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
    
 
