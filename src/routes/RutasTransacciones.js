@@ -67,7 +67,7 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 		console.log(fila);
 		var obj = {};
 		//matrix[i] = {};
-		hora = fila.hora.toString();
+		hora = fila.hora.toISOString();
 		console.log('hora');
 		console.log(hora);
 		hora = hora.split('T');
