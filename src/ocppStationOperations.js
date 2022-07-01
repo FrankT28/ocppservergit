@@ -85,7 +85,7 @@ async function meterValuesResponse(payload){
     
     let ultTrans0 = await pool.query('SELECT * FROM transacciones WHERE id_transaccion="'+ transaccionID + '" ORDER BY id_transaccion DESC LIMIT 1;');
     var energia_inicial=ultTrans0[0].energiaInicio;
-    let fecha_hora_inicio=new Date(ultTrans0[0].fecha + ultTrans0[0].hora_inicio);
+    let fecha_hora_inicio=new Date(ultTrans0[0].fecha + ' ' + ultTrans0[0].hora_inicio);
     console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
 
 

@@ -281,12 +281,13 @@ module.exports = function(server){
                             if(stationClient!=undefined){
                                 console.log('station clientes si esta definido: ');
                                 let uniqueId = await getUniqueId();
+                                uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
                                 PayloadResponseApk = Respuestas[2];
 
-                                let CallResult = [3, uniqueId, action, PayloadResponse]; 
+                                let CallResult = [3,uniqueId,action,PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
