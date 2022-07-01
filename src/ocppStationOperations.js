@@ -195,7 +195,9 @@ async function meterValuesResponse(payload){
 
 /***********************************************************************/
 async function addPowerDb(valores){
-    let sql = "INSERT INO potencia_transacciones VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INO potencia_transacciones VALUES(null,?,?,?,?,?,?)";
+    console.log('sql');
+    console.log(sql);
     result = await pool.query(sql,valores);
     if (result){
         console.log('Ingresado correctamente potencia');
