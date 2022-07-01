@@ -57,18 +57,18 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 router.get('/home/transacciones/get_grafica/:id', async(req, res)=> { 
 	let id = req.params.id;
 	let sql = "SELECT * FROM potencia_transacciones WHERE id_transaccion=?;";
-	let result = await pool.query(sql, [id]);
+	let arr = await pool.query(sql, [id]);
 	var matrix = [];
 	let fila;
 	let elemento;
-	for(var i=0; i<result.length; i++) {
+	for(var i=0; i<arr.length; i++) {
 		fila = arr[i];
-		fila = fila.split('Z ');
 		matrix[i] = [];
 		cont=0;
 		var obj = {};
 		for (var j=0; j<fila.length; j++){
-			elemento = fila[j].replace(/ /g,'');
+			//elemento = fila[j].replace(/ /g,'');
+			elemento = fila[j];
 			if(j==0){
 				elemento = elemento.split('T');
 				cont++;
