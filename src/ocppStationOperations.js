@@ -151,9 +151,15 @@ async function meterValuesResponse(payload){
         }
     }
 
+    let valores = [transaccionID, 1, conectorID, now(), timest, energia1];
+    addPowerDb(valores);
+
+    valores = [transaccionID, 1, conectorID, now(), timest, potencia1];
+    addEnergyDb(valores);
+
     //*************************************************************************************
     //Registro de potencia
-    //***************************************************************************************
+    /***************************************************************************************
     var potencia_registro=timest.toISOString() + " " + potencia1 +' \n';
 
     fs.appendFile(archivo_potencia , potencia_registro, function (err) {
@@ -167,7 +173,7 @@ async function meterValuesResponse(payload){
 
     //*************************************************************************************
     //Registro de energia
-    //***************************************************************************************
+    /****************************************************************************************
     var energiaconsumida=(energia1-energia_inicial)/1000;
     var energia_registro=timest.toISOString() + " " + energiaconsumida +' \n';
 
@@ -179,6 +185,7 @@ async function meterValuesResponse(payload){
             console.log('No hay eror en archivo de energia')
         }
     });
+    //****************************************************************************************/
 
 
     payloadResponseNav = {'tipo': 'meterValue', 'texto':'cargando', 'values': payload};
@@ -186,6 +193,26 @@ async function meterValuesResponse(payload){
     return [payloadResponse, payloadResponseNav, payloadResponseApk]
 }
 
+/***********************************************************************/
+async function addPowerDb(valores){
+    let sql = "INSERT INO potencia_transacciones VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    if (result){
+        console.log('Ingresado correctamente potencia');
+    }else{
+        console.log('Error al ingresar db potencia');
+    }
+}
+/***********************************************************************/
+async function addEnergyDb(valores){
+    let sql = "INSERT INO energia_transacciones VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    if (result){
+        console.log('Ingresado correctamente energia');
+    }else{
+        console.log('Error al ingresar db energia');
+    }
+}
 /***********************************************************************/
 function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp * 1000);
