@@ -74,7 +74,8 @@ function heartbeatResponse(payload){
 //METER VALUES
 /*=============================================================================================*/
 async function meterValuesResponse(payload){
-
+    console.log('payload');
+    console.log(payload);
 
     let timest=new Date();
 
@@ -85,9 +86,11 @@ async function meterValuesResponse(payload){
     
     let ultTrans0 = await pool.query('SELECT * FROM transacciones WHERE id_transaccion="'+ transaccionID + '" ORDER BY id_transaccion DESC LIMIT 1;');
     var energia_inicial=ultTrans0[0].energiaInicio;
-    let fecha_hora_inicio=new Date(ultTrans0[0].fecha + ' ' + ultTrans0[0].hora_inicio);
+    console.log('ultima transaccion');
+    console.log(ultTrans0[0])
+    let fecha_hora_inicio=new Date(ultTrans0[0].fecha + 'T' + ultTrans0[0].hora_inicio);
     console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
-
+  
 
     let date = fecha_hora_inicio.getDate();
     let month = fecha_hora_inicio.getMonth() + 1;
