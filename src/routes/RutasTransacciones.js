@@ -56,7 +56,7 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 /******************************************************************************/
 router.get('/home/transacciones/get_grafica/:id', async(req, res)=> { 
 	let id = req.params.id;
-	let sql = "SELECT * FROM energia_transacciones WHERE id_transaccion=?;";
+	let sql = "SELECT * FROM potencia_transacciones WHERE id_transaccion=?;";
 	let result = await pool.query(sql, [id]);
 	var matrix = [];
 	try {  
