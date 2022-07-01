@@ -280,7 +280,7 @@ function SetChargingProfileRequest(payload){
     */
 
     payloadRequest = {
-        "connectorId": 2,
+        "connectorId": 1,
         "csChargingProfiles": {
             "chargingProfileId": 2,
             //"transactionId": 1,
