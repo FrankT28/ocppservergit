@@ -102,7 +102,8 @@ async function meterValuesResponse(payload){
     let mili= fecha_hora_inicio.getMilliseconds();
 
     //let nombre_archivo=year + "_" + month + "_" + date+"_"+hour+"_"+minute+"_"+second + "_conector_" + conectorID+"_transaccionID_"+transaccionID;
-    let nombre_archivo = ultTrans0[0].hora_inicio;
+    let hora_inicio = ultTrans0[0].hora_inicio.replace(':', '_');
+    let nombre_archivo = hora_inicio;
     let archivo_potencia=nombre_archivo + "_potencia.txt";
     let archivo_energia= nombre_archivo + "_energia.txt";
 
