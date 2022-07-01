@@ -142,6 +142,9 @@ async function meterValuesResponse(payload){
             if(linea.measurand=='Energy.Active.Import.Register'){
                 console.log('energia:' + linea.value)
                 energia1 = linea.value;
+                if(!energia1){
+                    energia1 = 63000;
+                }
             }
 
             if(linea.measurand=='Power.Active.Import'){

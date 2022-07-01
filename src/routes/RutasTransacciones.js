@@ -54,6 +54,46 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 });
 
 /******************************************************************************/
+router.get('/home/transacciones/get_grafica/:id', async(req, res)=> { 
+	let id = req.params.id;
+	let sql = "SELECT * FROM energia_transacciones WHERE id_transaccion=?;";
+	let result = await pool.query(sql, [id]);
+	var matrix = [];
+	try {  
+		let fila;
+		let elemento;
+		for(var i=0; i<result.length-1; i++) {
+			fila = arr[i];
+			fila = fila.split('Z ');
+			matrix[i] = [];
+			cont=0;
+			var obj = {};
+			for (var j=0; j<fila.length; j++){
+				elemento = fila[j].replace(/ /g,'');
+				if(j==0){
+					elemento = elemento.split('T');
+					cont++;
+					obj.dia = elemento[0];
+					obj.hora = elemento[1].substring(0,8);
+				}else if(j==1) {
+					elemento = parseInt(elemento, 10)/1000;
+					obj.valor = elemento;
+				}
+				cont++;
+				matrix[i] = obj;
+			}
+		}	
+
+		console.log('matrix');
+		console.log(matrix)
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+
+	res.send(matrix);
+});
+
+/******************************************************************************
 router.get('/home/transacciones/get_grafica/:id', (req, res)=> { 
 	let id = req.params.id;
 	var matrix = [];
