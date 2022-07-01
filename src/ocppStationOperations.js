@@ -195,7 +195,7 @@ async function meterValuesResponse(payload){
 
 /***********************************************************************/
 async function addPowerDb(valores){
-    let sql = "INSERT INO potencia_transacciones VALUES(null,?,?,?,?,?,?)";
+    let sql = "INSERT INTO potencia_transacciones VALUES(null,?,?,?,?,?,?)";
     console.log('sql');
     console.log(sql);
     result = await pool.query(sql,valores);
@@ -207,7 +207,7 @@ async function addPowerDb(valores){
 }
 /***********************************************************************/
 async function addEnergyDb(valores){
-    let sql = "INSERT INO energia_transacciones VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO energia_transacciones VALUES(null,?,?,?,?,?,?)"
     result = await pool.query(sql,valores);
     if (result){
         console.log('Ingresado correctamente energia');
