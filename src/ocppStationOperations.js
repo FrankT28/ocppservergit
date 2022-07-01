@@ -101,12 +101,14 @@ async function meterValuesResponse(payload){
     let second = fecha_hora_inicio.getSeconds();
     let mili= fecha_hora_inicio.getMilliseconds();
 
-    let nombre_archivo=year + "_" + month + "_" + date+"_"+hour+"_"+minute+"_"+second + "_conector_" + conectorID+"_transaccionID_"+transaccionID;
+    //let nombre_archivo=year + "_" + month + "_" + date+"_"+hour+"_"+minute+"_"+second + "_conector_" + conectorID+"_transaccionID_"+transaccionID;
+    let nombre_archivo = ultTrans0[0].hora_inicio;
     let archivo_potencia=nombre_archivo + "_potencia.txt";
     let archivo_energia= nombre_archivo + "_energia.txt";
 
-    console.log('nombre archivo');
-    console.log(nombre_archivo);
+    console.log('nombres archivos');
+    console.log(archivo_potencia);
+    console.log(archivo_energia);
 
     var energia1;
     var potencia1;
@@ -155,7 +157,11 @@ async function meterValuesResponse(payload){
     var potencia_registro=timest.toISOString() + " " + potencia1 +' \n';
 
     fs.appendFile(archivo_potencia , potencia_registro, function (err) {
-        if (err) return console.log(err);
+        if (err){
+            console.log(err)
+        }else{
+            console.log('no hay error en archivo de potencia')
+        }
     });
     //************************************************************************************
 
@@ -166,7 +172,12 @@ async function meterValuesResponse(payload){
     var energia_registro=timest.toISOString() + " " + energiaconsumida +' \n';
 
     fs.appendFile(archivo_energia , energia_registro, function (err) {
-        if (err) return console.log(err);
+        console.log('Entra a archivo de energia')
+        if (err){
+            console.log(err)
+        }else{
+            console.log('No hay eror en archivo de energia')
+        }
     });
 
 
