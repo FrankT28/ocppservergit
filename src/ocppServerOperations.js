@@ -59,7 +59,7 @@ function DataTransferRequest(payload){
 //GET COMPOSITE SCHEDULE
 /*=============================================================================================*/
 function GetCompositeScheduleRequest(payload){
-    payloadRequest = {"connectorId": 3, "duration": 3600, 'chargingRateUnit': 'W'};
+    payloadRequest = {"connectorId": 3, "duration": 3600, 'chargingRateUnit': 'A'};
     return [payloadRequest];
 }
 
