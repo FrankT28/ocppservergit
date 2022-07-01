@@ -63,7 +63,9 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 	let elemento;
 	for(var i=0; i<arr.length; i++) {
 		fila = arr[i];
-		matrix[i] = [];
+		console.log('fila');
+		console.log(fila);
+		//matrix[i] = [];
 		cont=0;
 		var obj = {};
 		for (var j=0; j<fila.length; j++){
