@@ -69,6 +69,8 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 		for (var j=0; j<fila.length; j++){
 			//elemento = fila[j].replace(/ /g,'');
 			elemento = fila[j];
+			console.log('elemento');
+			console.log(elemento);
 			if(j==0){
 				elemento = elemento.split('T');
 				cont++;
