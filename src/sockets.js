@@ -287,7 +287,7 @@ module.exports = function(server){
                                 PayloadResponseNav = Respuestas[1];
                                 PayloadResponseApk = Respuestas[2];
 
-                                let CallResult = [3,uniqueId,action,PayloadResponse]; 
+                                let CallResult = [2,uniqueId,action,PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
