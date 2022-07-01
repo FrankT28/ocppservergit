@@ -89,7 +89,7 @@ async function meterValuesResponse(payload){
     console.log('ultima transaccion');
     console.log(ultTrans0[0])
     //let fecha_hora_inicio=new Date(ultTrans0[0].fecha + 'T' + ultTrans0[0].hora_inicio);
-    let fecha_hora_inicio = ultTrans0[0].fecha + ultTrans0[0].hora_inicio;
+    let fecha_hora_inicio = ultTrans0[0].fecha;
     console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
    
 
