@@ -73,37 +73,6 @@ function heartbeatResponse(payload){
 //METER VALUES
 /*=============================================================================================*/
 async function meterValuesResponse(payload){
-
-
-    let timest=new Date();
-
-    console.log('Este es el transactionID')
-    let transaccionID=payload.transactionId;
-    let conector =payload.connectorId;
-    console.log(transaccionID)
-    
-    let ultTrans0 = await pool.query('SELECT * FROM transacciones WHERE id_transaccion="'+ transaccionID + '" ORDER BY id_transaccion DESC LIMIT 1;');
-    var energia_inicial=ultTrans0[0].energiaInicio;
-    let fecha_hora_inicio=new Date(ultTrans0[0].hora_inicio);
-    console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
-
-
-    let date = fecha_hora_inicio.getDate();
-    let month = fecha_hora_inicio.getMonth() + 1;
-    let year = fecha_hora_inicio.getFullYear();
-    let hour = fecha_hora_inicio.getHours()-5;
-    let minute = fecha_hora_inicio.getMinutes();
-    let second = fecha_hora_inicio.getSeconds();
-    let mili= fecha_hora_inicio.getMilliseconds();
-
-    let nombre_archivo=year + "_" + month + "_" + date+"_"+hour+"_"+minute+"_"+second + "_conector_" + conectorID+"_transaccionID_"+transaccionID;
-    let archivo_potencia=nombre_archivo + "_potencia.txt";
-    let archivo_energia= nombre_archivo + "_energia.txt";
-
-
-    var energia1;
-    var potencia1;
-
     var meterValue = [];
     var timestamp = '';
     var value = '';
@@ -111,58 +80,15 @@ async function meterValuesResponse(payload){
     var sample = '';
     payloadResponse = {}
     
+    let transactionId = payload.transactionId;
+    let connectorId = payload.connectorId;
     meterValue = payload.meterValue;
     
     for(var i=0; i<meterValue.length; i++){
         value = meterValue[i];
         timestamp = value.timestamp;
         sampledValue = value.sampledValue;
-        
-        for (var k=0; k<sampledValue.length; k++){
-            let linea = sampledValue[k];
-            if(linea.measurand=='soc'){
-                response.soc = linea.value;
-                response.costocarga = 'esto es costocarga';
-                response.estadocarga = 'esto es estadocarga';
-                response.enecons = 'esto es enecons';
-                response.saldo = 'esto es saldo';
-            }
-
-            if(linea.measurand=='Energy.Active.Import.Register'){
-                console.log('energia:' + linea.value)
-                energia1 = linea.value;
-            }
-
-            if(linea.measurand=='Power.Active.Import'){
-                console.log('Power:' + linea.value)
-                potencia1 = linea.value;
-            }
-        }
-
-
     }
-
-    //*************************************************************************************
-    //Registro de potencia
-    //***************************************************************************************
-    var potencia_registro=timest.toISOString() + " " + potencia1 +' \n';
-
-    fs.appendFile(archivo_potencia , potencia_registro, function (err) {
-        if (err) return console.log(err);
-    });
-    //************************************************************************************
-
-    //*************************************************************************************
-    //Registro de energia
-    //***************************************************************************************
-    var energiaconsumida=(energia1-energia_inicial)/1000;
-    var energia_registro=timest.toISOString() + " " + energiaconsumida +' \n';
-
-    fs.appendFile(archivo_energia , energia_registro, function (err) {
-        if (err) return console.log(err);
-    });
-
-
     payloadResponseNav = {'tipo': 'meterValue', 'texto':'cargando', 'values': payload};
     var payloadResponseApk = meterValuesApk(payload.meterValue);
     return [payloadResponse, payloadResponseNav, payloadResponseApk]
@@ -249,7 +175,6 @@ function insertMeterValues(timestamp, transactionId, connectorId, sample){
 
 /***********************************************************************/
 function meterValuesApk(array){
-
     var response = {}
     for(var i=0; i<array.length; i++){
         let sampledValue = array[i].sampledValue;

@@ -193,8 +193,6 @@ module.exports = function(server){
                     console.log('El servidor ha recibido datos-------------------------------------------------');
                     console.log(message);
                     const opCode = parsedBuffer.opCode;
-                    console.log('opCode');
-                    console.log(opCode);
                     const CallId = 2;
                     const CallResultId = 3;
                     const CallErrorId = 4;
@@ -287,8 +285,6 @@ module.exports = function(server){
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
                                 PayloadResponseApk = Respuestas[2];
-
-                                //stationClient.write(funciones.constructReply(OIBCS, 0x1));
 
                                 let CallResult = [3, uniqueId, action, PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
