@@ -252,6 +252,7 @@ function SendLocalListRequest(payload){
 //SET CHARGING PROFILE
 /*=============================================================================================*/
 function SetChargingProfileRequest(payload){
+    /*
     payloadRequest = {
         "connectorId": 1,
         "csChargingProfiles": {
@@ -276,8 +277,36 @@ function SetChargingProfileRequest(payload){
             }
         }
     }
+    */
 
-    /*perfilcarga={
+    PayloadRequest = {
+        "connectorId": 2,
+        "csChargingProfiles": {
+            "chargingProfileId": 2,
+            //"transactionId": 1,
+            "stackLevel": 1,
+            "chargingProfilePurpose": "TxDefaultProfile",
+            "chargingProfileKind": "Relative",
+            //"recurrencyKind": "Daily",
+            //"validFrom": '2022-03-06T17:10:00.000Z',
+            //"validTo": '2022-03-16T17:20:00.000Z',
+            "chargingSchedule": {
+                //"duration": 100,
+                //"startSchedule": '2022-03-6T10:00:00.000Z',
+                "chargingRateUnit": "A",
+                "chargingSchedulePeriod": [
+                    {"startPeriod": 0, 
+                     "limit": 10, 
+                    "numberPhases": 3},
+                    //{"startPeriod": 1, "limit": 2, "numberPhases": 3}
+                ],
+                "minChargingRate": 6
+            }
+        }
+    }
+
+    /*
+    perfilcarga={
         "chargingProfileId": 1,
         "stackLevel": 1,
         "chargingProfilePurpose": "TxProfile",
@@ -287,9 +316,9 @@ function SetChargingProfileRequest(payload){
             "startSchedule": '2022-03-11T13:47:00.000Z',
             "chargingRateUnit": "A",
             "chargingSchedulePeriod": [{"startPeriod": 0, "limit": 18, "numberPhases": 3}]
-
         }
-    }*/ 
+    } 
+    */
 
     return [payloadRequest];
 }
