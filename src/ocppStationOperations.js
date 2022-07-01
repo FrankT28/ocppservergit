@@ -105,6 +105,8 @@ async function meterValuesResponse(payload){
     let archivo_potencia=nombre_archivo + "_potencia.txt";
     let archivo_energia= nombre_archivo + "_energia.txt";
 
+    console.log('nombre archivo');
+    console.log(nombre_archivo);
 
     var energia1;
     var potencia1;
