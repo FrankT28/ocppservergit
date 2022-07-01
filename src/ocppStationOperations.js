@@ -151,10 +151,10 @@ async function meterValuesResponse(payload){
         }
     }
 
-    let valores = [transaccionID, 1, conectorID, now(), timest, energia1];
+    let valores = [transaccionID, 1, conectorID, 'now()', timest, energia1];
     addPowerDb(valores);
 
-    valores = [transaccionID, 1, conectorID, now(), timest, potencia1];
+    valores = [transaccionID, 1, conectorID, 'now()', timest, potencia1];
     addEnergyDb(valores);
 
     //*************************************************************************************
