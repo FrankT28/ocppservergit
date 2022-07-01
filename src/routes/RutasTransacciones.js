@@ -65,26 +65,24 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 		fila = arr[i];
 		console.log('fila');
 		console.log(fila);
-		//matrix[i] = [];
-		cont=0;
 		var obj = {};
-		for (var j=0; j<fila.length; j++){
-			//elemento = fila[j].replace(/ /g,'');
-			elemento = fila[j];
-			console.log('elemento');
-			console.log(elemento);
-			if(j==0){
-				elemento = elemento.split('T');
-				cont++;
-				obj.dia = elemento[0];
-				obj.hora = elemento[1].substring(0,8);
-			}else if(j==1) {
-				elemento = parseInt(elemento, 10)/1000;
-				obj.valor = elemento;
-			}
-			cont++;
-			matrix[i] = obj;
-		}
+		//matrix[i] = {};
+		hora = fila.hora;
+		console.log('hora');
+		console.log(hora);
+		hora = hora.split('T');
+		obj.dia = hora[0];
+		obj.hora = hora[1].substring(0,8);
+
+		//VALOR
+		valor = fila.valor;
+		console.log('valor');
+		console.log(valor);
+		valor = parseInt(valor, 10)/1000;
+		obj.valor = valor;
+
+		//ASIGNAMOS EL OBJECTO
+		matrix[i] = obj;
 	}	
 
 	console.log('matrix');
