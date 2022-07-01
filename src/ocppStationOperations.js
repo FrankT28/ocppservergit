@@ -79,7 +79,7 @@ async function meterValuesResponse(payload){
 
     console.log('Este es el transactionID')
     let transaccionID=payload.transactionId;
-    let conector =payload.connectorId;
+    let conectorID =payload.connectorId;
     console.log(transaccionID)
     
     let ultTrans0 = await pool.query('SELECT * FROM transacciones WHERE id_transaccion="'+ transaccionID + '" ORDER BY id_transaccion DESC LIMIT 1;');
