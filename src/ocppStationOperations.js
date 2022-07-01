@@ -139,13 +139,13 @@ async function meterValuesResponse(payload){
                 response.saldo = 'esto es saldo';
             }
 
-            energia1 = 63000;
+            //energia1 = 63000;
             if(linea.measurand=='Energy.Active.Import.Register'){
                 console.log('energia:' + linea.value)
                 energia1 = linea.value;
             }
 
-            potencia1 = 50000;
+            //potencia1 = 50000;
             if(linea.measurand=='Power.Active.Import'){
                 console.log('Power:' + linea.value)
                 potencia1 = linea.value;
@@ -157,7 +157,7 @@ async function meterValuesResponse(payload){
     addEnergyDb(valores);
 
     valores = [transaccionID, 1, conectorID, 'now()', timest, potencia1];
-    addPowerDb(valores);
+    addPowerDb  (valores);
 
     //*************************************************************************************
     //Registro de potencia
