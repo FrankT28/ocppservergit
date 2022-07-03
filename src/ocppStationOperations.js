@@ -95,12 +95,12 @@ async function meterValuesResponse(payload){
         value = meterValue[i];
         timestamp = value.timestamp;
         sampledValue = value.sampledValue;
-        valores = [transactionId, 1, connectorId, 'now()', timestamp];
+        valores = [transactionId, timestamp];
         for (var k=0; k<sampledValue.length; k++){
             linea = sampledValue[k];
             measurand = linea.measurand;
             value = linea.value;
-            valores[5] = value;
+            valores[2] = value;
             console.log(measurand + ': ' + value);
             if(measurand=='Current.Offered'){
                 addCurrentOfferedDb(valores);
@@ -146,67 +146,67 @@ async function meterValuesResponse(payload){
 
 /***********************************************************************
 async function addEnergyDb(valores){
-    let sql = "INSERT INTO energia_transacciones VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO energia_transacciones VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Energia Ingresado correctamente';
 }
 /***********************************************************************/
 async function addCurrentOfferedDb(valores){
-    let sql = "INSERT INTO current_offered VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO current_offered VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Current Offered Ingresado correctamente';
 }
 /***********************************************************************/
 async function addCurrentImportPhase1Db(valores){
-    let sql = "INSERT INTO current_import_phase1 VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO current_import_phase1 VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Current Import Phase 1 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addCurrentImportPhase2Db(valores){
-    let sql = "INSERT INTO current_import_phase2 VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO current_import_phase2 VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Current Import Phase 2 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addCurrentImportPhase3Db(valores){
-    let sql = "INSERT INTO current_import_phase3 VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO current_import_phase3 VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Current Import Phase 3 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addEnergyActiveImportRegisterDb(valores){
-    let sql = "INSERT INTO energy_active_import_register VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO energy_active_import_register VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Energy Active Import Register Ingresado correctamente';
 }
 /***********************************************************************/
 async function addPowerActiveImportDb(valores){
-    let sql = "INSERT INTO power_active_import VALUES(null,?,?,?,?,?,?)";
+    let sql = "INSERT INTO power_active_import VALUES(null,?,?,?)";
     result = await pool.query(sql,valores);
     return 'Power Active Import Ingresado correctamente';
 }
 /***********************************************************************/
 async function addVoltagePhase1nDb(valores){
-    let sql = "INSERT INTO voltage_phase1n VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO voltage_phase1n VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Voltage Phase 1 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addVoltagePhase2nDb(valores){
-    let sql = "INSERT INTO voltage_phase2n VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO voltage_phase2n VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Voltage Phase 2 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addVoltagePhase3nDb(valores){
-    let sql = "INSERT INTO voltage_phase3n VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO voltage_phase3n VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'Voltage Phase 3 Ingresado correctamente';
 }
 /***********************************************************************/
 async function addStateOfChargeDb(valores){
-    let sql = "INSERT INTO state_of_charge VALUES(null,?,?,?,?,?,?)"
+    let sql = "INSERT INTO state_of_charge VALUES(null,?,?,?)"
     result = await pool.query(sql,valores);
     return 'State of charge Ingresado correctamente';
 }
