@@ -1,0 +1,49 @@
+var obj = 
+{
+	"connectorId":1,
+	"meterValue": [
+	{
+		"sampledValue":
+	[
+		{
+			"context":"Sample.Periodic","measurand":"Current.Offered","unit":"A","value":"-1.000000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Current.Import","phase":"L1","unit":"A","value":"12.150000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Current.Import","phase":"L2","unit":"A","value":"11.510000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Current.Import","phase":"L3","unit":"A","value":"12.600000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Current.Import","unit":"A","value":"12.086667"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Energy.Active.Import.Register","unit":"Wh","value":"490695.000000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Power.Active.Import","unit":"W","value":"9636.000000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Voltage","phase":"L1-N","unit":"V","value":"227.200000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Voltage","phase":"L2-N","unit":"V","value":"228.800000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Voltage","phase":"L3-N","unit":"V","value":"228.200000"
+		},
+		{
+			"context":"Sample.Periodic","measurand":"Voltage","unit":"V","value":"228.066667"
+		},
+		{
+			"context":"Sample.Periodic","location":"EV","measurand":"SoC","unit":"Percent","value":"99.000000"
+		}
+		],
+		"timestamp":"2022-07-01T21:29:04Z"
+	}
+	],
+	"transactionId":694
+}

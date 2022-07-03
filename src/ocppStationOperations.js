@@ -74,148 +74,141 @@ function heartbeatResponse(payload){
 //METER VALUES
 /*=============================================================================================*/
 async function meterValuesResponse(payload){
-    console.log('payload');
-    console.log(payload);
-
-    let timest=new Date();
-
-    console.log('Este es el transactionID')
-    let transaccionID=payload.transactionId;
-    let conectorID =payload.connectorId;
-    console.log(transaccionID)
-    
-    let ultTrans0 = await pool.query('SELECT *, date(fecha) FROM transacciones WHERE id_transaccion="'+ transaccionID + '" ORDER BY id_transaccion DESC LIMIT 1;');
-    var energia_inicial=ultTrans0[0].energiaInicio;
+    let transactionId=payload.transactionId;
+    let connectorId =payload.connectorId;
+    let sql = 'SELECT * FROM transacciones WHERE id_transaccion=? ORDER BY id_transaccion DESC LIMIT 1;';
+    let ultTrans0 = await pool.query(sql, [transactionId]);
     console.log('ultima transaccion');
     console.log(ultTrans0[0])
-    //let fecha_hora_inicio=new Date(ultTrans0[0].fecha + 'T' + ultTrans0[0].hora_inicio);
-    let fecha_hora_inicio = ultTrans0[0].fecha;
-    console.log('Esta es la hora de inicio: ' + fecha_hora_inicio)
-   
-
-    let date = fecha_hora_inicio.getDate();
-    let month = fecha_hora_inicio.getMonth() + 1;
-    let year = fecha_hora_inicio.getFullYear();
-    let hour = fecha_hora_inicio.getHours()-5;
-    let minute = fecha_hora_inicio.getMinutes();
-    let second = fecha_hora_inicio.getSeconds();
-    let mili= fecha_hora_inicio.getMilliseconds();
-
-    //let nombre_archivo=year + "_" + month + "_" + date+"_"+hour+"_"+minute+"_"+second + "_conector_" + conectorID+"_transaccionID_"+transaccionID;
-    let hora_inicio = ultTrans0[0].hora_inicio.replace(':', '_');
-    hora_inicio = hora_inicio.replace(':', '_');
-    let nombre_archivo = hora_inicio;
-    let archivo_potencia=nombre_archivo + "_potencia.txt";
-    let archivo_energia= nombre_archivo + "_energia.txt";
-
-    console.log('nombres archivos');
-    console.log(archivo_potencia);
-    console.log(archivo_energia);
-
-    var energia1;
-    var potencia1;
 
     var meterValue = [];
     var timestamp = '';
-    var value = '';
     var sampledValue = '';
-    var sample = '';
     payloadResponse = {}
     
     meterValue = payload.meterValue;
-    
+    let linea;
+    let measurand;
+    let value;
+    let phase;
     for(var i=0; i<meterValue.length; i++){
         value = meterValue[i];
         timestamp = value.timestamp;
         sampledValue = value.sampledValue;
-        
+        valores = [transactionId, 1, connectorId, 'now()', timestamp];
         for (var k=0; k<sampledValue.length; k++){
-            let linea = sampledValue[k];
-            if(linea.measurand=='soc'){
-                response.soc = linea.value;
-                response.costocarga = 'esto es costocarga';
-                response.estadocarga = 'esto es estadocarga';
-                response.enecons = 'esto es enecons';
-                response.saldo = 'esto es saldo';
-            }
-
-            //energia1 = 63000;
-            if(linea.measurand=='Energy.Active.Import.Register'){
-                console.log('energia:' + linea.value)
-                energia1 = linea.value;
-            }
-
-            //potencia1 = 50000;
-            if(linea.measurand=='Power.Active.Import'){
-                console.log('Power:' + linea.value)
-                potencia1 = linea.value;
+            linea = sampledValue[k];
+            measurand = linea.measurand;
+            value = linea.value;
+            valores[5] = value;
+            console.log(measurand + ': ' + value);
+            if(measurand=='Current.Offered'){
+                addCurrentOfferedDb(valores);
+            }else if(measurand=='Current.Import'){
+                phase = linea.phase;
+                if(phase!=undefined){
+                    if(phase=='L1'){
+                        addCurrentImportPhase1Db(valores);
+                    }else if(phase=='L2'){
+                        addCurrentImportPhase2Db(valores);
+                    }else if(phase=='L3'){
+                        addCurrentImportPhase3Db(valores);
+                    }
+                }
+            }else if(measurand=='Energy.Active.Import.Register'){
+                addEnergyActiveImportRegisterDb(valores);
+            }else if(measurand=='Power.Active.Import'){
+                addPowerActiveImportDb(valores);
+            }else if(measurand=='Voltage'){
+                phase = linea.phase;
+                if(phase!=undefined){
+                    if(phase=='L1-N'){
+                        addVoltagePhase1nDb(valores);
+                    }else if(phase=='L2-N'){
+                        addVoltagePhase2nDb(valores);
+                    }else if(phase=='L3-N'){
+                        addVoltagePhase3nDb(valores);
+                    }
+                }
+            }else if(measurand=='SoC'){
+                addStateOfChargeDb(valores);
+            }else{
+                console.log('Measurand no implementado...');
             }
         }
     }
-
-    let valores = [transaccionID, 1, conectorID, 'now()', timest, energia1];
-    addEnergyDb(valores);
-
-    valores = [transaccionID, 1, conectorID, 'now()', timest, potencia1];
-    addPowerDb  (valores);
-
-    //*************************************************************************************
-    //Registro de potencia
-    /***************************************************************************************
-    var potencia_registro=timest.toISOString() + " " + potencia1 +' \n';
-
-    fs.appendFile(archivo_potencia , potencia_registro, function (err) {
-        if (err){
-            console.log(err)
-        }else{
-            console.log('no hay error en archivo de potencia')
-        }
-    });
-    //************************************************************************************
-
-    //*************************************************************************************
-    //Registro de energia
-    /****************************************************************************************
-    var energiaconsumida=(energia1-energia_inicial)/1000;
-    var energia_registro=timest.toISOString() + " " + energiaconsumida +' \n';
-
-    fs.appendFile(archivo_energia , energia_registro, function (err) {
-        console.log('Entra a archivo de energia')
-        if (err){
-            console.log(err)
-        }else{
-            console.log('No hay eror en archivo de energia')
-        }
-    });
-    //****************************************************************************************/
-
-
+    
     payloadResponseNav = {'tipo': 'meterValue', 'texto':'cargando', 'values': payload};
     var payloadResponseApk = meterValuesApk(payload.meterValue);
     return [payloadResponse, payloadResponseNav, payloadResponseApk]
 }
 
-/***********************************************************************/
-async function addPowerDb(valores){
-    let sql = "INSERT INTO potencia_transacciones VALUES(null,?,?,?,?,?,?)";
-    console.log('sql');
-    console.log(sql);
-    result = await pool.query(sql,valores);
-    if (result){
-        console.log('Ingresado correctamente potencia');
-    }else{
-        console.log('Error al ingresar db potencia');
-    }
-}
-/***********************************************************************/
+
+/***********************************************************************
 async function addEnergyDb(valores){
     let sql = "INSERT INTO energia_transacciones VALUES(null,?,?,?,?,?,?)"
     result = await pool.query(sql,valores);
-    if (result){
-        console.log('Ingresado correctamente energia');
-    }else{
-        console.log('Error al ingresar db energia');
-    }
+    return 'Energia Ingresado correctamente';
+}
+/***********************************************************************/
+async function addCurrentOfferedDb(valores){
+    let sql = "INSERT INTO current_offered VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Current Offered Ingresado correctamente';
+}
+/***********************************************************************/
+async function addCurrentImportPhase1Db(valores){
+    let sql = "INSERT INTO current_import_phase1 VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Current Import Phase 1 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addCurrentImportPhase2Db(valores){
+    let sql = "INSERT INTO current_import_phase2 VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Current Import Phase 2 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addCurrentImportPhase3Db(valores){
+    let sql = "INSERT INTO current_import_phase3 VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Current Import Phase 3 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addEnergyActiveImportRegisterDb(valores){
+    let sql = "INSERT INTO energy_active_import_register VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Energy Active Import Register Ingresado correctamente';
+}
+/***********************************************************************/
+async function addPowerActiveImportDb(valores){
+    let sql = "INSERT INTO power_active_import VALUES(null,?,?,?,?,?,?)";
+    result = await pool.query(sql,valores);
+    return 'Power Active Import Ingresado correctamente';
+}
+/***********************************************************************/
+async function addVoltagePhase1nDb(valores){
+    let sql = "INSERT INTO voltage_phase1n VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Voltage Phase 1 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addVoltagePhase2nDb(valores){
+    let sql = "INSERT INTO voltage_phase2n VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Voltage Phase 2 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addVoltagePhase3nDb(valores){
+    let sql = "INSERT INTO voltage_phase3n VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'Voltage Phase 3 Ingresado correctamente';
+}
+/***********************************************************************/
+async function addStateOfChargeDb(valores){
+    let sql = "INSERT INTO state_of_charge VALUES(null,?,?,?,?,?,?)"
+    result = await pool.query(sql,valores);
+    return 'State of charge Ingresado correctamente';
 }
 /***********************************************************************/
 function timeConverter(UNIX_timestamp){
@@ -231,7 +224,7 @@ function timeConverter(UNIX_timestamp){
     return time;
   }
 
-/***********************************************************************/
+/***********************************************************************
 function insertCurrent(fase, transactionId, connectorId, sample){
     let contexto = sample.context;
     let unidad = sample.unit;
@@ -256,7 +249,7 @@ function insertCurrent(fase, transactionId, connectorId, sample){
         pool.query(sql);
 }
 
-/***********************************************************************/
+/***********************************************************************
 function insertCurrent(fase, transactionId, connectorId, sample){
     let contexto = sample.context;
     let unidad = sample.unit;
@@ -281,7 +274,7 @@ function insertCurrent(fase, transactionId, connectorId, sample){
         pool.query(sql);
 }
 
-/***********************************************************************/
+/***********************************************************************
 function insertMeterValues(timestamp, transactionId, connectorId, sample){
     timestamp = timeConverter(timestamp);
     let measurand = sample.measurand;
