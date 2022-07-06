@@ -71,9 +71,6 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 		var obj = {};
 		dia = fila.timestamp.toLocaleDateString();
 		hora = fila.timestamp.toLocaleTimeString()
-		//hora = fila.hora.toISOString();
-		console.log('hora');
-		console.log(hora);
 		hora = hora.split('T');
 		obj.dia = dia;
 		obj.hora = hora;

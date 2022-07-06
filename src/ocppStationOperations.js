@@ -75,29 +75,25 @@ function heartbeatResponse(payload){
 /*=============================================================================================*/
 async function meterValuesResponse(payload){
     let transactionId=payload.transactionId;
-    let connectorId =payload.connectorId;
-    let sql = 'SELECT * FROM transacciones WHERE id_transaccion=? ORDER BY id_transaccion DESC LIMIT 1;';
-    let ultTrans0 = await pool.query(sql, [transactionId]);
-    console.log('ultima transaccion');
-    console.log(ultTrans0[0]);
-
-    var meterValue = [];
-    var timestamp = '';
-    var sampledValue = '';
-    payloadResponse = {}
-    
-    meterValue = payload.meterValue;
+    let meterValue = [];
+    let timestamp = '';
+    let sampledValue = '';
+    payloadResponse = {};
     let linea;
     let measurand;
     let value;
+    let values;
     let phase;
-    for(var i=0; i<meterValue.length; i++){
-        value = meterValue[i];
-        timestamp = value.timestamp;
-        sampledValue = value.sampledValue;
-        valores = [transactionId, timestamp];
-        for (var k=0; k<sampledValue.length; k++){
-                linea = sampledValue[k];
+    let valores = [transactionId, '', ''];
+    meterValue = payload.meterValue;
+
+    for(let i=0; i<meterValue.length; i++){
+        values = meterValue[i];
+        timestamp = values.timestamp;
+        sampledValue = values.sampledValue;
+        valores[1] = timestamp;
+        for (let k=0; k<sampledValue.length; k++){
+            linea = sampledValue[k];
             measurand = linea.measurand;
             value = linea.value;
             valores[2] = value;
@@ -139,7 +135,7 @@ async function meterValuesResponse(payload){
     }
     
     payloadResponseNav = {'tipo': 'meterValue', 'texto':'cargando', 'values': payload};
-    var payloadResponseApk = meterValuesApk(payload.meterValue);
+    let payloadResponseApk = meterValuesApk(payload.meterValue);
     return [payloadResponse, payloadResponseNav, payloadResponseApk]
 }
 
