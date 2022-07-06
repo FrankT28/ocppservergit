@@ -79,7 +79,7 @@ async function meterValuesResponse(payload){
     let sql = 'SELECT * FROM transacciones WHERE id_transaccion=? ORDER BY id_transaccion DESC LIMIT 1;';
     let ultTrans0 = await pool.query(sql, [transactionId]);
     console.log('ultima transaccion');
-    console.log(ultTrans0[0])
+    console.log(ultTrans0[0]);
 
     var meterValue = [];
     var timestamp = '';
@@ -97,7 +97,7 @@ async function meterValuesResponse(payload){
         sampledValue = value.sampledValue;
         valores = [transactionId, timestamp];
         for (var k=0; k<sampledValue.length; k++){
-            linea = sampledValue[k];
+                linea = sampledValue[k];
             measurand = linea.measurand;
             value = linea.value;
             valores[2] = value;

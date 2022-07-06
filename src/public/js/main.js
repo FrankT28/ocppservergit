@@ -136,7 +136,7 @@ function remoteStartTransaction(stationId){
 }
 
 function remoteStopTransaction(stationId){
-	var PayloadRequest = JSON.stringify({"tipo": "RemoteStopTransaction","idtag":"7240E49A"});
+	var PayloadRequest = JSON.stringify({"tipo": "RemoteStopTransaction","idtag":"7240E49A", "stationId": stationId});
 	ws.send(PayloadRequest);
 }
 

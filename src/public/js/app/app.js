@@ -61,9 +61,9 @@ require('./main');
                     if (attrs.toggle == 'flot-chart-mixed') {
                         el.tkFlotChartMixed();
                     }
-                    if (attrs.toggle == 'flot-chart-lines-1') {
+                    /*if (attrs.toggle == 'flot-chart-lines-1') {
                         el.tkFlotChartLines1();
-                    }
+                    }*/
                     if (attrs.toggle == 'flot-chart-lines-2') {
                         el.tkFlotChartLines2();
                     }
@@ -881,6 +881,8 @@ module.exports = charts;
 
 })(jQuery);
 },{"../lib/_skin":"/Code/html/themes/themekit/lib/charts/js/lib/_skin.js","./_helper":"/Code/html/themes/themekit/lib/charts/js/flot/_helper.js"}],"/Code/html/themes/themekit/lib/charts/js/flot/_line_fill_nopoints.js":[function(require,module,exports){
+
+/*
 (function ($) {
 
     var skin = require('../lib/_skin')();
@@ -987,7 +989,7 @@ module.exports = charts;
 
     /**
      * jQuery plugin wrapper for compatibility with Angular UI.Utils: jQuery Passthrough
-     */
+     *
     $.fn.tkFlotChartLines1 = function () {
 
         if (! this.length) return;
@@ -999,6 +1001,7 @@ module.exports = charts;
     $('[data-toggle="flot-chart-lines-1"]').tkFlotChartLines1();
 
 })(jQuery);
+*/
 },{"../lib/_skin":"/Code/html/themes/themekit/lib/charts/js/lib/_skin.js","./_helper":"/Code/html/themes/themekit/lib/charts/js/flot/_helper.js"}],"/Code/html/themes/themekit/lib/charts/js/flot/_line_fill_nopoints_2.js":[function(require,module,exports){
 (function ($) {
 

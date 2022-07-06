@@ -56,7 +56,8 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 /******************************************************************************/
 router.get('/home/transacciones/get_grafica/:id', async(req, res)=> { 
 	let id = req.params.id;
-	let sql = "SELECT * FROM potencia_transacciones WHERE id_transaccion=?;";
+	//let sql = "SELECT * FROM energy_active_import_register WHERE id_transaccion=?;";
+	let sql = "SELECT * FROM energia_transacciones WHERE id_transaccion=?;";
 	let arr = await pool.query(sql, [id]);
 	var matrix = [];
 	let fila;
@@ -66,7 +67,6 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 		console.log('fila');
 		console.log(fila);
 		var obj = {};
-		//matrix[i] = {};
 		hora = fila.hora.toISOString();
 		console.log('hora');
 		console.log(hora);

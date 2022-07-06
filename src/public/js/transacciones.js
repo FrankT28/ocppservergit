@@ -192,78 +192,136 @@
 			})
 		}
 		/*=========================================================================*
-		$scope.desvincularTarjeta = function(id_Transaccion, id_tarjeta){
-			var val = prompt('Ingrese la contrasena de administrador: ');
-			if(val=='123'){
-				$http.get('/home/transacciones/desvincular_tarjeta/' + id_Transaccion + '/' + id_tarjeta + '/')
-				.success(function(data){
-					console.log('respuesta de transacciones desvincular');
-					console.log(data);
-					$scope.successMessage = data.message
-					$scope.Transaccion.tarjetas = data.tarjetas
-					$scope.botonAsignarTarjeta = false;
-					$scope.tarjetaSeleccionada = '';
-					tarjetas()
-				}).error(function(data){
-					console.log('Error HTTP')
-				})
-			}else{
-				alert('Contrasena incorrecta!')
-			}
+		$scope.graficaTransaccion = function(){
+			(function ($) {
+				console.log('pasa de funcion');
+				let charts = {};
+				charts.chart_lines_fill_nopoints =
+				{
+					// chart data
+					data: {
+						d1: [],
+						d2: []
+					},
+
+					// will hold the chart object
+					plot: null,
+
+					// chart options
+					options: {
+						grid: {
+							show: true,
+							aboveData: false,
+							color: colors[ 'default-color' ],
+							labelMargin: 5,
+							axisMargin: 0,
+							borderWidth: 0,
+							borderColor: null,
+							minBorderMargin: 5,
+							clickable: true,
+							hoverable: true,
+							mouseActiveRadius: 20,
+							backgroundColor: {}
+						},
+						series: {
+							grow: {
+								active: false
+							},
+							lines: {
+								show: true,
+								fill: true,
+								lineWidth: 2,
+								steps: false
+							},
+							points: {
+								show: false
+							}
+						},
+						legend: {
+							position: "nw",
+							noColumns: 2
+						},
+						yaxis: {
+							ticks: 4,
+							tickDecimals: 0,
+							tickColor: '#efefef'
+						},
+						xaxis: {
+							ticks: 11,
+							tickDecimals: 0,
+							tickColor: 'transparent'
+						},
+						colors: [],
+						shadowSize: 1,
+						tooltip: true,
+						tooltipOpts: {
+							content: "%s : %y.0",
+							shifts: {
+								x: - 30,
+								y: - 50
+							},
+							defaultTheme: false
+						}
+					},
+
+					// initialize
+					init: function (wrapper) {
+
+						console.log('init')
+						if (! wrapper.length) return;
+
+						// apply styling
+						charts.utility.applyStyle(this);
+
+						// generate some data
+						this.data.d1 = [ [ 1, 3 + charts.utility.randNum() ], [ 2, 6 + charts.utility.randNum() ], [ 3, 9 + charts.utility.randNum() ], [ 4, 12 + charts.utility.randNum() ], [ 5, 15 + charts.utility.randNum() ], [ 6, 18 + charts.utility.randNum() ], [ 7, 21 + charts.utility.randNum() ], [ 8, 15 + charts.utility.randNum() ], [ 9, 18 + charts.utility.randNum() ], [ 10, 21 + charts.utility.randNum() ], [ 11, 24 + charts.utility.randNum() ], [ 12, 27 + charts.utility.randNum() ], [ 13, 30 + charts.utility.randNum() ], [ 14, 33 + charts.utility.randNum() ], [ 15, 24 + charts.utility.randNum() ], [ 16, 27 + charts.utility.randNum() ], [ 17, 30 + charts.utility.randNum() ], [ 18, 33 + charts.utility.randNum() ], [ 19, 36 + charts.utility.randNum() ], [ 20, 39 + charts.utility.randNum() ], [ 21, 42 + charts.utility.randNum() ], [ 22, 45 + charts.utility.randNum() ], [ 23, 36 + charts.utility.randNum() ], [ 24, 39 + charts.utility.randNum() ], [ 25, 42 + charts.utility.randNum() ], [ 26, 45 + charts.utility.randNum() ], [ 27, 38 + charts.utility.randNum() ], [ 28, 51 + charts.utility.randNum() ], [ 29, 55 + charts.utility.randNum() ], [ 30, 60 + charts.utility.randNum() ] ];
+						this.data.d2 = [ [ 1, charts.utility.randNum() - 5 ], [ 2, charts.utility.randNum() - 4 ], [ 3, charts.utility.randNum() - 4 ], [ 4, charts.utility.randNum() ], [ 5, 4 + charts.utility.randNum() ], [ 6, 4 + charts.utility.randNum() ], [ 7, 5 + charts.utility.randNum() ], [ 8, 5 + charts.utility.randNum() ], [ 9, 6 + charts.utility.randNum() ], [ 10, 6 + charts.utility.randNum() ], [ 11, 6 + charts.utility.randNum() ], [ 12, 2 + charts.utility.randNum() ], [ 13, 3 + charts.utility.randNum() ], [ 14, 4 + charts.utility.randNum() ], [ 15, 4 + charts.utility.randNum() ], [ 16, 4 + charts.utility.randNum() ], [ 17, 5 + charts.utility.randNum() ], [ 18, 5 + charts.utility.randNum() ], [ 19, 2 + charts.utility.randNum() ], [ 20, 2 + charts.utility.randNum() ], [ 21, 3 + charts.utility.randNum() ], [ 22, 3 + charts.utility.randNum() ], [ 23, 3 + charts.utility.randNum() ], [ 24, 2 + charts.utility.randNum() ], [ 25, 4 + charts.utility.randNum() ], [ 26, 4 + charts.utility.randNum() ], [ 27, 5 + charts.utility.randNum() ], [ 28, 2 + charts.utility.randNum() ], [ 29, 2 + charts.utility.randNum() ], [ 30, 3 + charts.utility.randNum() ] ];
+
+						// make chart
+						this.plot = $.plot(
+							wrapper,
+							[ {
+								label: "Visits",
+								data: this.data.d1
+							},
+							{
+								label: "Unique Visits",
+								data: this.data.d2
+							} ],
+							this.options
+						);
+					}
+				};
+
+				$.fn.tkFlotChartLines1 = function () {
+					if (! this.length) return;
+					charts.chart_lines_fill_nopoints.init(this);
+				};
+
+			})(jQuery);
 		}
 		/*=========================================================================*/
 		$scope.graficaTransaccion = function(transaccion){
-			console.log('id de transaccion: ' + transaccion.id_transaccion);
-			
 			let id_transaccion = transaccion.id_transaccion;
-
 			var elemento = document.getElementById('line-chart');
 			elemento.innerHTML = ""
-			//elemento.empty();
-
-			console.log('Este es el elemento: ');
-			console.log(elemento)
 			$http.get('/home/transacciones/get_grafica/' + id_transaccion + '/')
 			.success(function(data){
-				console.log('respuesta de transacciones grafica');
-				console.log(data);
-
-				
 				var skin = '';
-
 				new Morris.Line({
-					//lineColors: [ config.skins[ skin ][ 'primary-color' ], colors[ 'danger-color' ] ],
-					//pointFillColors: [ config.skins[ skin ][ 'primary-color' ], colors[ 'danger-color' ] ],
 					pointStrokeColors: [ '#ffffff', '#ffffff' ],
 					gridTextColor: colors[ 'default-color' ],
 					gridTextWeight: 'bold',
-		
-					// ID of the element in which to draw the chart.
 					element: 'line-chart',
-					// Chart data records -- each entry in this array corresponds to a point on
-					// the chart.
-					/*data: [
-						{date: '2014-02', a: 2000, b: 2400},
-						{date: '2014-03', a: 1200, b: 2500},
-						{date: '2014-04', a: 3200, b: 2000},
-						{date: '2014-05', a: 1600, b: 1440},
-						{date: '2014-06', a: 1290, b: 2830},
-						{date: '2014-07', a: 1930, b: 1200},
-						{date: '2014-08', a: 2120, b: 3000}
-					],*/
-					//LA DATA QUE ENVIA EL BACK PARA LA GRAFICA, EN VALORES POR HORA DEL DIA
 					data: data,
-					// The name of the data record attribute that contains x-values.
 					xkey: 'hora',
-					// A list of names of data record attributes that contain y-values.
 					ykeys: [ 'valor' ],
-					// Labels for the ykeys -- will be displayed when you hover over the
-					// chart.
 					labels: [ 'Potencia' ],
 					resize: false,
 					parseTime: false
 				});
 			})
 		}
+		/*=========================================================================*/
 	}]
 )
