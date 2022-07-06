@@ -62,17 +62,21 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 	var matrix = [];
 	let fila;
 	let elemento;
+	let dia;
+	let hora;
 	for(var i=0; i<arr.length; i++) {
 		fila = arr[i];
 		console.log('fila');
 		console.log(fila);
 		var obj = {};
-		hora = fila.hora.toISOString();
+		dia = fila.timestamp.toLocaleDateString();
+		hora = fila.timestamp.toLocaleTimeString()
+		//hora = fila.hora.toISOString();
 		console.log('hora');
 		console.log(hora);
 		hora = hora.split('T');
-		obj.dia = hora[0];
-		obj.hora = hora[1].substring(0,8);
+		obj.dia = dia;
+		obj.hora = hora;
 
 		//VALOR
 		valor = fila.valor;
