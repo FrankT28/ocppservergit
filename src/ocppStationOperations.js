@@ -95,7 +95,7 @@ async function meterValuesResponse(payload){
         for (let k=0; k<sampledValue.length; k++){
             linea = sampledValue[k];
             measurand = linea.measurand;
-            value = linea.value;    
+            value = linea.value;     
             valores[2] = value;
             console.log(measurand + ': ' + value);
             if(measurand=='Current.Offered'){
