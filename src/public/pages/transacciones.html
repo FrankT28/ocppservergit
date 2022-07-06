@@ -124,28 +124,35 @@
                     </div>
                 </div>
 
-                <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
+                <!--INICIA SECCION PARA VER LAS GRAFICAS DE CARGA-->
                 <div id="color-profile" class="tab-pane">
-                    <div class="row">
-                        <!-- Line chart -->
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Gráfica de Carga</div>
-                            <div class="panel-body">
-                                <div id="chart_lines_fill_nopoints_2" data-toggle="flot-chart-lines-2" class="flotchart-holder"></div>
-                                <div id="line-chart" data-toggle="morris-chart-line" class="height-250"></div>
+                    <div class="tabbable tabs-primary">
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs text-center">
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('energia', 1, transaccion)"><i class="fa fa-bar-chart-o"></i>Energía</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('potencia', 1, transaccion)"><i class="fa fa-bar-chart-o"></i>Potencia</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('corriente', 1, transaccion)"><i class="fa fa-bar-chart-o"></i>Corriente fase 1</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('corriente', 2, transaccion)"><i class="fa fa-bar-chart-o"></i>Corriente fase 2</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('corriente', 3, transaccion)"><i class="fa fa-bar-chart-o"></i>Corriente fase 3</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('voltage', 1, transaccion)"><i class="fa fa-bar-chart-o"></i>Voltage fase 1</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('voltage', 2, transaccion)"><i class="fa fa-bar-chart-o"></i>Voltage fase 2</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('voltage', 3, transaccion)"><i class="fa fa-bar-chart-o"></i>Voltage fase 3</a></li>
+                            <li><a href="#color-profile" data-toggle="tab" ng-click="graficaTransaccion('soc', 1, transaccion)"><i class="fa fa-bar-chart-o"></i>Estado de carga</a></li>
+                        </ul>
+                        <!-- // END Tabs -->
+                    
+                    
+                        <div class="row">
+                            <!-- Line chart -->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Gráfica de Carga</div>
+                                <div class="panel-body">
+                                    <div id="chart_lines_fill_nopoints_2" data-toggle="flot-chart-lines-2" class="flotchart-holder"></div>
+                                    <div id="line-chart" data-toggle="morris-chart-line" class="height-250"></div>
+                                </div>
                             </div>
+                            <!--End Line Chart-->
                         </div>
-                        <!-- // Line chart -->
-                        <!-- Lines chart --
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">Lines chart with fill & without points</h4>
-                            </div>
-                            <div class="panel-body">
-                                <div id="chart_lines_fill_nopoints" data-toggle="flot-chart-lines-1" class="flotchart-holder"></div>
-                            </div>
-                        </div>
-                        <!-- // Lines chart END -->
                     </div>
                 </div>
 

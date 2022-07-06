@@ -301,22 +301,25 @@
 			})(jQuery);
 		}
 		/*=========================================================================*/
-		$scope.graficaTransaccion = function(transaccion){
+		$scope.graficaTransaccion = function(tipo, fase, transaccion){
 			let id_transaccion = transaccion.id_transaccion;
 			var elemento = document.getElementById('line-chart');
 			elemento.innerHTML = ""
-			$http.get('/home/transacciones/get_grafica/' + id_transaccion + '/')
+			$http.get('/home/transacciones/get_grafica/' + tipo + '/' + fase + '/' + id_transaccion + '/')
 			.success(function(data){
 				var skin = '';
+				let label = data.label;
+				let matrix = data.matrix;
+
 				new Morris.Line({
 					pointStrokeColors: [ '#ffffff', '#ffffff' ],
 					gridTextColor: colors[ 'default-color' ],
 					gridTextWeight: 'bold',
 					element: 'line-chart',
-					data: data,
+					data: matrix,
 					xkey: 'hora',
 					ykeys: [ 'valor' ],
-					labels: [ 'Potencia' ],
+					labels: [label],
 					resize: false,
 					parseTime: false
 				});

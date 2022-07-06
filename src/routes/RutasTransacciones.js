@@ -54,24 +54,59 @@ router.get('/home/transacciones/informacion/:desde/:cuantos', async(req, res) =>
 });
 
 /******************************************************************************/
-router.get('/home/transacciones/get_grafica/:id', async(req, res)=> { 
+router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> { 
+	var data = {};
 	let id = req.params.id;
-	//let sql = "SELECT * FROM energy_active_import_register WHERE id_transaccion=?;";
-	let sql = "SELECT * FROM energy_active_import_register WHERE id_transaccion=?;";
+	let tipo = req.params.tipo;
+	let fase = req.params.fase;
+	let sql;
+	let label;
+	if(tipo=='energia'){
+		label = 'energia';
+		sql = "SELECT * FROM energy_active_import_register WHERE id_transaccion=?;";
+	}else if(tipo=='potencia'){
+		label = 'potencia';
+		sql = "SELECT * FROM power_active_import WHERE id_transaccion=?;";
+	
+	
+	}else if(tipo=='corriente'){
+		if(fase==1){
+			label = 'Corriente fase 1';
+			sql = "SELECT * FROM current_import_phase1 WHERE id_transaccion=?;";
+		}else if(fase==2){
+			label = 'Corriente fase 2';
+			sql = "SELECT * FROM current_import_phase2 WHERE id_transaccion=?;";
+		}else if(fase==3){
+			label = 'Corriente fase 3';
+			sql = "SELECT * FROM current_import_phase3 WHERE id_transaccion=?;";
+		}
+	}else if(tipo=='voltage'){
+		if(fase==1){
+			label = 'Voltaje fase 1';
+			sql = "SELECT * FROM voltage_phase1n WHERE id_transaccion=?;";
+		}else if(fase==2){
+			label = 'Voltaje fase 2';
+			sql = "SELECT * FROM voltage_phase2n WHERE id_transaccion=?;";
+		}else if(fase==3){
+			label = 'Voltaje fase 3';
+			sql = "SELECT * FROM voltage_phase3n WHERE id_transaccion=?;";
+		}	
+	}else if(tipo=='soc'){
+		label = 'Estado de carga';
+		sql = "SELECT * FROM state_of_charge WHERE id_transaccion=?;";
+	}
+
 	let arr = await pool.query(sql, [id]);
 	var matrix = [];
 	let fila;
-	let elemento;
 	let dia;
 	let hora;
 	for(var i=0; i<arr.length; i++) {
 		fila = arr[i];
-		console.log('fila');
-		console.log(fila);
 		var obj = {};
 		dia = fila.timestamp.toLocaleDateString();
 		hora = fila.timestamp.toLocaleTimeString()
-		hora = hora.split('T');
+		//hora = hora.split('T');
 		obj.dia = dia;
 		obj.hora = hora;
 
@@ -88,8 +123,9 @@ router.get('/home/transacciones/get_grafica/:id', async(req, res)=> {
 
 	console.log('matrix');
 	console.log(matrix)
-
-	res.send(matrix);
+	data.matrix = matrix;
+	data.label = label;
+	res.send(data);
 });
 
 /******************************************************************************

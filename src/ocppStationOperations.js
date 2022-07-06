@@ -90,6 +90,8 @@ async function meterValuesResponse(payload){
     for(let i=0; i<meterValue.length; i++){
         values = meterValue[i];
         timestamp = values.timestamp;
+        console.log('timestamp: ');
+        console.log(timestamp);
         sampledValue = values.sampledValue;
         valores[1] = timestamp;
         for (let k=0; k<sampledValue.length; k++){

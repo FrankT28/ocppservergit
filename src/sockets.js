@@ -121,7 +121,6 @@ async function updatePingDb(id){
     let result = await pool.query(sql, [id]);
 }
 
-
 /*=============================================================================================*/
 module.exports = function(server){
     server.on('upgrade',  async(req, socket) => { 
