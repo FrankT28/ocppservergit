@@ -95,39 +95,39 @@ async function meterValuesResponse(payload){
         for (let k=0; k<sampledValue.length; k++){
             linea = sampledValue[k];
             measurand = linea.measurand;
-            value = linea.value;       
-            valores[2] = value;
+            value = linea.value;
             console.log(measurand + ': ' + value);
+            valores[2] = value;
             if(measurand=='Current.Offered'){
-                addCurrentOfferedDb(valores);
+                await addCurrentOfferedDb(valores);
             }else if(measurand=='Current.Import'){
                 phase = linea.phase;
                 if(phase!=undefined){
                     if(phase=='L1'){
-                        addCurrentImportPhase1Db(valores);
+                        await addCurrentImportPhase1Db(valores);
                     }else if(phase=='L2'){
-                        addCurrentImportPhase2Db(valores);
+                        await addCurrentImportPhase2Db(valores);
                     }else if(phase=='L3'){
-                        addCurrentImportPhase3Db(valores);
+                        await addCurrentImportPhase3Db(valores);
                     }
                 }
             }else if(measurand=='Energy.Active.Import.Register'){
-                addEnergyActiveImportRegisterDb(valores);
+                await addEnergyActiveImportRegisterDb(valores);
             }else if(measurand=='Power.Active.Import'){
-                addPowerActiveImportDb(valores);
+                await addPowerActiveImportDb(valores);
             }else if(measurand=='Voltage'){
                 phase = linea.phase;
                 if(phase!=undefined){
                     if(phase=='L1-N'){
-                        addVoltagePhase1nDb(valores);
+                        await addVoltagePhase1nDb(valores);
                     }else if(phase=='L2-N'){
-                        addVoltagePhase2nDb(valores);
+                        await addVoltagePhase2nDb(valores);
                     }else if(phase=='L3-N'){
-                        addVoltagePhase3nDb(valores);
+                        await addVoltagePhase3nDb(valores);
                     }
                 }
             }else if(measurand=='SoC'){
-                addStateOfChargeDb(valores);
+                await addStateOfChargeDb(valores);
             }else{
                 console.log('Measurand no implementado...');
             }
