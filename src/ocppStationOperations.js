@@ -97,7 +97,7 @@ async function meterValuesResponse(payload){
         for (let k=0; k<sampledValue.length; k++){
             linea = sampledValue[k];
             measurand = linea.measurand;
-            value = linea.value;
+            value = linea.value; 
             console.log(measurand + ': ' + value);
             valores[2] = value;
             if(measurand=='Current.Offered'){
@@ -388,8 +388,6 @@ async function stopTransactionResponse(payload){
     let hora_fin = payload.timestamp;
     var sql = 'SELECT energiaInicio FROM transacciones WHERE id_transaccion=?;';
     let meterStart = await pool.query(sql, transactionId);
-    console.log('energia inicio');
-    console.log(meterStart[0].energiaInicio);
     let meterStop = payload.meterStop;
     let ec;
     if(meterStart.length>0){
@@ -399,13 +397,10 @@ async function stopTransactionResponse(payload){
         ec = meterStop;
     }
 
-    console.log('ec: ');
-    console.log(ec);
-            
     let razon = payload.reason;
     const values = [meterStop, ec, estado, razon, transactionId]
     sql = 'UPDATE transacciones SET hora_fin=now(), energiaFin=?, energiaConsumida=?, estado=?, razon=? WHERE id_transaccion=?;'; 
-    let update = await pool.query(sql, values);
+    await pool.query(sql, values);
 
     payloadResponse = {"idTagInfo": {"status": "Accepted"}};
     payloadResponseNav = {"idTagInfo": {"status": "Accepted"}};

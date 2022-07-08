@@ -310,6 +310,8 @@
 				var skin = '';
 				let label = data.label;
 				let matrix = data.matrix;
+				let ymin = data.ymin;
+				let ymax = data.ymax;
 
 				new Morris.Line({
 					pointStrokeColors: [ '#ffffff', '#ffffff' ],
@@ -319,6 +321,8 @@
 					data: matrix,
 					xkey: 'hora',
 					ykeys: [ 'valor' ],
+					ymin: ymin,
+					ymax: ymax,
 					labels: [label],
 					resize: false,
 					parseTime: false

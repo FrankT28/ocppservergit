@@ -4,6 +4,15 @@ const pool = require('../database');
 var fs = require('fs');
 const path = require('path');
 
+/********************************************************************************************/
+function invierte_fecha(fecha){
+    const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    let year = fecha.getFullYear()
+    let month = months[fecha.getMonth()];
+    let day = fecha.getDate()
+    let fecha_invertida = day + '-' + month + '-' + year;
+    return fecha_invertida
+}
 
 function timeConverter(UNIX_timestamp){
 	var a = new Date(UNIX_timestamp);
@@ -61,15 +70,21 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 	let fase = req.params.fase;
 	let sql;
 	let label;
+	let divisor = 1;
+	let ymin, ymax;
 	if(tipo=='energia'){
 		label = 'energia';
 		sql = "SELECT * FROM energy_active_import_register WHERE id_transaccion=?;";
+		divisor = 1000;
+		ymin = 0; ymax = 100;
 	}else if(tipo=='potencia'){
 		label = 'potencia';
 		sql = "SELECT * FROM power_active_import WHERE id_transaccion=?;";
-	
-	
+		divisor = 1000;
+		ymin = 0; ymax = 50;
 	}else if(tipo=='corriente'){
+		ymin = 0; ymax = 80;
+		divisor = 1;
 		if(fase==1){
 			label = 'Corriente fase 1';
 			sql = "SELECT * FROM current_import_phase1 WHERE id_transaccion=?;";
@@ -81,6 +96,8 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 			sql = "SELECT * FROM current_import_phase3 WHERE id_transaccion=?;";
 		}
 	}else if(tipo=='voltage'){
+		ymin = 210; ymax = 230;
+		divisor = 1;
 		if(fase==1){
 			label = 'Voltaje fase 1';
 			sql = "SELECT * FROM voltage_phase1n WHERE id_transaccion=?;";
@@ -92,6 +109,8 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 			sql = "SELECT * FROM voltage_phase3n WHERE id_transaccion=?;";
 		}	
 	}else if(tipo=='soc'){
+		ymin = 0; ymax = 100;
+		divisor = 1;
 		label = 'Estado de carga';
 		sql = "SELECT * FROM state_of_charge WHERE id_transaccion=?;";
 	}
@@ -112,22 +131,46 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 
 		//VALOR
 		valor = fila.valor;
-		console.log('valor');
-		console.log(valor);
-		valor = parseInt(valor, 10)/1000;
+		valor = parseInt(valor, 10)/divisor;
 		obj.valor = valor;
 
 		//ASIGNAMOS EL OBJECTO
 		matrix[i] = obj;
 	}	
 
-	console.log('matrix');
-	console.log(matrix)
+	
+	if(tipo=='energia'){
+		datos = limitesEnergía(matrix);
+		matrix = datos.matrix;
+		ymin = 0;
+		ymax = datos.rango;
+	}
+
 	data.matrix = matrix;
 	data.label = label;
+	data.ymin = ymin;
+	data.ymax = ymax;
+
 	res.send(data);
 });
 
+/******************************************************************************/
+function limitesEnergía(matrix){
+	let data = {};
+	let min = matrix[0].valor;
+	let max = matrix[matrix.length-1].valor;
+	let rango = (max - min).toFixed(2);
+	console.log('minimo: ' + min);
+	console.log('maximo: ' + max);
+	for(let i=0; i< matrix.length; i++){
+		matrix[i].valor -= min;
+		matrix[i].valor = matrix[i].valor.toFixed(2);
+		console.log(matrix[i].valor)
+	}
+	data.matrix = matrix;
+	data.rango = rango;
+	return data;
+}
 /******************************************************************************
 router.get('/home/transacciones/get_grafica/:id', (req, res)=> { 
 	let id = req.params.id;

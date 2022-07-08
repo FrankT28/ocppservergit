@@ -19,6 +19,16 @@ router.get('/home/estaciones/archivo', async(req, res) => {
 */
 
 /********************************************************************************************/
+function invierte_fecha(fecha){
+    const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+    let year = fecha.getFullYear()
+    let month = months[fecha.getMonth()];
+    let day = fecha.getDate()
+    let fecha_invertida = day + '-' + month + '-' + year;
+    return fecha_invertida
+}
+
+/********************************************************************************************/
 async function estadoEstacion(id){
 	let sql = "SELECT estado_est_espanol FROM estados_estaciones WHERE id_estado_est=?";
 	let result = await pool.query(sql, [id]);
@@ -145,7 +155,7 @@ router.get('/home/estaciones/transacciones/:id/:desde/:cuantos', async(req, res)
 	var ide = req.params.id;
 	var desde = req.params.desde;
 	var cuantos = req.params.cuantos;
-
+	let transacciones = [];
 	let sqlTotal = 'SELECT COUNT(*) as total FROM transacciones WHERE id_estacion="' + ide + '";';
 	let total = await pool.query(sqlTotal);
 	total = total[0].total;
@@ -155,7 +165,14 @@ router.get('/home/estaciones/transacciones/:id/:desde/:cuantos', async(req, res)
 	"' AND tr.id_tarjeta = ta.id_tarjeta ORDER BY id_transaccion DESC LIMIT " + desde + ", " + cuantos + ";";
 	console.log('sqlSelect: ');
 	console.log(sqlSelect);
-	const transacciones = await pool.query(sqlSelect);
+	let result = await pool.query(sqlSelect);
+	for(let i=0; i<result.length; i++){
+		transacciones[i] = result[i];
+		transacciones[i].fecha = invierte_fecha(transacciones[i].fecha);
+		transacciones[i].energiaInicio = transacciones[i].energiaInicio/1000;
+		transacciones[i].energiaFin = transacciones[i].energiaFin/1000;
+		transacciones[i].energiaConsumida = transacciones[i].energiaConsumida/1000;
+	}
 	data.success = true;
 	data.transacciones = transacciones;
 	res.send(data);
