@@ -5,7 +5,7 @@ const funciones = require('./funciones.js');
 /*=============================================================================================*/
 //CANCEL RESERVATION
 /*=============================================================================================*/
-function CancelReservationReques(payload){
+function CancelReservationRequest(payload){
     let reservationId = payload.reservationId;
     payloadRequest = {"reservationId": reservationId};
     return [payloadRequest];

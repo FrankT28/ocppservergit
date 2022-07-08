@@ -4,15 +4,7 @@ const pool = require('../database');
 var fs = require('fs');
 const path = require('path');
 
-/********************************************************************************************/
-function invierte_fecha(fecha){
-    const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-    let year = fecha.getFullYear()
-    let month = months[fecha.getMonth()];
-    let day = fecha.getDate()
-    let fecha_invertida = day + '-' + month + '-' + year;
-    return fecha_invertida
-}
+
 
 function timeConverter(UNIX_timestamp){
 	var a = new Date(UNIX_timestamp);

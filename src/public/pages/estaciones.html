@@ -217,28 +217,66 @@
             <!--INICIA SECCION PARA OPERACIONES OCPP-->
             <div id="color-messages" class="tab-pane">
                 <div class="card-body row" id="Cuadro_opciones">
-                    <div class="col-md-3">
-                        <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
-                        <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
-                        <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
-                        <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
-                        <button onclick="clearChargingProfile(1)" class="btn btn-primary m-1 form-control">Limpiar Perfil de Carga</button>
-                        <button onclick="dataTransfer(1)" class="btn btn-secondary m-1 form-control">Transferencia de Datos</button>
-                        <button onclick="getCompositeSchedule(1)" class="btn btn-light m-1 form-control">Obtener Horario Compuesto</button>
-                        <button onclick="getConfiguration(1)" class="btn btn-dark m-1 form-control">Obtener configuracion</button>
-                        <button onclick="getDiagnostics(1)" class="btn btn-muted m-1 form-control">Pedir diagnostico</button>
-                        <button onclick="remoteStartTransaction(1)" class="btn btn-danger m-1 form-control">Iniciar Transaccion Remota</button>
-                        <button onclick="remoteStopTransaction(1)" class="btn btn-info m-1 form-control">Detener Transaccion Remota</button>
-                        <button onclick="getLocalListVersion(1)" class="btn btn-warning m-1 form-control">Obtener Version de Lista Local</button>
-                        <button onclick="reserveNow(1)" class="btn btn-success m-1 form-control">Reservar Ahora</button>
-                        <button onclick="reset(1)" class="btn btn-primery m-1 form-control">Resetear</button>
-                        <button onclick="sendLocalList(1)" class="btn btn-secondary m-1 form-control">Enviar Lista Local</button>
-                        <button onclick="setChargingProfile(1)" class="btn btn-light m-1 form-control">Establecer Perfil de Carga</button>
-                        <button onclick="triggerMessage(1)" class="btn btn-muted m-1 form-control">Solicitar Operacion OCPP</button>
-                        <button onclick="buttons_unlockConnector()" class="btn btn-danger m-1 form-control">Desbloquear Conector</button>
-                        <button onclick="updateFirmware(1)" class="btn btn-info m-1 form-control">Actualizar Firmware</button>
+                    <div class="col-md-12">
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="clearChargingProfile(1)" class="btn btn-success m-1 form-control">Limpiar Perfil de Carga</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="dataTransfer(1)" class="btn btn-danger m-1 form-control">Transferencia de Datos</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="getCompositeSchedule(1)" class="btn btn-info m-1 form-control">Obtener Horario Compuesto</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="getConfiguration(1)" class="btn btn-warning m-1 form-control">Obtener configuracion</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="getDiagnostics(1)" class="btn btn-warning m-1 form-control">Pedir diagnostico</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="remoteStartTransaction(1)" class="btn btn-success m-1 form-control">Iniciar Transaccion Remota</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="remoteStopTransaction(1)" class="btn btn-danger m-1 form-control">Detener Transaccion Remota</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="getLocalListVersion(1)" class="btn btn-info m-1 form-control">Obtener Version de Lista Local</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="reserveNow(1)" class="btn btn-info m-1 form-control">Reservar Ahora</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="reset(1)" class="btn btn-warning m-1 form-control">Resetear</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="sendLocalList(1)" class="btn btn-success m-1 form-control">Enviar Lista Local</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="setChargingProfile(1)" class="btn btn-danger m-1 form-control">Establecer Perfil de Carga</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="triggerMessage(1)" class="btn btn-danger m-1 form-control">Solicitar Operacion OCPP</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="buttons_unlockConnector()" class="btn btn-info m-1 form-control">Desbloquear Conector</button>
+                        </div>
+                        <div class="col-md-3" style="padding: 10px 10px">
+                              <button onclick="updateFirmware(1)" class="btn btn-warning m-1 form-control">Actualizar Firmware</button>
+                        </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="col-md-12">
                             Opciones aqui   
                         </div>
@@ -282,7 +320,7 @@
                                         <!--<td>{{transaccion.id_transaccion}}</td>-->
                                         <td>{{transaccion.fecha}}</td>
                                         <td>{{transaccion.hora_inicio}}</td>
-                                        <td>{{transaccion.conector}}</td>
+                                        <td>{{transaccion.id_conector}}</td>
                                         <td>{{transaccion.codigo_rfid}}</td>
                                         <td>{{transaccion.energiaInicio}}</td>
                                         <td>{{transaccion.energiaFin}}</td>
