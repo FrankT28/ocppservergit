@@ -36,7 +36,6 @@ ws.addEventListener('message', event => {
     }else{
         notImplementedAction();
     }
-
 });
 
 /*=============================================================================================*/
@@ -110,7 +109,6 @@ function statusAction(boton, texto){
         element = document.getElementById(boton)
         element.innerHTML = texto;
     }
-    
 }
 
 /*=============================================================================================*/

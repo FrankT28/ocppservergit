@@ -364,8 +364,8 @@ function NotImplementedRequest(payload){
 /*=============================================================================================*/
 async function processOcppRequestFromBrowser(ocppMessageFromBrowser){
     var payloadRequest;
-    let Action = ocppMessageFromBrowser[2];
-    let payload = ocppMessageFromBrowser[3];
+    //let Action = ocppMessageFromBrowser[2];
+    let payload = ocppMessageFromBrowser;
     let tipo = ocppMessageFromBrowser.tipo;
 
     if(tipo=='CancelReservation'){

@@ -69,12 +69,10 @@ function buttons_startRemoteTransaction(){
 }
 
 function buttons_changeAvailability(){
-
 	ocultar_bloques();
 	document.getElementById("ventana_disponibilidad").style.display="block";
 
 }
-
 
 function ChangeAvailability(stationId,id){
 	//console.log('Hola');
@@ -84,12 +82,8 @@ function ChangeAvailability(stationId,id){
 	console.log('stationId: ' + stationId);
 	if(id=="CCS"){
 		idConector=1;
-
-
 	}else if(id=="Chademo"){
-
 		idConector=2;
-
 	}else if(id=="AC"){
 		idConector=3;
 	}
@@ -197,7 +191,7 @@ function reserveNow(stationId){
 	console.log('hora reserva')
 	console.log(hora_res)
 	console.log('fecha reserva')
-	console.log(fecha_res)
+	console.log(fecha_res) 
 	console.log('conector reserva')
 	console.log(conector_res)
 	console.log('id reserva')

@@ -106,13 +106,33 @@ const debugBuffer = (bufferName, buffer) => {
 };
 
 /*=============================================================================================*/
-async function getUniqueId(){
-    let sql = "SELECT id_mensaje_servidor FROM mensajes_desde_servidor ORDER BY id_mensaje_servidor DESC LIMIT 1";
-    let result = await pool.query(sql);
-    let id = result[0].id_mensaje_servidor + 1;
-    console.log('Nuevo unique id: ');
-    console.log(id);
-    return id;
+async function compareUniqueId(uniqueId){
+    let sql = "SELECT id_mensaje_enviado FROM mensajes_enviados WHERE uniqueId=?;";
+    let result = await pool.query(sql, [uniqueId]);
+    let pasa = 'si';
+    if(result.length>0){
+        pasa = 'no';
+    }
+    return pasa;
+}
+
+/*=============================================================================================*/
+async function generateUniqueId(length) {
+    let pasa = 'no';
+    while(pasa=='no'){
+        let result           = '';
+        let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random()*charactersLength));
+        }
+        console.log('result uniqueId: ');
+        console.log(result);
+        pasa = await compareUniqueId(result);
+    }
+    
+    console.log('ya paso');
+    return result;
 }
 
 /*=============================================================================================*/
@@ -279,14 +299,14 @@ module.exports = function(server){
                             let action = message.tipo;  
                             if(stationClient!=undefined){
                                 console.log('station clientes si esta definido: ');
-                                let uniqueId = await getUniqueId();
-                                uniqueId = uniqueId.toString();
+                                let uniqueId = await generateUniqueId(32);
+                                //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
                                 PayloadResponseApk = Respuestas[2];
 
-                                let CallResult = [2,uniqueId,action,PayloadResponse]; 
+                                let CallResult = [2, uniqueId, action, PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
