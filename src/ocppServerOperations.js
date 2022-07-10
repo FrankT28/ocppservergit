@@ -378,7 +378,7 @@ async function processOcppRequestFromBrowser(ocppMessageFromBrowser){
         payloadRequest = ClearCache(payload);
     }else if(tipo=='ClearChargingProfile'){
         payloadRequest = ClearChargingProfileRequest(payload);
-    }else if(Action=='DataTransfer') {
+    }else if(tipo=='DataTransfer') {
         payloadRequest = DataTransferRequest(payload);
     }else if(tipo=='GetCompositeSchedule'){
         payloadRequest = GetCompositeScheduleRequest(payload);
