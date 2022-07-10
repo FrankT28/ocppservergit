@@ -304,9 +304,10 @@ module.exports = function(server){
                             var stationClient = clientes.get(stationId);  
                             let action = message.tipo;  
                             if(stationClient!=undefined){
+                                let messageString = JSON.stringify(message);
                                 console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
-                                await ingresarUniqueIdDb([stationId, uniqueId, message, 0]);
+                                await ingresarUniqueIdDb([stationId, uniqueId, messageString, 0]);
 
                                 //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
