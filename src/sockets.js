@@ -117,11 +117,9 @@ async function compareUniqueId(uniqueId){
 }
 
 /*=============================================================================================*/
-async function ingresarUniqueIdDb(uniqueId){
+async function ingresarUniqueIdDb(valores){
     let sql = "INSERT INTO mensajes_enviados values(null,?,?,?,?);";
-    await pool.query(sql, []);
-
-
+    await pool.query(sql, [valores]);
 }
 /*=============================================================================================*/
 async function generateUniqueId(length) {
