@@ -146,6 +146,12 @@ async function updatePingDb(id){
 }
 
 /*=============================================================================================*/
+async function updateStateMessage(uniqueID){
+    let sql = "UPDATE mensajes_enviados SET estado_respuesta=1 WHERE uniqueId=?";
+    await pool.query(uniqueID);
+}
+
+/*=============================================================================================*/
 module.exports = function(server){
     server.on('upgrade',  async(req, socket) => { 
         let bufferToParse = Buffer.alloc(0);
@@ -265,6 +271,8 @@ module.exports = function(server){
                         /***********************************************************/
                         //ESTE CASO SE DA CUANDO LA ESTACION RESPONDE A UN CALL REALIZADO DESDE EL SERVIDOR.
                         else if (MessageTypeId==3){
+                            let uniqueID = message[1];
+                            await updateStateMessage(uniqueID);
                             clientenav = clientes.get(0);
                             console.log('Se ha recibido un MessageTypeId igual a 3!')
                             console.log(message[2]);
@@ -298,8 +306,6 @@ module.exports = function(server){
                         else{
                             console.log('Se ha recibido un mensaje desde navegador!')
                             console.log(message);
-                            console.log('tipo de dato de message');
-                            console.log(typeof(message))
                             var stationId = message.stationId;
                             var stationClient = clientes.get(stationId);  
                             let action = message.tipo;  
