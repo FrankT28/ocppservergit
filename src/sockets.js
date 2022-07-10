@@ -107,9 +107,9 @@ const debugBuffer = (bufferName, buffer) => {
 
 /*=============================================================================================*/
 async function compareUniqueId(uniqueId){
+    let pasa = 'si';
     let sql = "SELECT id_mensaje_enviado FROM mensajes_enviados WHERE uniqueId=?;";
     let result = await pool.query(sql, [uniqueId]);
-    let pasa = 'si';
     if(result.length>0){
         pasa = 'no';
     }
@@ -117,12 +117,19 @@ async function compareUniqueId(uniqueId){
 }
 
 /*=============================================================================================*/
+async function ingresarUniqueIdDb(uniqueId){
+    let sql = "INSERT INTO mensajes_enviados values(null,?,?,?,?);";
+    await pool.query(sql, []);
+
+
+}
+/*=============================================================================================*/
 async function generateUniqueId(length) {
     let pasa = 'no';
+    var result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
     while(pasa=='no'){
-        let result           = '';
-        let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let charactersLength = characters.length;
         for ( var i = 0; i < length; i++ ) {
             result += characters.charAt(Math.floor(Math.random()*charactersLength));
         }
@@ -130,7 +137,6 @@ async function generateUniqueId(length) {
         console.log(result);
         pasa = await compareUniqueId(result);
     }
-    
     console.log('ya paso');
     return result;
 }
@@ -298,8 +304,10 @@ module.exports = function(server){
                             var stationClient = clientes.get(stationId);  
                             let action = message.tipo;  
                             if(stationClient!=undefined){
-                                console.log('station clientes si esta definido: ');
+                                console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
+                                await ingresarUniqueIdDb([stationId, uniqueId, message, 0]);
+
                                 //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
