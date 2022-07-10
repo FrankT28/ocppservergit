@@ -119,7 +119,7 @@ async function compareUniqueId(uniqueId){
 /*=============================================================================================*/
 async function ingresarUniqueIdDb(valores){
     let sql = "INSERT INTO mensajes_enviados values(null,?,?,?,?);";
-    await pool.query(sql, [valores]);
+    await pool.query(sql, valores);
 }
 /*=============================================================================================*/
 async function generateUniqueId(length) {
@@ -304,7 +304,7 @@ module.exports = function(server){
                             if(stationClient!=undefined){
                                 console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
-                                await ingresarUniqueIdDb([stationId, uniqueId, message, 0]);
+                                await ingresarUniqueIdDb([stationId, uniqueId, message.stringify(), 0]);
 
                                 //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
