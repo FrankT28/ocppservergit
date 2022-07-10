@@ -298,13 +298,15 @@ module.exports = function(server){
                         else{
                             console.log('Se ha recibido un mensaje desde navegador!')
                             console.log(message);
+                            console.log('tipo de dato de message');
+                            console.log(typeof(message))
                             var stationId = message.stationId;
                             var stationClient = clientes.get(stationId);  
                             let action = message.tipo;  
                             if(stationClient!=undefined){
                                 console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
-                                await ingresarUniqueIdDb([stationId, uniqueId, message.stringify(), 0]);
+                                await ingresarUniqueIdDb([stationId, uniqueId, message, 0]);
 
                                 //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
