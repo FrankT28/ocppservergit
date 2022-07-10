@@ -148,7 +148,7 @@ async function updatePingDb(id){
 /*=============================================================================================*/
 async function updateStateMessage(uniqueID){
     let sql = "UPDATE mensajes_enviados SET estado_respuesta=1 WHERE uniqueId=?";
-    await pool.query(uniqueID);
+    await pool.query(sql, [uniqueID]);
 }
 
 /*=============================================================================================*/
