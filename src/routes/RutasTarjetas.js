@@ -43,14 +43,12 @@ router.post('/home/tarjetas/agregar', async (req, res) => {
     console.log('El formulario ha enviado lo siguiente: ');
     console.log(req.body)
     let codigo_rfid = req.body.codigo_rfid;
-    let estado = req.body.estado;
+    let id_estado_autorizacion = req.body.id_estado_autorizacion;
     let saldo = req.body.saldo;
     let comentario = req.body.comentario;
-    console.log(codigo_rfid);
-    console.log(estado);
 
 
-    let insert = await pool.query('INSERT INTO tarjetas VALUES (null,?,?,0,?);', [codigo_rfid, estado, saldo]);
+    let insert = await pool.query('INSERT INTO tarjetas VALUES (null,?,?,0,?);', [id_estado_autorizacion, codigo_rfid, saldo]);
     //console.log(it.insertId);
     if(insert.insertId){
         let mensaje = 'Tarjeta añadida exitósamente';
