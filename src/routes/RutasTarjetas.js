@@ -72,6 +72,17 @@ router.post('/home/tarjetas/agregar', async (req, res) => {
     res.send(data); 
 });
 
+/*************************************************************************/
+router.get('/home/tarjetas/estados_autorizacion', async (req, res) => {
+    console.log('llega a estados autorizacion')
+    var data = {};
+    let sql = "SELECT * FROM estados_autorizacion;";
+    let result = await pool.query(sql);
+ 
+    data.success = true;
+    data.estadosAutorizacion = result;
+    res.send(data);
+})
 
 
 router.get('/home/tarjetas/eliminar/:id', async(req, res) => {

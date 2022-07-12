@@ -61,6 +61,16 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 	$scope.listarTarjetas(0);
 
 	/*=========================================================================*/
+	estadosAutorizacion();
+	function estadosAutorizacion(){
+		$http.get('/home/tarjetas/estados_autorizacion/')
+		.success(function(data){
+			console.log('data estados autorizacion: ');
+			console.log(data);
+			$scope.estadosAutorizacion = data.estadosAutorizacion;
+		})
+	}
+	/*=========================================================================*/
 	$scope.agregarTarjeta = function(){
 		$scope.verTarjetas = false;
 		$scope.verFormAgregarTarjeta = true;
