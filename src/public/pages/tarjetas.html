@@ -21,7 +21,6 @@
                 <table class="table v-middle" id="tablaTarjetas">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Codigo</th>
                         <th>Cliente</th>
                         <th>Saldo</th>
@@ -30,12 +29,11 @@
                     </tr>
                 </thead>
                 <tbody id="responsive-table-body">
-                    <tr ng-repeat="tarjeta in tarjetas">
-                        <td></td>
+                    <tr ng-repeat="tarjeta in tarjetas" ng-click="detallesTarjeta(tarjeta)">
                     <td>{{tarjeta.codigo_rfid}}</td>
                     <td>{{tarjeta.razon_social}}</td>
                     <td>{{tarjeta.saldo}}</td>
-                    <td>{{tarjeta.estado}}</td>
+                    <td>{{tarjeta.estadoAutorizacion}}</td>
                     <td class="text-right">
                         <a ng-click="detallesTarjeta(tarjeta)" class="btn btn-default btn-xs" 
                             data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
@@ -60,7 +58,7 @@
     </div>
     <!--TERMINA SECCION PARA LISTAR TARJETAS-->
     
-    <!--INICIA SECCION PARA AGREGAR O EDITAR TARJETA-->
+    <!--INICIA SECCION PARA AGREGAR TARJETA-->
     <div ng-if="verFormAgregarTarjeta==true || verFormEditarTarjeta==true" class="panel panel-default">
         <div>
             <h5 class="text-center">{{accion}}</h5>
@@ -68,23 +66,23 @@
         <div class="panel-body">
         <form class="form-horizontal" role="form">
             <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Código RFID</label>
+                <label class="col-sm-3 control-label">Código RFID</label>
                 <div class="col-sm-9">
                     <input ng-model="formTarjeta.codigo_rfid" class="form-control">
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Saldo</label>
+                <label class="col-sm-3 control-label">Saldo</label>
                 <div class="col-sm-9">
                 <input ng-model="formTarjeta.saldo" class="form-control">
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputEmail3" class="col-sm-3 control-label">Estado</label>
+                <label class="col-sm-3 control-label">Estado</label>
                 <div class="col-sm-9">
                     <select class="form-control" ng-model="formTarjeta.id_estado_autorizacion">
                         <option ng-selected="formTarjeta.id_estado_autorizacion == estado.id_estado" 
-                            ng-repeat="estado in estadosAutorizacion" ng-value="estado.id_estado_autorizacion">{{estado.nombre}}
+                            ng-repeat="estado i n estadosAutorizacion" ng-value="estado.id_estado_autorizacion">{{estado.nombre}}
                         </option>
                    </select>
                 </div>
@@ -103,54 +101,124 @@
             <button ng-click="volverTarjetas()" class="btn btn-info">Cerrar</button>
         </div>
     </div>
-    <!--TERMINA SECCION PARA AGREGAR O EDITAR TARJETA-->
+    <!--TERMINA SECCION PARA AGREGAR TARJETA-->
 
     <!--INICIA PAGINA PARA DETALLES DE UNA TARJETA-->
     <div ng-if="verTarjeta==true" class="panel panel-default">
+        <!-- Tabbable Widget -->
+        <div class="tabbable tabs-primary">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs text-center">
+                <li class="active"><a href="#info-estacion" data-toggle="tab"><i class="fa fa-fw fa-home"></i>Info</a></li>
+                <li><a href="#cliente-tarjeta" data-toggle="tab" ng-click="datosClienteTarjeta()"><i class="fa fa-fw fa-user"></i>Cliente</a></li>
+                <li><a href="#editar-tarjeta" data-toggle="tab"><i class="fa fa-fw fa-pencil"></i>Editar</a></li>
+                <li><a href="#editar-tarjeta" data-toggle="tab"><i class="fa fa-fw fa-car"></i>Transacciones</a></li>
+            </ul>
+            <!-- // END Tabs -->
 
-        <div class="panel panel-body">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 text-center">
-                        <img src="/images/tarjetas/logoTarjeta.png" 
-                        width="200px" height="400px" style="border: 1px solid; padding: 1px">
-                    </div>
-                    <div class="col-md-9">
-                        <div class="col-md-12">
-                            <div id="id_Tarjeta_edit" hidden="true"></div>
-                            <div class="card" style="margin-bottom: 20px">
-                                <div class="card-header">
-                                    Detalles
-                                </div>
-                            </div>
-                            <div class="card" style="margin-bottom: 20px;">
-                                <div class="row">
-                                    <div class="col-md-6 p-3">
-                                        <b>Código:</b>  <span>{{tarjeta.codigo_rfid}}</span><br>
-                                        <b>Cliente: </b> <span>{{tarjeta.razon_social}} </span><br>
-                                        <b>Saldo: </b> <span>{{tarjeta.saldo}} </span><br>
-                                        <b>Estado:  </b> <span>{{tarjeta.estado}}</span><br>
+            <!-- Panes -->
+            <div class="tab-content">
+                <!--INICIA PANEL PARA VER INFO DE LA TARJETA-->
+                <div id="info-estacion" class="tab-pane active">
+                    <div class="panel panel-body">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8 col-md-offset-4">
+                                    <div class="col-md-12">
+                                        <div class="card" style="margin-bottom: 20px;">
+                                            <div class="row">
+                                                <div class="col-md-6 p-3">
+                                                    <b>Código:</b>  <span>{{tarjeta.codigo_rfid}}</span><br>
+                                                    <b>Cliente: </b> <span>{{tarjeta.razon_social}} </span><br>
+                                                    <b>Saldo: </b> <span>{{tarjeta.saldo}} </span><br>
+                                                    <b>Estado:  </b> <span>{{tarjeta.estadoAutorizacion}}</span><br>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="submits">
-                                <button  class="btn btn-success" ng-click="agregarAtarjetas()">
-                                    <em class="fa fa-arrow-left"></em> Volver</button>
-                                <button  class="btn btn-info" ng-click="editarTarjeta(tarjeta)">
-                                    <em class="fa fa-pencil"></em> Editar</button>
-                                <button  class="btn btn-warning" ng-click="listarTransacciones(tarjeta.id_tarjeta, 0)">
-                                    <em class="fa fa-pencil"></em> Transacciones</button>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <h3>
-                                Seccion del cliente
-                            </h3>
                         </div>
                     </div>
                 </div>
+                <!--TERMINA PANEL PARA VER INFO DE LA TARJETA-->
+
+                <!--INICIA PANEL PARA VER INFORMACION DEL CLIENTE DUENO DE LA TARJETA-->
+                <div id="cliente-tarjeta" class="tab-pane">
+                    <div class="panel panel-body">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8 col-md-offset-4">
+                                    <div class="col-md-12">
+                                        <div class="card" style="margin-bottom: 20px;">
+                                            <div class="row">
+                                                <div class="col-md-6 p-3">
+                                                    <b>R.U.C.:</b>  <span>{{cliente.ruc}}</span><br>
+                                                    <b>Nombre:</b>  <span>{{cliente.razon_social}}</span><br>
+                                                    <b>Ciudad: </b> <span>{{cliente.ciudad}} </span><br>
+                                                    <b>Dirección: </b> <span>{{cliente.direccion}} </span><br>
+                                                    <b>Telefono:  </b> <span>{{cliente.telefono}}</span><br>
+                                                    <b>Email:  </b> <span>{{cliente.email}}</span><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA PANEL PARA VER INFORMACION DEL CLIENTE DUENO DE LA TARJETA-->
+
+                <!--INICIA SECCION PARA EDITAR DATOS DE LA TARJETA-->
+                <div id="editar-tarjeta" class="tab-pane">
+                    <div class="panel panel-default">
+                        <div>
+                            <h5 class="text-center">{{accion}}</h5>
+                        </div>
+                        <div class="panel-body">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Código RFID</label>
+                                <div class="col-sm-9">
+                                    <input ng-model="formTarjeta.codigo_rfid" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Saldo</label>
+                                <div class="col-sm-9">
+                                <input ng-model="formTarjeta.saldo" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Estado</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control" ng-model="formTarjeta.id_estado_autorizacion">
+                                        <option ng-selected="formTarjeta.id_estado_autorizacion == estado.id_estado_autorizacion" 
+                                            ng-repeat="estado in estadosAutorizacion" ng-value="estado.id_estado_autorizacion">{{estado.nombre}}
+                                        </option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Comentario</label>
+                                <div class="col-sm-9">
+                                <textarea ng-model="formTarjeta.comentario" class="form-control" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+                            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formTarjeta.id_tarjeta)" class="btn btn-info">Actualizar</button>
+                            <button ng-click="volverTarjetas()" class="btn btn-info">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA SECCION PARA EDITAR DATOS DE LA TARJETA-->
             </div>
         </div>
+    </div>
     </div>
     <!--TERMINA PAGINA PARA DETALLES DE UNA Tarjeta-->
 

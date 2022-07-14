@@ -3,7 +3,18 @@ const router = express.Router();
 const pool = require('../database');
 
 
-/****************************SECCION DE FUNCIONES**********************/
+/********************************************************************************************/
+async function getComentario(modulo, id){
+    let sql = "SELECT comentario FROM comentarios WHERE id_modulo=" + modulo + " AND id_registro=" + id + "; ";
+    let comentario = await pool.query(sql);
+    if(comentario.length>0){
+        comentario = comentario[0].comentario;
+    }else{
+        comentario = '';
+    }
+    return comentario;
+}
+/****************************SECCION DE FUNCIONES**********************
 async function clientePorId(id){
     let sql = "SELECT razon_social FROM clientes WHERE id_cliente=" + id + "; ";
     let cliente = await pool.query(sql);
@@ -14,22 +25,36 @@ async function clientePorId(id){
     }
     return cliente;
 }
+/**************************************************/
+async function clientePorId(id_cliente){
+    let cliente = {};
+    let sql = "SELECT * FROM clientes WHERE id_cliente=?;";
+    cliente = await pool.query(sql, [id_cliente]);
+    if(cliente.length<0){
+        cliente.razon_social = 'Sin Asignar';
+    }else{
+        cliente = cliente[0];
+    }
+    return cliente;
+}
 /****************************SECCION DE FUNCIONES**********************/
 /*Rutas definitivas*/
 router.get('/home/tarjetas/informacion/:desde/:cuantos', async(req, res) => {
     var data = {};
     let sql = "SELECT COUNT(*) as total FROM tarjetas";
     let total = await pool.query(sql);
-    let desde = req.params.desde;
-    let cuantos = req.params.cuantos;
+    let desde = parseInt(req.params.desde);
+    let cuantos = parseInt(req.params.cuantos);
     data.totalTarjetas = total[0].total;
 
-    sql = 'SELECT * FROM tarjetas ORDER BY id_tarjeta DESC LIMIT ' + desde + ', ' + cuantos + '; ';
-	var tarjetas = await pool.query(sql);
+    sql = 'SELECT ta.*, ea.nombre estadoAutorizacion FROM tarjetas ta, estados_autorizacion ea WHERE ta.id_estado_autorizacion=ea.id_estado_autorizacion ORDER BY id_tarjeta DESC LIMIT ?, ?;';
+	var tarjetas = await pool.query(sql, [desde, cuantos]);
     var i = 0;
     for(const row of tarjetas){
         tarjetas[i].saldo = (Math.round(tarjetas[i].saldo * 100) / 100).toFixed(2);
-        tarjetas[i].razon_social = await clientePorId(tarjetas[i].id_cliente)
+        //tarjetas[i].razon_social = await clientePorId(tarjetas[i].id_cliente)
+        tarjetas[i].cliente = await clientePorId(tarjetas[i].id_cliente)
+        tarjetas[i].comentario = await getComentario(2, tarjetas[i].id_tarjeta); 
         i++;
     };
     data.success = true;
@@ -56,14 +81,12 @@ router.post('/home/tarjetas/agregar', async (req, res) => {
         let mensaje = 'Ha ocurrido un problema al intentar subir la información'
     }
 
-    if(comentario){
-        if(comentario.length>0){
-            let sqlIdTarjeta = "SELECT id_tarjeta FROM tarjetas ORDER BY id_tarjeta DESC LIMIT 1";
-            let idtarjeta = await pool.query(sqlIdTarjeta);
-            idtarjeta = idtarjeta[0].id_tarjeta;
-            let sqlComentario = "INSERT INTO COMENTARIOS VALUES(null,?,?,?,?)";
-            let insert = await pool.query(sqlComentario, [ 2, idtarjeta, comentario, 1])
-        }
+    if(comentario!=undefined && comentario.length>0){
+        let sqlIdTarjeta = "SELECT id_tarjeta FROM tarjetas ORDER BY id_tarjeta DESC LIMIT 1";
+        let idtarjeta = await pool.query(sqlIdTarjeta);
+        idtarjeta = idtarjeta[0].id_tarjeta;
+        let sqlComentario = "INSERT INTO COMENTARIOS VALUES(null,?,?,?,?)";
+        let insert = await pool.query(sqlComentario, [ 2, idtarjeta, comentario, 1])
     }
 
     data.success = true;
@@ -72,7 +95,6 @@ router.post('/home/tarjetas/agregar', async (req, res) => {
 
 /*************************************************************************/
 router.get('/home/tarjetas/estados_autorizacion', async (req, res) => {
-    console.log('llega a estados autorizacion')
     var data = {};
     let sql = "SELECT * FROM estados_autorizacion;";
     let result = await pool.query(sql);

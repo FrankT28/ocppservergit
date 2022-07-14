@@ -123,9 +123,17 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 	}
 	/*=========================================================================*/
 	$scope.detallesTarjeta = function(tarjeta){
+		console.log('se llama detalles tarjeta')
 		$scope.tarjeta = tarjeta;
+		$scope.formTarjeta = tarjeta;
 		$scope.verTarjetas = false;
 		$scope.verTarjeta = true;
+	}
+	/*=========================================================================*/
+	$scope.datosClienteTarjeta = function(){
+		console.log('se llama function datos cliente tarjeta');
+		console.log($scope.tarjeta)
+		$scope.cliente = $scope.tarjeta.cliente;
 	}
 	/*=========================================================================*
 	$scope.volverDetallesTarjeta = function(){
