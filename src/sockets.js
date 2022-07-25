@@ -159,7 +159,8 @@ module.exports = function(server){
         console.log('                                           ');
         console.log('------------------------------------------------------');
         console.log('Un cliente quiere establecer un websocket: ');
-        console.log('Identidad del cliente: ' + url_est)
+        console.log('Identidad del cliente: ' + url_est);
+        console.log(req.body);
         var clave;
         if (req.headers['upgrade'] !== 'websocket') {
             socket.end('HTTP/1.1 400 Bad Request');

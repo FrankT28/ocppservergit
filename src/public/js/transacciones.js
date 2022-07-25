@@ -124,7 +124,7 @@
 		/*=========================================================================*/
 		$scope.transacciones = {};
 		$scope.listarTransacciones = function(pagina){
-			console.log('Se llama a ver transacciones')
+			console.log('Se llama a ver transacciones');
 			let desde = pagina*$scope.transaccionesPorPagina;
 			let cuantos = $scope.transaccionesPorPagina;
 			$http.get('/home/transacciones/informacion/' + desde + '/' + cuantos + '/')

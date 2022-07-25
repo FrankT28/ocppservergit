@@ -22,7 +22,7 @@ function timeConverter(UNIX_timestamp){
 /******************************************************************************/
 function formatDate (input) {
 	var datePart = input.match(/\d+/g),
-	year = datePart[0], // get only two digits
+	year = datePart[0],
 	month = datePart[1], 
 	day = datePart[2];
   
@@ -99,7 +99,7 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 		}else if(fase==3){
 			label = 'Voltaje fase 3';
 			sql = "SELECT * FROM voltage_phase3n WHERE id_transaccion=?;";
-		}	
+		}
 	}else if(tipo=='soc'){
 		ymin = 0; ymax = 100;
 		divisor = 1;
@@ -117,15 +117,12 @@ router.get('/home/transacciones/get_grafica/:tipo/:fase/:id', async(req, res)=> 
 		var obj = {};
 		dia = fila.timestamp.toLocaleDateString();
 		hora = fila.timestamp.toLocaleTimeString()
-		//hora = hora.split('T');
 		obj.dia = dia;
 		obj.hora = hora;
-
 		//VALOR
 		valor = fila.valor;
 		valor = parseInt(valor, 10)/divisor;
 		obj.valor = valor;
-
 		//ASIGNAMOS EL OBJECTO
 		matrix[i] = obj;
 	}	
@@ -242,8 +239,5 @@ router.get('/home/transacciones/eliminar/:id', async(req, res) => {
 	await pool.query('DELETE FROM transacciones WHERE id_transaccion=?', idt);
 	res.redirect('/home/transacciones/informacion');
 });
-
-
-
 
 module.exports = router; 
