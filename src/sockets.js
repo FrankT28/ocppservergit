@@ -160,7 +160,9 @@ module.exports = function(server){
         console.log('------------------------------------------------------');
         console.log('Un cliente quiere establecer un websocket: ');
         console.log('Identidad del cliente: ' + url_est);
-        console.log(req);
+        for(i in req){
+            console.log(i);
+        }
         var clave;
         if (req.headers['upgrade'] !== 'websocket') {
             socket.end('HTTP/1.1 400 Bad Request');
