@@ -41,6 +41,28 @@ var responseHeaders = function(req){
 }
 
 /*=================================================================================================*/
+var responseHeaders1 = function(req){
+    const acceptKey = req.headers['sec-websocket-key'];
+    const hash = generateAcceptValue(acceptKey);
+    const response = [ 
+        'HTTP/1.1 101 Switching Protocols', 
+        'Upgrade: WebSocket', 
+        'Connection: Upgrade', 
+        `Sec-WebSocket-Accept: ${hash}`
+    ];
+
+    const protocol = req.headers['sec-websocket-protocol'];
+    const protocols = !protocol ? [] : protocol.split(',').map(s => s.trim());
+
+    if (protocols.includes('ocpp1.6')) {
+        console.log('Ha solicitado el subprotocolo ocpp1.6')
+        response.push('Sec-WebSocket-Protocol: ocpp1.6');
+    };
+    console.log('Respuestas a enviar: ');
+    console.log(response.join('\r\n\r\n'));
+    return response.join('\r\n\r\n');
+}
+/*=================================================================================================*/
 function getByValue(map, searchValue) {
     for (let [key, value] of map.entries()) {
       if (value === searchValue)
@@ -155,11 +177,11 @@ async function updateStateMessage(uniqueID){
 module.exports = function(server){
     server.on('upgrade',  async(req, socket) => { 
         let bufferToParse = Buffer.alloc(0);
-        var url_est = req.url.substring(1,req.url.length);
+        var codigoEstacion = req.url.substring(1,req.url.length);
         console.log('                                           ');
         console.log('------------------------------------------------------');
         console.log('Un cliente quiere establecer un websocket: ');
-        console.log('Identidad del cliente: ' + url_est);
+        console.log('Identidad del cliente: ' + codigoEstacion);
         for(i in req){
             console.log(i);
         }
@@ -167,16 +189,20 @@ module.exports = function(server){
         if (req.headers['upgrade'] !== 'websocket') {
             socket.end('HTTP/1.1 400 Bad Request');
             return;
-        }; 
-        let query = 'SELECT id_estacion FROM estaciones WHERE codigoEstacion="' + url_est + '";';
-        let estaciones = await pool.query(query);
+        };
+        let query = 'SELECT id_estacion FROM estaciones WHERE codigoEstacion=?;';
+        let estaciones = await pool.query(query, [codigoEstacion]);
 
         if(estaciones.length!=0){
-            response = responseHeaders(req);
+            if(codigoEstacion=='EC0120040002'){
+                response = responseHeaders1(req);
+            }else{
+                response = responseHeaders(req);
+            }
             clave = estaciones[0].id_estacion;
             socket.write(response.join('\r\n') + '\r\n\r\n' );
         }else{
-            if(url_est=='navegador'){
+            if(codigoEstacion=='navegador'){
                 console.log('El navegador quiere conectarse')
                 response = responseHeaders(req);
                 clave = 0;
@@ -187,6 +213,7 @@ module.exports = function(server){
         }
      
         if(socket.readyState=='open'){
+            console.log('socket.readyState es igual a open');
             clientes.set(clave, socket);
         };
 
