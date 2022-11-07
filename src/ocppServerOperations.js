@@ -211,7 +211,7 @@ async function ReserveNowRequest(payload){
     payloadMessageSent.lastReservationId = lastReservationId;
     payloadMessageSent.operacion = 'ReserveNow';
 
-    let connectorId = payload.connectorId;
+    let connectorId = parseInt(payload.connectorId);
     let expiryDate = payload.expiryDate;
     let idTag = payload.idTag;
     let reservationId = payload.reservationId;

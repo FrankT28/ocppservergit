@@ -119,7 +119,7 @@
 			if($scope.accionPost=='editar'){accion = accion + '/' + id;}
 			let fechas = $scope.formReservacion.periodo.split(' - ');
 			let expira = fechas[1].split(' ');
-			let fechaExpira = expira[0];
+			let fechaExpira = expira[0].replace('/','-');
 			let horaExpira = expira[1];
 			let am_pm = expira[2];
 			if(am_pm=='PM'){
@@ -128,12 +128,14 @@
 				soloHora +=12;
 				horaExpira = soloHora.toString() + ':' + horaMinuto[1]
 			}
-			$scope.formReservacion.expiryDate = fechaMysql(fechaExpira) + " " + horaExpira + ":00";
+			$scope.formReservacion.expiryDate = fechaMysql(fechaExpira) + "T" + horaExpira + ":00";
 			$scope.formReservacion.stationId = parseInt($scope.formReservacion.stationId);
+			$scope.formReservacion.connectorId = parseInt($scope.formReservacion.connectorId);
 			$scope.formReservacion.tipo = 'ReserveNow';
 			$scope.formReservacion.reservationId = $scope.lastReservationId;
 			let ocppMessage = JSON.stringify($scope.formReservacion);
-			
+			console.log('ocppMessage');
+			console.log(ocppMessage);
 			ws.send(ocppMessage);
 			// $http({
 			// 	method: 'POST',
