@@ -1,7 +1,7 @@
 <div data-ng-controller="reservacionesController">
     <!--INICIA SECCION PARA LISTAR reservaciones-->
-    <div class="page-section-heading">
-            <button ng-if="verreservaciones==true" ng-click="agregarReservacion()" class="btn btn-primary">
+    <div class="col-md-12">
+            <button ng-if="verReservaciones==true" ng-click="agregarReservacion()" class="btn btn-primary">
                 <em class="fa fa-plus"></em> Agregar</button>
             <button ng-if="verReservacion==true" class="btn btn-success" id="toStationsDetails" ng-click="agregarAreservaciones()">
                 <em class="fa fa-arrow-left"></em> Volver a reservaciones</button>
@@ -12,36 +12,37 @@
             <button ng-if="verTransacciones==true" ng-click="volverDetallesReservacion()" class="btn btn-success">
                 <em class="fa fa-hand-o-left"></em> Volver</button>-->
     </div>
-    <div ng-if="verreservaciones==true" >
+    <div ng-if="verReservaciones==true" class="col-md-12">
         <div class="panel panel-default">
             <!-- Progress table -->
             <div class="table-responsive">
                 <table class="table v-middle">
                 <thead>
                     <tr>
-                    <th style="width: 14%">Codigo</th>
-                    <th style="width: 20%">Nombre</th>
-                    <th style="width: 18%">Ubicacion <a href="#"><i class="fa fa-map-marker fa-fw text-muted"></i></a></th>
-                    <th style="width: 10%"># Conectores</th>
+                    <th style="width: 6%">ID</th>
+                    <th style="width: 12%">Tarjeta</th>
+                    <th style="width: 20%">Estación</th>
+                    <th style="width: 10%">Conector</th>
+                    <th style="width: 10%">Expira</th>
                     <th style="width: 10%">Estado</th>
-                    <th style="width: 10%" class="text-center">Conexion</th>
                     <th style="width: 8%" class="text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="responsive-table-body">
-                    <tr ng-repeat="Reservacion in reservaciones" ng-click="detallesReservacion(Reservacion)">
-                    <td>{{Reservacion.codigoReservacion}}</td>
-                    <td>{{Reservacion.nombreReservacion}}</td>
-                    <td>{{Reservacion.ubicacion}}</td>
-                    <td class="text-center">{{Reservacion.cantidadConectores}}</td>
-                    <td id="status{{Reservacion.id_Reservacion}}">{{Reservacion.estado}}</td>
-                    <td class="text-center">
-                        <span ng-style="{'color': Reservacion.estado_conexio=='ok' ? 'green': 'red'}" class="fa fa-circle"></span>
-                    </td>
+                    <tr ng-repeat="reservacion in reservaciones">
+                    <td ng-click="detallesReservacion(reservacion)">{{reservacion.id_reservacion}}</td>
+                    <td>{{reservacion.id_tag}}</td>
+                    <td>{{reservacion.nombreEstacion}}</td>
+                    <td>{{reservacion.nombre}}</td>
+                    <td>{{reservacion.expiry_date}}</td>
+                    <td>{{reservacion.reservation_status}}</td>
+                    <!-- <td class="text-center">
+                        <span ng-style="{'color': reservacion.estado==0 ? 'green': 'red'}" class="fa fa-circle"></span>
+                    </td> -->
                     <td class="text-right">
-                        <a ng-click="detallesReservacion(Reservacion)" class="btn btn-default btn-xs" 
+                        <a ng-click="detallesReservacion(reservacion)" class="btn btn-default btn-xs" 
                             data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
-                        <a ng-click="alertEliminarReservacion(Reservacion.id_Reservacion)" class="btn btn-danger btn-xs" 
+                        <a ng-click="alertEliminarReservacion(reservacion.id_reservacion)" class="btn btn-danger btn-xs" 
                             data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
                     </td>
                     </tr>
@@ -59,64 +60,122 @@
         </div>
     </div>
     <!--TERMINA SECCION PARA LISTAR reservaciones-->
-    
-    
+
+    <!--INICIA SECCION PARA AGREGAR O EDITAR Reservacion-->
+    <div class="col-md-12">
+        <div id="color-profile" class="tab-pane">
+            <div ng-if="verFormAgregarReservacion==true" class="panel panel-default"> 
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Tarjeta</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" ng-model="formReservacion.idTag">
+                                    <option ng-repeat="tarjeta in tarjetas" ng-value="tarjeta.codigo_rfid">{{tarjeta.codigo_rfid}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Estación</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" ng-model="formReservacion.stationId" ng-change="setConectores(formReservacion.stationId)">
+                                    <option ng-repeat="estacion in estaciones" ng-value="estacion.id_estacion">
+                                        {{estacion.nombreEstacion}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Conector</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" ng-model="formReservacion.connectorId">
+                                    <option ng-repeat="conector in conectoresEstacion" ng-value="conector.id_local">{{conector.nombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Expira</label>
+                            <div class="form-group margin-none col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input ng-model="formReservacion.periodo" type="text" name="reservation" id="reservationtime" class="form-control daterangepicker-reservation" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label class="col-sm-3 control-label">Comentario</label>
+                            <div class="col-sm-6">
+                            <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
+                            </div>
+                        </div> -->
+                    </form>
+                </div>
+                <div class="panel-footer text-right">
+                    <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+                    <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formReservacion.id_reservacion)" class="btn btn-info">Actualizar</button>
+                    <button ng-click="volverReservaciones()" class="btn btn-info">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--TERMINA SECCION PARA AGREGAR O EDITAR Reservacion-->
 
     <!--INICIA PAGINA PARA DETALLES DE UNA Reservacion-->
-    <div ng-if="verReservacion==true" class="panel panel-default">
-        <!-- Tabbable Widget -->
-        <div class="tabbable tabs-primary">
-            <!-- Tabs -->
-            <ul class="nav nav-tabs text-center">
-                <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
-                <li><a href="#color-profile" data-toggle="tab" ng-click="editarReservacion(Reservacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
-                <li><a href="#color-messages" data-toggle="tab"><i class="fa fa-fw fa-envelope"></i> Operaciones OCPP</a></li>
-                <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(Reservacion.id_Reservacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
-            </ul>
-            <!-- // END Tabs -->
+    <div class="col-md-12">
+        <div ng-if="verReservacion==true" class="panel panel-default">
+            <!-- Tabbable Widget -->
+            <div class="tabbable tabs-primary">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs text-center">
+                    <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
+                    <li><a href="#color-profile" data-toggle="tab" ng-click="editarReservacion(Reservacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
+                    <li><a href="#color-messages" data-toggle="tab"><i class="fa fa-fw fa-envelope"></i> Operaciones OCPP</a></li>
+                    <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(Reservacion.id_reservacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
+                </ul>
+                <!-- // END Tabs -->
 
-            <!-- Panes -->
-            <div class="tab-content">
-                <div id="color-home" class="tab-pane active">
-                    <div class="panel panel-body">
-                        <div class="card-header text-center">
-                            <h3 style="font-family: sans-serif;"> {{Reservacion.nombreReservacion}}</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-2 text-center">
-                                    <img src="/images/reservaciones/logoReservacion.png" 
-                                    width="200px" height="400px" style="border: 1px solid; padding: 1px">
-                                </div>
-                                <div class="col-md-9 text-center">
-                                    <div id="id_Reservacion_edit" hidden="true"></div>
-                                    <div class="card" style="margin-bottom: 20px">
-                                        <div class="card-header">
-                                            Detalles
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 text-center p-3">
-                                                <b>Código:</b> <span style="padding-right: 30px">{{Reservacion.codigoReservacion}}</span>
-                                                <b>Nombre:</b><span style="padding: 3px">{{Reservacion.nombreReservacion}}</span>
-                                            </div>
-                                        </div>
+                <!-- Panes -->
+                <div class="tab-content">
+                    <div id="color-home" class="tab-pane active">
+                        <div class="panel panel-body">
+                            <div class="card-header text-center">
+                                <h3 style="font-family: sans-serif;"> {{Reservacion.nombreReservacion}}</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2 text-center">
+                                        <img src="/images/reservaciones/logoReservacion.png" 
+                                        width="200px" height="400px" style="border: 1px solid; padding: 1px">
                                     </div>
-                                    <div class="card" style="margin-bottom: 20px;">
-                                        <div class="card-header">
-                                            Caracteristicas Técnicas
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 text-center p-3">
-                                                <b>N° conectores:</b>  <label>{{Reservacion.cantidadConectores}}</label><br>
-                                                <b>Cargas Simultaneas: </b> <label>{{Reservacion.cargasSimultaneas}} </label><br>
-                                                <b>Potencia Mínima: </b> <label>{{Reservacion.potenciaMinima}} </label><br>
-                                                <b>Potencia Máxima:  </b> <label>{{Reservacion.potenciaMaxima}}</label><br>
+                                    <div class="col-md-9 text-center">
+                                        <div id="id_reservacion_edit" hidden="true"></div>
+                                        <div class="card" style="margin-bottom: 20px">
+                                            <div class="card-header">
+                                                Detalles
                                             </div>
-                                            <div class="col-md-6 text-center p-3">
-                                                <b>Voltaje Mínimo:   </b> <label>{{Reservacion.voltajeMinimo}}</label><br>
-                                                <b>Voltaje Máximo:   </b> <label>{{Reservacion.voltajeMaximo}}</label><br>
-                                                <b>Corriente Mínima:</b>  <label>{{Reservacion.corrienteMinima}}</label><br>
-                                                <b>Corriente Máxima: </b> <label>{{Reservacion.corrienteMaxima}} </label><br>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center p-3">
+                                                    <b>Código:</b> <span style="padding-right: 30px">{{Reservacion.codigoReservacion}}</span>
+                                                    <b>Nombre:</b><span style="padding: 3px">{{Reservacion.nombreReservacion}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-bottom: 20px;">
+                                            <div class="card-header">
+                                                Caracteristicas Técnicas
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 text-center p-3">
+                                                    <b>N° conectores:</b>  <label>{{Reservacion.cantidadConectores}}</label><br>
+                                                    <b>Cargas Simultaneas: </b> <label>{{Reservacion.cargasSimultaneas}} </label><br>
+                                                    <b>Potencia Mínima: </b> <label>{{Reservacion.potenciaMinima}} </label><br>
+                                                    <b>Potencia Máxima:  </b> <label>{{Reservacion.potenciaMaxima}}</label><br>
+                                                </div>
+                                                <div class="col-md-6 text-center p-3">
+                                                    <b>Voltaje Mínimo:   </b> <label>{{Reservacion.voltajeMinimo}}</label><br>
+                                                    <b>Voltaje Máximo:   </b> <label>{{Reservacion.voltajeMaximo}}</label><br>
+                                                    <b>Corriente Mínima:</b>  <label>{{Reservacion.corrienteMinima}}</label><br>
+                                                    <b>Corriente Máxima: </b> <label>{{Reservacion.corrienteMaxima}} </label><br>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -124,200 +183,200 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!--INICIA SECCION PARA AGREGAR O EDITAR Reservacion-->
-                <div id="color-profile" class="tab-pane">
-                    <div ng-if="verFormAgregarReservacion==true || verFormEditarReservacion==true" class="panel panel-default"> 
-                        <div class="panel-body">
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
-                                <div class="col-sm-9">
-                                    <input ng-model="formReservacion.codigoReservacion" class="form-control">
+                    <!--INICIA SECCION PARA AGREGAR O EDITAR Reservacion-->
+                    <div id="color-profile" class="tab-pane">
+                        <div ng-if="verFormAgregarReservacion==true || verFormEditarReservacion==true" class="panel panel-default"> 
+                            <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
+                                    <div class="col-sm-9">
+                                        <input ng-model="formReservacion.codigoReservacion" class="form-control">
+                                    </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.nombreReservacion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Ubicación</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.ubicacion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.cantidadConectores" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.cargasSimultaneas" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.potenciaMaxima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.potenciaMinima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.corrienteMaxima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.corrienteMinima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.voltajeMaximo" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formReservacion.voltajeMinimo" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Comentario</label>
+                                    <div class="col-sm-9">
+                                    <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+                            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formReservacion.id_reservacion)" class="btn btn-info">Actualizar</button>
+                            <button ng-click="volverReservaciones()" class="btn btn-info">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA SECCION PARA AGREGAR O EDITAR Reservacion-->
+
+                <!--INICIA SECCION PARA OPERACIONES OCPP-->
+                <div id="color-messages" class="tab-pane">
+                    <div class="card-body row" id="Cuadro_opciones">
+                        <div class="col-md-3">
+                            <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
+                            <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
+                            <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
+                            <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
+                            <button onclick="clearChargingProfile(1)" class="btn btn-primary m-1 form-control">Limpiar Perfil de Carga</button>
+                            <button onclick="dataTransfer(1)" class="btn btn-secondary m-1 form-control">Transferencia de Datos</button>
+                            <button onclick="getCompositeSchedule(1)" class="btn btn-light m-1 form-control">Obtener Horario Compuesto</button>
+                            <button onclick="getConfiguration(1)" class="btn btn-dark m-1 form-control">Obtener configuracion</button>
+                            <button onclick="getDiagnostics(1)" class="btn btn-muted m-1 form-control">Pedir diagnostico</button>
+                            <button onclick="remoteStartTransaction(1)" class="btn btn-danger m-1 form-control">Iniciar Transaccion Remota</button>
+                            <button onclick="remoteStopTransaction(1)" class="btn btn-info m-1 form-control">Detener Transaccion Remota</button>
+                            <button onclick="getLocalListVersion(1)" class="btn btn-warning m-1 form-control">Obtener Version de Lista Local</button>
+                            <button onclick="reserveNow(1)" class="btn btn-success m-1 form-control">Reservar Ahora</button>
+                            <button onclick="reset(1)" class="btn btn-primery m-1 form-control">Resetear</button>
+                            <button onclick="sendLocalList(1)" class="btn btn-secondary m-1 form-control">Enviar Lista Local</button>
+                            <button onclick="setChargingProfile(1)" class="btn btn-light m-1 form-control">Establecer Perfil de Carga</button>
+                            <button onclick="triggerMessage(1)" class="btn btn-muted m-1 form-control">Solicitar Operacion OCPP</button>
+                            <button onclick="buttons_unlockConnector()" class="btn btn-danger m-1 form-control">Desbloquear Conector</button>
+                            <button onclick="updateFirmware(1)" class="btn btn-info m-1 form-control">Actualizar Firmware</button>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="col-md-12">
+                                Opciones aqui   
                             </div>
                             <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.nombreReservacion" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Ubicación</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.ubicacion" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.cantidadConectores" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.cargasSimultaneas" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.potenciaMaxima" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.potenciaMinima" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.corrienteMaxima" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.corrienteMinima" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.voltajeMaximo" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
-                                <div class="col-sm-9">
-                                <input ng-model="formReservacion.voltajeMinimo" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Comentario</label>
-                                <div class="col-sm-9">
+                                <label class="col-md-12 control-label">Respuesta de la estación</label>
+                                <div class="col-md-12">
                                 <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="panel-footer text-right">
-                        <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-                        <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formReservacion.id_Reservacion)" class="btn btn-info">Actualizar</button>
-                        <button ng-click="volverreservaciones()" class="btn btn-info">Cerrar</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!--TERMINA SECCION PARA AGREGAR O EDITAR Reservacion-->
+                <!--TERMINA SECCION PARA OPERACIONES OCPP-->
+                
+                <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
+                <div id="color-settings" class="tab-pane">
+                    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+                        <div ng-if="transacciones" class="card">
+                            <div class="card-header">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">    
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Id transacción</th>-->
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Código RFID</th>
+                                            <th>Energía inicio [Wh]</th>
+                                            <th>Energía fin [Wh]</th>
+                                            <th>Energía consumida [kWh]</th>
+                                            <th>Estado</th>
+                                            <th>Razón</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="transaccion in transacciones">
+                                            <!--<td>{{transaccion.id_transaccion}}</td>-->
+                                            <td>{{transaccion.fecha}}</td>
+                                            <td>{{transaccion.hora_inicio}}</td>
+                                            <td>{{transaccion.codigo_rfid}}</td>
+                                            <!--<td>{{transaccion.energia_inicio}}</td>
+                                            <td>{{transaccion.energia_fin}}</td>-->
+                                            <td>{{transaccion.energiaConsumida}}</td>
+                                            <td id="status1">{{transaccion.estado}}</td>
+                                            <td>{{transaccion.razon}}</td>
+                                            <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
+                                            title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
+                                        </tr>   
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- // Progress table -->
 
-            <!--INICIA SECCION PARA OPERACIONES OCPP-->
-            <div id="color-messages" class="tab-pane">
-                <div class="card-body row" id="Cuadro_opciones">
-                    <div class="col-md-3">
-                        <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
-                        <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
-                        <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
-                        <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
-                        <button onclick="clearChargingProfile(1)" class="btn btn-primary m-1 form-control">Limpiar Perfil de Carga</button>
-                        <button onclick="dataTransfer(1)" class="btn btn-secondary m-1 form-control">Transferencia de Datos</button>
-                        <button onclick="getCompositeSchedule(1)" class="btn btn-light m-1 form-control">Obtener Horario Compuesto</button>
-                        <button onclick="getConfiguration(1)" class="btn btn-dark m-1 form-control">Obtener configuracion</button>
-                        <button onclick="getDiagnostics(1)" class="btn btn-muted m-1 form-control">Pedir diagnostico</button>
-                        <button onclick="remoteStartTransaction(1)" class="btn btn-danger m-1 form-control">Iniciar Transaccion Remota</button>
-                        <button onclick="remoteStopTransaction(1)" class="btn btn-info m-1 form-control">Detener Transaccion Remota</button>
-                        <button onclick="getLocalListVersion(1)" class="btn btn-warning m-1 form-control">Obtener Version de Lista Local</button>
-                        <button onclick="reserveNow(1)" class="btn btn-success m-1 form-control">Reservar Ahora</button>
-                        <button onclick="reset(1)" class="btn btn-primery m-1 form-control">Resetear</button>
-                        <button onclick="sendLocalList(1)" class="btn btn-secondary m-1 form-control">Enviar Lista Local</button>
-                        <button onclick="setChargingProfile(1)" class="btn btn-light m-1 form-control">Establecer Perfil de Carga</button>
-                        <button onclick="triggerMessage(1)" class="btn btn-muted m-1 form-control">Solicitar Operacion OCPP</button>
-                        <button onclick="buttons_unlockConnector()" class="btn btn-danger m-1 form-control">Desbloquear Conector</button>
-                        <button onclick="updateFirmware(1)" class="btn btn-info m-1 form-control">Actualizar Firmware</button>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="col-md-12">
-                            Opciones aqui   
+                            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                                <ul class="pagination">
+                                <li class="disabled"><a href="#">&laquo;</a></li>
+                                <li ng-repeat="pagina in paginasTransacciones">
+                                    <a type="button" ng-click="listarTransacciones(Reservacion.id_reservacion, pagina)">
+                                            {{pagina+1}}
+                                    </a>
+                                </li>
+                                <li><a href="#">&raquo;</a></li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-12 control-label">Respuesta de la estación</label>
-                            <div class="col-md-12">
-                            <textarea ng-model="formReservacion.comentario" class="form-control" rows="5"></textarea>
+                        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+                            <div class="card card-body text-center">
+                                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
             </div>
-            <!--TERMINA SECCION PARA OPERACIONES OCPP-->
-            
-            <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
-            <div id="color-settings" class="tab-pane">
-                <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
-                    <div ng-if="transacciones" class="card">
-                        <div class="card-header">
-                            <div class="col-md-12">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <table class="table">    
-                                <thead>
-                                    <tr>
-                                        <!--<th>Id transacción</th>-->
-                                        <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Código RFID</th>
-                                        <th>Energía inicio [Wh]</th>
-                                        <th>Energía fin [Wh]</th>
-                                        <th>Energía consumida [kWh]</th>
-                                        <th>Estado</th>
-                                        <th>Razón</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="transaccion in transacciones">
-                                        <!--<td>{{transaccion.id_transaccion}}</td>-->
-                                        <td>{{transaccion.fecha}}</td>
-                                        <td>{{transaccion.hora_inicio}}</td>
-                                        <td>{{transaccion.codigo_rfid}}</td>
-                                        <!--<td>{{transaccion.energia_inicio}}</td>
-                                        <td>{{transaccion.energia_fin}}</td>-->
-                                        <td>{{transaccion.energiaConsumida}}</td>
-                                        <td id="status1">{{transaccion.estado}}</td>
-                                        <td>{{transaccion.razon}}</td>
-                                        <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
-                                        title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
-                                    </tr>   
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- // Progress table -->
+            <!-- // END Panes -->
 
-                        <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
-                            <ul class="pagination">
-                            <li class="disabled"><a href="#">&laquo;</a></li>
-                            <li ng-repeat="pagina in paginasTransacciones">
-                                <a type="button" ng-click="listarTransacciones(Reservacion.id_Reservacion, pagina)">
-                                        {{pagina+1}}
-                                </a>
-                            </li>
-                            <li><a href="#">&raquo;</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div ng-if="!transacciones" class="col-md-4 mx-auto">
-                        <div class="card card-body text-center">
-                            <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA Reservacion-->
         </div>
-        <!-- // END Panes -->
-
     </div>
     <!-- // END Tabbable Widget -->
 

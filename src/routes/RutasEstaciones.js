@@ -60,7 +60,7 @@ router.get('/home/estaciones/informacion', async(req, res) => {
 	let totalEstaciones = await pool.query(sql1);
 	totalEstaciones = totalEstaciones[0].total;
 	data.totalEstaciones = totalEstaciones;
- 
+  
 	let sql2 = "SELECT es.*, ee.*, pe.fecha fecha_ping, pe.hora hora_ping FROM estaciones es, estado_estacion ee, ping_estacion pe WHERE es.id_estacion!=0 AND es.id_estacion=ee.id_estacion AND es.id_estacion=pe.id_estacion;"; 
 	let estaciones = await pool.query(sql2); 
 	let estacion;
@@ -69,7 +69,7 @@ router.get('/home/estaciones/informacion', async(req, res) => {
 		estacion = estaciones[i];
 		estaciones[i].estado = await estadoEstacion(estaciones[i].id_estado_est);
 		fechaFormatoYmd = formatearFechaYMD(estaciones[i].fecha_ping);
-		console.log('fechaFormatoYmd: ' + fechaFormatoYmd);
+		//console.log('fechaFormatoYmd: ' + fechaFormatoYmd);
 		estaciones[i].conexion = getEstadoConexion(fechaFormatoYmd, estacion.hora_ping);
 	}
 	data.estaciones = estaciones;
@@ -78,6 +78,15 @@ router.get('/home/estaciones/informacion', async(req, res) => {
 });
 
 /********************************************************************************************/
+router.get('/home/estaciones/listar_tipos_conectores', async(req, res) => {
+	var data = {};
+	let sql = "SELECT * FROM conectores_tipos;";
+	let result = await pool.query(sql);  
+	data.tiposConectores = result;
+	data.success = true;
+	res.send(data);
+});
+/********************************************************************************************/
 function getEstadoConexion(fecha, hora){
 	let estado = 'Conectada';
 	let union = fecha + 'T' + hora;
@@ -85,7 +94,6 @@ function getEstadoConexion(fecha, hora){
 	let previousTimeStamp = union.getTime();	
 	let currentTimestamp = new Date().getTime();
 	let diff = (currentTimestamp - previousTimeStamp)/1000;
-	console.log('diff: ' + diff);
 	if(diff>20){ 
 		estado = 'Desconectada';
 	}
@@ -94,8 +102,6 @@ function getEstadoConexion(fecha, hora){
 /********************************************************************************************/
 router.post('/home/estaciones/agregar', async(req, res) => {
 	var data = {};
-	console.log('llama a estaciones agregar')
-	console.log(req.body)
 	var ce = req.body.codigoEstacion;
 	var ns = req.body.nombreEstacion;
 	var ubi = req.body.ubicacion;
@@ -109,11 +115,24 @@ router.post('/home/estaciones/agregar', async(req, res) => {
 	var vmax = req.body.voltajeMaximo
 	var vmin = req.body.voltajeMinimo
 	var comentario = req.body.comentario
+	let conectores = req.body.conectores;
+
 
 	var insert = 'INSERT INTO estaciones VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?,?);';
-	const subirEstacion = await pool.query(insert, [ce, ns, ubi, cc, cs, pmin, pmax, vmin, vmax, cmin, cmax, 3, cs ]);
+	await pool.query(insert, [ce, ns, ubi, cc, cs, pmin, pmax, vmin, vmax, cmin, cmax, 3, cs ]);
+	//CONSULTAMOS EL ID DE LA ULTIMA ESTACION AGREGADA
+	let sql_ide = 'SELECT id_estacion FROM estaciones ORDER BY id_estacion DESC LIMIT 1;';
+	let result = await pool.query(sql_ide);
+	console.log('result');
+	console.log(result);
+	let id_estacion = result[0].id_estacion;
+	//LUEGO INSERTAMOS EL ESTADO DE ESTACION COMO DISPONIBLE POR DEFECTO
+	await insertarEstadoEstacion(id_estacion);
+	//LUEGO INSERTAMOS EL 'ULTIMO PING' CON LA HORA ACTUAL
+	await insertarUltimoPing(id_estacion);
+	//LUEGO INSERTAMOS LOS CONECTORES DE LA ESTACION
+	await ingresarConectoresEstacion(conectores, id_estacion);
 
-	
 	if(comentario.length>0){
 		let sqlIdEstacion = "SELECT id_estacion FROM estaciones ORDER BY id_estacion DESC LIMIT 1";
 		let idEstacion = await pool.query(sqlIdEstacion);
@@ -127,17 +146,61 @@ router.post('/home/estaciones/agregar', async(req, res) => {
 });
 
 /********************************************************************************************/
+async function ingresarConectoresEstacion(conectores, id_estacion){
+
+	var sql = "INSERT INTO conectores VALUES(null,?,?,'50 kw','Disponible',?)";
+	for (conector of conectores){
+		let id_conector = conector.id_conector;
+		let nombre = conector.nombre;
+		console.log('id_conector');
+		console.log(id_conector);
+		//QUISE PONER LA SENTENCIA FUERA PERO PARECE QUE DENTRO DEL SCOPE DEL FOR NO RECONOCE LA VARIABLE sql
+		await pool.query(sql, [id_estacion, id_conector, nombre]);
+	}
+}
+/********************************************************************************************/
+async function insertarEstadoEstacion(id_estacion){
+	let sql = "INSERT INTO estado_estacion VALUES(null,?,1)";
+	await pool.query(sql, [id_estacion]); 
+}
+/********************************************************************************************/
+async function insertarUltimoPing(id_estacion){
+	let sql = "INSERT INTO ping_estacion VALUES(null,?,now(),now())";
+	await pool.query(sql, [id_estacion]);
+}
+/********************************************************************************************/
 router.get('/home/estaciones/eliminar/:id', async(req, res) => {
-	var data = {};
-	var ide = req.params.id;
-	console.log('se pide eliminar: ' + ide);
-	var delet = 'DELETE FROM estaciones ';
-	var where = 'WHERE id_estacion="' + ide + '";';
-	await pool.query(delet + where);
+	let data = {};
+	let id_estacion = req.params.id;
+	//console.log('se pide eliminar: ' + ide);
+	let sql = 'DELETE FROM estaciones WHERE id_estacion=?;';
+	await pool.query(sql, [id_estacion]);
+	//PRIMERO ELIMINAMOS LOS CONECTORES DE LA ESTACION
+	await eliminarConectoresEstacion(id_estacion);
+	//LUEGO ELIMINAMOS EL ESTADO ESTACION
+	await eliminarEstadoEstacion(id_estacion);
+	//LUEGO ELIMINAMOS EL PING ESTACION
+	await eliminarPingEstacion(id_estacion);
 	data.success = true;
 	res.send(data);
 });
+/********************************************************************************************/
+async function eliminarConectoresEstacion(id_estacion){
+	let sql = 'DELETE FROM conectores WHERE id_estacion=?';
+	await pool.query(sql, [id_estacion]);
+}
 
+/********************************************************************************************/
+async function eliminarEstadoEstacion(id_estacion){
+	let sql = 'DELETE FROM estado_estacion WHERE id_estacion=?';
+	await pool.query(sql, [id_estacion]);
+}
+
+/********************************************************************************************/
+async function eliminarPingEstacion(id_estacion){
+	let sql = 'DELETE FROM ping_estacion WHERE id_estacion=?';
+	await pool.query(sql, [id_estacion]);
+}
 
 /********************************************************************************************
 router.get('/home/estaciones/info/:id', async(req, res) => {

@@ -67,7 +67,7 @@ function GetCompositeScheduleRequest(payload){
 //GET CONFIGURATION
 /*=============================================================================================*/
 function GetConfigurationRequest(payload){
-    
+
     const KeysArray = ['AuthorizationCacheEnabled',
     'AuthorizeRemoteTxRequests',
     'AllowOfflineTxForUnknownId',
@@ -204,15 +204,37 @@ async function RemoteStopTransactionRequest(payload){
 /*=============================================================================================*/
 //RESERVE NOW
 /*=============================================================================================*/
-function ReserveNowRequest(payload){
+async function ReserveNowRequest(payload){
+    console.log('Se esta usando reserve now request');
+    let lastReservationId = await addReserveNowDb(payload);
+    let payloadMessageSent = {};
+    payloadMessageSent.lastReservationId = lastReservationId;
+    payloadMessageSent.operacion = 'ReserveNow';
+
     let connectorId = payload.connectorId;
     let expiryDate = payload.expiryDate;
     let idTag = payload.idTag;
     let reservationId = payload.reservationId;
     payloadRequest = {"connectorId": connectorId, "expiryDate": expiryDate, "idTag": idTag, "reservationId": reservationId};
-    return [payloadRequest];
+    return [payloadRequest, , ,payloadMessageSent];
 }
 
+/*=============================================================================================*/
+async function addReserveNowDb(data){
+    let reservationId = data.reservationId; 
+    let idTag = data.idTag; 
+	let stationId = data.stationId;
+	let connectorId = data.connectorId;
+	let expiryDate = data.expiryDate;
+	 
+	let sql = 'INSERT INTO reservaciones VALUES (?,?,?,?,?,0,"");';
+	await pool.query(sql, [reservationId, idTag, stationId, connectorId, expiryDate]);
+
+    sql = "SELECT id_reservacion from reservaciones ORDER BY id_reservacion DESC LIMIT 1;";
+    let result = await pool.query(sql);
+    let lastReservationId = result[0].id_reservacion;
+    return lastReservationId;
+}
 /*=============================================================================================*/
 function agregaMinutos(dt, minutos) {
     const currentDate = new Date();
@@ -384,7 +406,7 @@ async function processOcppRequestFromBrowser(ocppMessageFromBrowser){
         payloadRequest = GetCompositeScheduleRequest(payload);
     }else if(tipo=='GetConfiguration'){
         payloadRequest = GetConfigurationRequest(payload);
-   }else if(tipo=='GetDiagnostics'){
+    }else if(tipo=='GetDiagnostics'){
         payloadRequest = GetDiagnosticsRequest(payload);
     }else if(tipo=='GetLocalListVersion'){
         payloadRequest = GetLocalListVersionRequest(payload);
@@ -393,7 +415,7 @@ async function processOcppRequestFromBrowser(ocppMessageFromBrowser){
     }else if(tipo=='RemoteStopTransaction'){
         payloadRequest = RemoteStopTransactionRequest(payload);
     }else if(tipo=='ReserveNow'){
-        payloadRequest = ReserveNowRequest(payload);
+        payloadRequest = await ReserveNowRequest(payload);
     }else if(tipo=='Reset'){
         payloadRequest = ResetRequest(payload);
     }else if(tipo=='SendLocalList'){

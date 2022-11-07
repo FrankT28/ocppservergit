@@ -32,7 +32,7 @@ async function clientePorId(id_cliente){
     cliente = await pool.query(sql, [id_cliente]);
     if(cliente.length<0){
         cliente.razon_social = 'Sin Asignar';
-    }else{
+    }else{ 
         cliente = cliente[0];
     }
     return cliente;
@@ -47,10 +47,10 @@ router.get('/home/tarjetas/informacion/:desde/:cuantos', async(req, res) => {
     let cuantos = parseInt(req.params.cuantos);
     data.totalTarjetas = total[0].total;
 
-    sql = 'SELECT ta.*, ea.nombre estadoAutorizacion FROM tarjetas ta, estados_autorizacion ea WHERE ta.id_estado_autorizacion=ea.id_estado_autorizacion ORDER BY id_tarjeta DESC LIMIT ?, ?;';
+    sql = 'SELECT ta.*, ea.nombre estadoAutorizacion, ea.alias FROM tarjetas ta, estados_autorizacion ea WHERE ta.id_estado_autorizacion=ea.id_estado_autorizacion ORDER BY id_tarjeta DESC LIMIT ?, ?;';
 	var tarjetas = await pool.query(sql, [desde, cuantos]);
     var i = 0;
-    for(const row of tarjetas){
+    for(const row of tarjetas){ 
         tarjetas[i].saldo = (Math.round(tarjetas[i].saldo * 100) / 100).toFixed(2);
         //tarjetas[i].razon_social = await clientePorId(tarjetas[i].id_cliente)
         tarjetas[i].cliente = await clientePorId(tarjetas[i].id_cliente)
@@ -105,10 +105,15 @@ router.get('/home/tarjetas/estados_autorizacion', async (req, res) => {
 })
 
 
-router.get('/home/tarjetas/eliminar/:id', async(req, res) => {
-	var idt = req.params.id;
-	await pool.query('DELETE FROM tarjetas WHERE id_tarjeta=?', idt);
-	res.redirect('/home/tarjetas/informacion');
+/*************************************************************************/
+router.get('/home/tarjetas/eliminar/:id_tarjeta', async(req, res) => {
+    let data = {};
+	let id_tarjeta = req.params.id_tarjeta;
+    let sql = 'DELETE FROM tarjetas WHERE id_tarjeta=?';
+	await pool.query(sql, [id_tarjeta]);
+    data.success = true;
+	// res.redirect('/home/tarjetas/informacion');
+    res.send(data);
 });
 
 /*
@@ -122,23 +127,17 @@ router.get('/home/tarjetas/editar/:id', async(req, res) => {
 });
 */
 
-router.post('/home/tarjetas/editar/:id', async(req, res) => {
-    var data = {};
-	var id = req.params.id;
-    var crfid = req.body.codigo_rfid
-    var estado = req.body.estado
-    var saldo = req.body.saldo
-
-	var query = 'UPDATE tarjetas SET '
-    + ' codigo_rfid="' + crfid 
-    + '", estado="' + estado
-    + '", saldo="' + saldo
-	+ '" WHERE id_tarjeta="' + id + '";';
-	console.log(query); 
-	await pool.query(query);
+router.post('/home/tarjetas/editar/:id_tarjeta', async(req, res) => {
+    let data = {};
+	let id_tarjeta = req.params.id_tarjeta;
+    let idTag = req.body.codigo_rfid
+    let id_estado_autorizacion = req.body.id_estado_autorizacion
+    let saldo = req.body.saldo
+	let sql = 'UPDATE tarjetas SET codigo_rfid=?, id_estado_autorizacion=?, saldo=? WHERE id_tarjeta=?;';
+	await pool.query(sql, [idTag, id_estado_autorizacion, saldo, id_tarjeta]);
     data.success = true;
     res.send(data); 
-});
+}); 
 
 
 

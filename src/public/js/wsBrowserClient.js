@@ -1,5 +1,5 @@
-//const ws = new WebSocket('ws://localhost:3000/navegador');
-const ws = new WebSocket('ws://serverocpp.herokuapp.com/navegador');
+const ws = new WebSocket('ws://localhost:3000/navegador');
+//const ws = new WebSocket('ws://serverocpp.herokuapp.com/navegador');
 
 /*=============================================================================================*/
 ws.addEventListener('open', () => {

@@ -36,6 +36,8 @@
 			$scope.accion = 'Nueva Estación';
 			$scope.accionPost = 'agregar';
 			$scope.formEstacion = {};	
+			$scope.formEstacion.conectores = [];
+			$scope.conector = {};	
 			$scope.verFormAgregarEstacion = true;
 			$scope.verEstaciones = false;
 		}
@@ -73,6 +75,25 @@
 			$scope.verEstaciones = false;
 		}
 		/*=========================================================================*/
+		listarTiposConectores();
+		function listarTiposConectores(){
+			$http.get('/home/estaciones/listar_tipos_conectores/')
+			.success(function(data){
+				if(data.success){
+					$scope.tiposConectores = data.tiposConectores;
+				}
+			})
+		}
+		/*=========================================================================*/
+		$scope.agregarConectorEstacion = function(){
+			console.log('$scope.conector');
+			console.log($scope.conector);
+			$scope.formEstacion.conectores.push($scope.conector);
+			console.log('conectores form');
+			console.log($scope.formEstacion.conectores);
+			$scope.conector = {};
+		}
+		/*=========================================================================*/
 		$scope.alertEliminarEstacion = function(id_estacion){
 			var deleteStation = confirm('Esta seguro que desea eliminar los datos de la estación?');
 			if(deleteStation){
@@ -100,10 +121,12 @@
 			if($scope.accionPost=='editar'){
 				accion = accion + '/' + id;
 			}
+			console.log('$scope.formEstacion');
+			console.log($scope.formEstacion);
 			$http({
 				method: 'POST',
 				url: '/home/estaciones/' + accion + '/',
-				data: parametrar($scope.formEstacion),
+				data: $.param($scope.formEstacion),
 				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 			}).success(function(data){
 				$scope.verEstaciones = true;

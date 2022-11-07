@@ -6,20 +6,21 @@ const fs = require('fs');
 //AUTHORIZE
 /*=============================================================================================*/
 async function authorizeResponse(payload){
-    crfid = payload.idTag;
-    var datosTarjeta = await pool.query('SELECT id_tarjeta, estado FROM tarjetas where codigo_rfid="' + crfid + '";');
     var payloadResponse = {};
-    datosTarjeta = datosTarjeta[0];
-    
+    crfid = payload.idTag;
+    let sql = 'SELECT ta.id_tarjeta, ea.alias FROM tarjetas ta INNER JOIN estados_autorizacion ea on ta.id_estado_autorizacion=ea.id_estado_autorizacion where codigo_rfid=?;';
+    let result = await pool.query(sql, [crfid]);
+    let datosTarjeta = result[0];
+    let estado = datosTarjeta.alias;
+ 
     if (datosTarjeta){
-        if (datosTarjeta.estado=='Accepted'){
-            payloadResponse =  {"idTagInfo": {"status": "Accepted"}};
-        }else{
-
-            payloadResponse =  {"idTagInfo": {"status": "Blocked"}};
-        } 
+        payloadResponse = {'idTagInfo': {"status": estado}}
+        // if (datosTarjeta.estado=='Accepted'){
+        //     payloadResponse =  {"idTagInfo": {"status": "Accepted"}};
+        // }else{
+        //     payloadResponse =  {"idTagInfo": {"status": "Blocked"}};
+        // } 
     }else{
-
         payloadResponse =  {"idTagInfo": {"status": "Invalid"}};
     }
 
@@ -35,6 +36,12 @@ function bootNotificationResponse(payload){
     payloadResponse = {"status":"Accepted", "currentTime":currentDate, "interval":300};
     payloadResponseNav = {};
     return [payloadResponse, payloadResponseNav];
+}
+
+/*=============================================================================================*/
+async function insertBootNotification(id_estacion){
+    let sql = "INSERT INTO bootNotificationMessages VALUES(null,?,now(),now());";
+    await pool.query(sql, [id_estacion]);
 }
 
 /*=============================================================================================*/
@@ -345,13 +352,13 @@ async function startTransactionResponse(payload){
     return [payloadResponse, payloadResponseNav, payloadresponseapk];
 }
 /*=============================================================================================*/
-async function validarTarjeta(codigo){
-    let sql = "SELECT id_tarjeta FROM tarjetas WHERE codigo_rfid=?";
-    let result = await pool.query(sql, codigo);
-    if(result.length>0){
+async function validarTarjeta(idTag){
+    let sql = "SELECT id_tarjeta, alias FROM tarjetas ta INNER JOIN estados_autorizacion ea on ta.id_estado_autorizacion=ea.id_estado_autorizacion WHERE codigo_rfid=?";
+    let result = await pool.query(sql, idTag);
+    if(result.length>0 && result[0].alias=='Accepted'){
         id_tarjeta = result[0].id_tarjeta;
     }else{
-        id_tarjeta = false;
+        id_tarjeta = false; 
     }
     return id_tarjeta;
 }
@@ -391,7 +398,7 @@ async function stopTransactionResponse(payload){
     let meterStop = payload.meterStop;
     let ec;
     if(meterStart.length>0){
-        console.log('si pasa')
+        console.log('si pasa')   
         ec = meterStop - meterStart[0].energiaInicio;
     }else{
         ec = meterStop;
@@ -436,9 +443,9 @@ async function processOcppRequest(ocppMessage){
     }else if (action=='StatusNotification'){
         payloadResponse = await statusNotificationResponse(payload);
     }else if(action=='StopTransaction'){
-        payloadResponse = stopTransactionResponse(payload)
+        payloadResponse = stopTransactionResponse(payload);
     }else{
-        payloadResponse = notImplementedResponse(payload)
+        payloadResponse = notImplementedResponse(payload);
     }
     return payloadResponse
 }

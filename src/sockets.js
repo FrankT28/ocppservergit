@@ -8,6 +8,8 @@ const path = require('path');
 const { networkInterfaces } = require('os');
 const ocppClient = require('./ocppStationOperations');
 const ocppServer = require('./ocppServerOperations');
+const manageStationResponse = require('./manageStationResponse');
+const keys = require('./keys.js');
 
 /*=================================================================================================*/
 var generateAcceptValue = function (acceptKey) {
@@ -139,8 +141,8 @@ async function compareUniqueId(uniqueId){
 }
 
 /*=============================================================================================*/
-async function ingresarUniqueIdDb(valores){
-    let sql = "INSERT INTO mensajes_enviados values(null,?,?,?,?);";
+async function addMessageSent(valores){
+    let sql = "INSERT INTO mensajes_enviados values(null,?,?,?,?,'0');";
     await pool.query(sql, valores);
 }
 /*=============================================================================================*/
@@ -171,20 +173,22 @@ async function updatePingDb(id){
 async function updateStateMessage(uniqueID){
     let sql = "UPDATE mensajes_enviados SET estado_respuesta=1 WHERE uniqueId=?";
     await pool.query(sql, [uniqueID]);
+
+    let sql2 = "SELECT id_registro, operacion FROM mensajes_enviados WHERE uniqueId=?;";
+    let result2 = await pool.query(sql2, [uniqueID]);
+    return result2[0];
 }
 
 /*=============================================================================================*/
-module.exports = function(server){
-    server.on('upgrade',  async(req, socket) => { 
+function sockets(server){
+    server.on('upgrade',  async(req, socket) => {
         let bufferToParse = Buffer.alloc(0);
         var codigoEstacion = req.url.substring(1,req.url.length);
         console.log('                                           ');
         console.log('------------------------------------------------------');
         console.log('Un cliente quiere establecer un websocket: ');
         console.log('Identidad del cliente: ' + codigoEstacion);
-        for(i in req){
-            console.log(i);
-        }
+        
         var clave;
         if (req.headers['upgrade'] !== 'websocket') {
             socket.end('HTTP/1.1 400 Bad Request');
@@ -208,10 +212,12 @@ module.exports = function(server){
                 clave = 0;
                 socket.write(response.join('\r\n') + '\r\n\r\n' );
             }else{
-                return; 
+                console.log('Cliente no agregado');
+                socket.end('HTTP/1.1 404');
+                return;
             }
         }
-     
+    
         if(socket.readyState=='open'){
             console.log('socket.readyState es igual a open');
             clientes.set(clave, socket);
@@ -302,9 +308,13 @@ module.exports = function(server){
                         //ESTE CASO SE DA CUANDO LA ESTACION RESPONDE A UN CALL REALIZADO DESDE EL SERVIDOR.
                         else if (MessageTypeId==3){
                             let uniqueID = message[1];
-                            await updateStateMessage(uniqueID);
+                            let payload = message[2];
+                            let regAndope = await updateStateMessage(uniqueID);
+                            console.log('regandope');
+                            console.log(regAndope);
+                            await manageStationResponse.update(regAndope, payload);
                             clientenav = clientes.get(0);
-                            console.log('Se ha recibido un MessageTypeId igual a 3!')
+                            console.log('Se ha recibido un MessageTypeId igual a 3!');
                             console.log(message[2]);
                             console.log('Este es el uniqueID');
                             console.log(message[1]);
@@ -338,23 +348,28 @@ module.exports = function(server){
                             console.log(message);
                             var stationId = message.stationId;
                             var stationClient = clientes.get(stationId);  
-                            let action = message.tipo;  
+                            let action = message.tipo;
                             if(stationClient!=undefined){
                                 let messageString = JSON.stringify(message);
                                 console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
-                                await ingresarUniqueIdDb([stationId, uniqueId, messageString, 0]);
 
                                 //uniqueId = uniqueId.toString();
                                 Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
                                 PayloadResponse = Respuestas[0];
                                 PayloadResponseNav = Respuestas[1];
                                 PayloadResponseApk = Respuestas[2];
+                                PayloadMessage = Respuestas[3];
 
                                 let CallResult = [2, uniqueId, action, PayloadResponse]; 
                                 console.log('Request a enviar al punto de carga: ');
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
+                                if(true){//IF TRUE SIGNIFICA QUE EL MENSAJE FUE ENVIADO CORRECTAMENTE A LA ESTACION
+                                    let id_registro = PayloadMessage.lastReservationId;
+                                    let operacion = PayloadMessage.operacion;
+                                    await addMessageSent([stationId, uniqueId, id_registro, operacion]);
+                                }
                             }else{
                                 clientenav = clientes.get(0);
                                 var Response = {
@@ -395,3 +410,5 @@ module.exports = function(server){
         });
     }); 
 };
+
+module.exports.sockets = sockets;

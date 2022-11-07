@@ -34,6 +34,7 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 		return paginas;
 	}
 	/*=========================================================================*/
+	//ELIMINAR ESTA FUNCTION, USAR $.PARAM EN JS
 	function parametrar(obj) {
 		var p = [];
 		for (var key in obj) {
@@ -59,7 +60,6 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 		})
     }
 	$scope.listarTarjetas(0);
-
 	/*=========================================================================*/
 	estadosAutorizacion();
 	function estadosAutorizacion(){
@@ -83,20 +83,23 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 		$scope.accion = 'Editar Tarjeta';
 		$scope.accionPost = 'editar';
 		$scope.verFormEditarTarjeta = true;
-		$scope.verTarjeta = false;
+		$scope.verTarjetas = false;
 	}
 	/*=========================================================================*/
 	$scope.agregarAtarjetas = function(){
 		$scope.verTarjeta = false;
 		$scope.verFormAgregarTarjeta = false;
+		$scope.verFormEditarTarjeta = false;
 		$scope.verTarjetas = true;
 	}
 	/*=========================================================================*/
 	$scope.editarAtarjeta = function(){
-		console.log('Se llama volver Tarjetaes')
+		console.log('Se llama volver Tarjetas')
 		$scope.verTarjeta = true;
 		$scope.verFormEditarTarjeta = false;
 		$scope.verTarjetas = false;
+
+		
 	}
 	/*=========================================================================*/
 	$scope.enviar = function(accion, id){
@@ -124,10 +127,22 @@ angular.module("pages.tarjetas", ['angular-js-xlsx'])
 	/*=========================================================================*/
 	$scope.detallesTarjeta = function(tarjeta){
 		console.log('se llama detalles tarjeta')
+		console.log('tarjeta');
+		console.log(tarjeta);
 		$scope.tarjeta = tarjeta;
 		$scope.formTarjeta = tarjeta;
 		$scope.verTarjetas = false;
-		$scope.verTarjeta = true;
+		$scope.verFormEditarTarjeta = true;
+	}
+	/*=========================================================================*/
+	$scope.alertEliminarTarjeta = function(id_tarjeta){
+		let confirmEliminar = confirm('Esta seguro de que desea eliminar los datos de la tarjeta?');
+		if (confirmEliminar){
+			$http.get('/home/tarjetas/eliminar/' + id_tarjeta + '/')
+			.success(function(data){
+				$scope.listarTarjetas(0);
+			})
+		}
 	}
 	/*=========================================================================*/
 	$scope.datosClienteTarjeta = function(){

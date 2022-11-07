@@ -6,9 +6,9 @@ const MySQLStore = require('express-mysql-session');
 const passport = require('passport');
 const express = require('express');
 const flash = require('connect-flash');
+const sockets = require('./sockets.js');
+
 var url = require('url');
-
-
 const {database} = require('./keys');
 
 
@@ -21,8 +21,11 @@ const app = express();
 require('./lib/passport');
 
 
+//ANTES URLENCODED ERA FALSE POR EL VIDEO DE FAZT QUE VI EN YOUTUBE
+//PERO DE AHORA EN ADELANTE PONER TRUE PARA QUE FUNCIONEN LOS POST
+//QUE HAGO DESDE EL FRONT EN LOS QUE MANDO OBJETOS CON ARRAYS INTERNOS
+app.use(express.urlencoded({extended: true}));
 
-app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'css')));
 app.use(express.static(path.join(__dirname, '/public')));
@@ -90,6 +93,7 @@ app.use(require('./routes/RutasDashboard.js'));
 app.use(require('./routes/RutasTarjetas.js'));
 app.use(require('./routes/RutasClientes.js'));
 app.use(require('./routes/RutasEstaciones.js'));   
+app.use(require('./routes/RutasReservaciones.js')); 
 app.use(require('./routes/RutasTransacciones.js'));
  
 app.set('port', process.env.PORT || 3000);
@@ -100,13 +104,9 @@ app.set('port', process.env.PORT || 3000);
   res.render(principal);
 });*/
 
- 
-
-
-
 var server = http.createServer(app);
 server.listen(app.get('port'), () =>{
   console.log('Server on port ', app.get('port'));
 });
 
-require('./sockets.js')(server);
+sockets.sockets(server);

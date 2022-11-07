@@ -1,47 +1,48 @@
 <div data-ng-controller="tarjetasController">
     <!--INICIA SECCION PARA LISTAR TARJETAS-->
-    <div class="page-section-heading">
+    <div class="col-md-12">
         <button ng-if="verTarjetas==true" ng-click="agregarTarjeta()" class="btn btn-primary">
             <em class="fa fa-plus"></em> Agregar</button>
-        <button ng-if="verFormAgregarTarjeta==true" ng-click="agregarAtarjetas()" class="btn btn-primary">
+        <button ng-if="verFormAgregarTarjeta==true || verFormEditarTarjeta==true" ng-click="agregarAtarjetas()" class="btn btn-primary">
             <em class="fa fa-hand-o-left"></em> Volver</button>
-        <button ng-if="verFormEditarTarjeta==true" ng-click="editarAtarjeta()" class="btn btn-info">
+        <!-- <button ng-if="verFormEditarTarjeta==true" ng-click="editarAtarjeta()" class="btn btn-info">
             <em class="fa fa-hand-o-left"></em> Volver</button>
         <button ng-if="verTransacciones==true" ng-click="volverDetallesTarjeta()" class="btn btn-success">
-            <em class="fa fa-hand-o-left"></em> Volver</button>
-        <button ng-if="verTarjetas==true" ng-click="excel()" class="btn btn-success">
-            <em class="fa fa-file-excel-o"></em> Exportar</button>
+            <em class="fa fa-hand-o-left"></em> Volver</button> -->
+        <!-- <button ng-if="verTarjetas==true" ng-click="excel()" class="btn btn-success">
+            <em class="fa fa-file-excel-o"></em> Exportar</button> -->
         <!--<js-xls onread="read" onerror="error" class="">Excel</js-xls>-->
     </div>
 
-    <div ng-if="verTarjetas==true">
+    <!--INICIA SECCION PARA LISTAR TARJETAS-->
+    <div ng-if="verTarjetas==true" class="col-md-12">
         <div class="panel panel-default">
             <!-- Progress table -->
             <div class="table-responsive">
                 <table class="table v-middle" id="tablaTarjetas">
-                <thead>
-                    <tr>
-                        <th>Codigo</th>
-                        <th>Cliente</th>
-                        <th>Saldo</th>
-                        <th>Estado</th>
-                        <th class="text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="responsive-table-body">
-                    <tr ng-repeat="tarjeta in tarjetas" ng-click="detallesTarjeta(tarjeta)">
-                    <td>{{tarjeta.codigo_rfid}}</td>
-                    <td>{{tarjeta.razon_social}}</td>
-                    <td>{{tarjeta.saldo}}</td>
-                    <td>{{tarjeta.estadoAutorizacion}}</td>
-                    <td class="text-right">
-                        <a ng-click="detallesTarjeta(tarjeta)" class="btn btn-default btn-xs" 
-                            data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
-                        <a ng-click="alertEliminarTarjeta(tarjeta.id_tarjeta)" class="btn btn-danger btn-xs" 
-                            data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
-                    </td>
-                    </tr>
-                </tbody>
+                    <thead>
+                        <tr>
+                            <th>idTag</th>
+                            <th>Cliente</th>
+                            <th>Saldo</th>
+                            <th>Estado</th>
+                            <th class="text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="responsive-table-body">
+                        <tr ng-repeat="tarjeta in tarjetas">
+                            <td ng-click="detallesTarjeta(tarjeta)">{{tarjeta.codigo_rfid}}</td>
+                            <td>{{tarjeta.cliente.razon_social}}</td>
+                            <td>{{tarjeta.saldo}}</td>
+                            <td>{{tarjeta.alias}}</td>
+                            <td class="text-right">
+                                <a ng-click="editarTarjeta(tarjeta)" class="btn btn-default btn-xs" 
+                                    data-placement="top" title="Editar"><i class="fa fa-pencil"></i></a>
+                                <a ng-click="alertEliminarTarjeta(tarjeta.id_tarjeta)" class="btn btn-danger btn-xs" 
+                                    data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <!-- // Progress table -->
@@ -59,46 +60,45 @@
     <!--TERMINA SECCION PARA LISTAR TARJETAS-->
     
     <!--INICIA SECCION PARA AGREGAR TARJETA-->
-    <div ng-if="verFormAgregarTarjeta==true || verFormEditarTarjeta==true" class="panel panel-default">
-        <div>
-            <h5 class="text-center">{{accion}}</h5>
-        </div> 
-        <div class="panel-body">
-        <form class="form-horizontal" role="form">
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Código RFID</label>
-                <div class="col-sm-9">
-                    <input ng-model="formTarjeta.codigo_rfid" class="form-control">
+    <div class="col-md-12" ng-if="verFormAgregarTarjeta==true || verFormEditarTarjeta==true">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">idTag</label>
+                    <div class="col-sm-9">
+                        <input ng-model="formTarjeta.codigo_rfid" class="form-control">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Saldo</label>
-                <div class="col-sm-9">
-                <input ng-model="formTarjeta.saldo" class="form-control">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Saldo</label>
+                    <div class="col-sm-9">
+                    <input ng-model="formTarjeta.saldo" class="form-control">
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Estado</label>
-                <div class="col-sm-9">
-                    <select class="form-control" ng-model="formTarjeta.id_estado_autorizacion">
-                        <option ng-selected="formTarjeta.id_estado_autorizacion == estado.id_estado" 
-                            ng-repeat="estado i n estadosAutorizacion" ng-value="estado.id_estado_autorizacion">{{estado.nombre}}
-                        </option>
-                   </select>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Estado</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" ng-model="formTarjeta.id_estado_autorizacion">
+                            <option ng-selected="formTarjeta.id_estado_autorizacion == estado.id_estado_autorizacion" 
+                                ng-repeat="estado in estadosAutorizacion" ng-value="estado.id_estado_autorizacion">{{estado.alias}}
+                            </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Comentario</label>
-                <div class="col-sm-9">
-                <textarea ng-model="formTarjeta.comentario" class="form-control" rows="5"></textarea>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Comentario</label>
+                    <div class="col-sm-9">
+                    <textarea ng-model="formTarjeta.comentario" class="form-control" rows="5"></textarea>
+                    </div>
                 </div>
+            </form>
             </div>
-        </form>
-        </div>
-        <div class="panel-footer text-right">
-            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formTarjeta.id_tarjeta)" class="btn btn-info">Actualizar</button>
-            <button ng-click="volverTarjetas()" class="btn btn-info">Cerrar</button>
+            <div class="panel-footer text-right">
+                <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+                <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formTarjeta.id_tarjeta)" class="btn btn-info">Actualizar</button>
+                <button ng-click="volverTarjetas()" class="btn btn-info">Cerrar</button>
+            </div>
         </div>
     </div>
     <!--TERMINA SECCION PARA AGREGAR TARJETA-->

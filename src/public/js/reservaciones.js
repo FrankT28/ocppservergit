@@ -7,7 +7,7 @@
 		//INICIALIZACION DE VARIABLES
 		console.log('se ha llamado a reservaciones js');
 		$scope.formReservacion = {};
-		$scope.verreservaciones = true;
+		$scope.verReservaciones = true;
 		$scope.verReservacion = false;
 		$scope.verFormAgregarReservacion = false;
 		$scope.verFormEditarReservacion = false;
@@ -30,6 +30,7 @@
 			$http.get('/home/reservaciones/informacion/')
 			.success(function(data){
 				$scope.reservaciones = data.reservaciones;
+				$scope.lastReservationId = data.lastReservationId;
 				$scope.totalreservaciones = data.totalreservaciones;
 				$scope.verFormEditarReservacion = false;
 				$scope.verFormAgregarReservacion = false;
@@ -41,7 +42,8 @@
 			$scope.accionPost = 'agregar';
 			$scope.formReservacion = {};	
 			$scope.verFormAgregarReservacion = true;
-			//$scope.verreservaciones = false;
+			console.log('agregar reservacion');
+			$scope.verReservaciones = false;
 		}
 		/*=========================================================================*/
 		$scope.editarReservacion = function(Reservacion){
@@ -57,12 +59,12 @@
 			$scope.verFormAgregarReservacion = false;
 			$scope.verReservacion = true;
 			$scope.verFormEditarReservacion = false;
-			$scope.verreservaciones = false;
+			$scope.verReservaciones = false;
 		}
 		/*=========================================================================*/
 		$scope.detallesReservacion = function(Reservacion){
 			$scope.Reservacion = Reservacion;
-			$scope.verreservaciones = false;
+			$scope.verReservaciones = false;
 			$scope.verReservacion = true;
 		}
 		/*=========================================================================*/
@@ -70,21 +72,21 @@
 			console.log('Se llama volver reservaciones')
 			$scope.verReservacion = false;
 			$scope.verFormAgregarReservacion = false;
-			$scope.verreservaciones = true;
+			$scope.verReservaciones = true;
 		}
 		/*=========================================================================*/
 		$scope.editarAReservacion = function(){
 			console.log('Se llama volver reservaciones')
 			$scope.verReservacion = true;
 			$scope.verFormEditarReservacion = false;
-			$scope.verreservaciones = false;
+			$scope.verReservaciones = false;
 		}
 		/*=========================================================================*/
-		$scope.alertEliminarReservacion = function(id_Reservacion){
-			console.log('id de la Reservacion: ' + id_Reservacion);
-			var deleteStation = confirm('Esta seguro que desea eliminar los datos de la estación?');
+		$scope.alertEliminarReservacion = function(id_reservacion){
+			console.log('id de la Reservacion: ' + id_reservacion);
+			var deleteStation = confirm('Esta seguro que desea eliminar los datos de la reservackón?');
 			if(deleteStation){
-				$http.get('/home/reservaciones/eliminar/' + id_Reservacion)
+				$http.get('/home/reservaciones/eliminar/' + id_reservacion)
 				.success(function(data){
 					if(data.success){
 						console.log('Se ha eliminado la Reservacion exitosamente');
@@ -107,35 +109,53 @@
 			return p.join('&');
 		};
 		/*=========================================================================*/
+        function fechaMysql(fecha){
+            let [ month, day, year] = fecha.split('/');
+            let result = [year, month, day].join('-');
+            return result;
+        }
+		/*=========================================================================*/
 		$scope.enviar = function(accion, id){
-			if($scope.accionPost=='editar'){
-				accion = accion + '/' + id;
+			if($scope.accionPost=='editar'){accion = accion + '/' + id;}
+			let fechas = $scope.formReservacion.periodo.split(' - ');
+			let expira = fechas[1].split(' ');
+			let fechaExpira = expira[0];
+			let horaExpira = expira[1];
+			let am_pm = expira[2];
+			if(am_pm=='PM'){
+				let horaMinuto = horaExpira.split(':')
+				let soloHora = parseInt(horaMinuto[0]) 
+				soloHora +=12;
+				horaExpira = soloHora.toString() + ':' + horaMinuto[1]
 			}
-			console.log('form Reservacion antes de enviar: ' + accion);
-			console.log($scope.formReservacion);
-			$http({
-				method: 'POST',
-				url: '/home/reservaciones/' + accion + '/',
-				data: parametrar($scope.formReservacion),
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-			}).success(function(data){
-				console.log('respuesta de reservaciones agregar');
-				console.log(data);
-				$scope.verreservaciones = true;
-				$scope.verFormAgregarReservacion = false;
-				$scope.successMessage = data.message
-				reservaciones();
-			}).error(function(data){
-				console.log('Error HTTP')
-			})
+			$scope.formReservacion.expiryDate = fechaMysql(fechaExpira) + " " + horaExpira + ":00";
+			$scope.formReservacion.stationId = parseInt($scope.formReservacion.stationId);
+			$scope.formReservacion.tipo = 'ReserveNow';
+			$scope.formReservacion.reservationId = $scope.lastReservationId;
+			let ocppMessage = JSON.stringify($scope.formReservacion);
+			
+			ws.send(ocppMessage);
+			// $http({
+			// 	method: 'POST',
+			// 	url: '/home/reservaciones/' + accion + '/',
+			// 	data: $.param($scope.formReservacion),
+			// 	headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+			// }).success(function(data){
+			// 	console.log('respuesta de reservaciones agregar');
+			// 	console.log(data);
+			// 	$scope.verReservaciones = true;
+			// 	$scope.verFormAgregarReservacion = false;
+			// 	$scope.successMessage = data.message
+			// 	reservaciones();
+			// })
 		}
 		/*=========================================================================*/
 		$scope.transacciones = {};
-			$scope.listarTransacciones = function(id_Reservacion, pagina){
+			$scope.listarTransacciones = function(id_reservacion, pagina){
 			console.log('Se llama a ver transacciones')
 			let desde = pagina*$scope.transaccionesPorPagina;
 			let cuantos = $scope.transaccionesPorPagina;
-			$http.get('/home/reservaciones/transacciones/' + id_Reservacion + '/' + desde + '/' + cuantos + '/')
+			$http.get('/home/reservaciones/transacciones/' + id_reservacion + '/' + desde + '/' + cuantos + '/')
 			.success(function(data){
 				if(data.success){
 					$scope.transacciones = data.transacciones;
@@ -156,6 +176,37 @@
 			$scope.verTransacciones = false;
 			$scope.verReservacion = true;
 		}
+		/*=========================================================================*/
+		tarjetas(0);
+		function tarjetas(){
+			$http.get('/home/reservaciones/tarjetas/')
+			.success(function(data){
+				console.log('data informacion tarjetas: ');
+				console.log(data);
+				$scope.tarjetas = data.tarjetas;
+			})
+		}
+		/*=========================================================================*/
+		estaciones(0);
+		function estaciones(){
+			$http.get('/home/reservaciones/estaciones/')
+			.success(function(data){
+				console.log('data informacion estaciones: ');
+				console.log(data);
+				$scope.estaciones = data.estaciones;
+			})
+		}
+		/*=========================================================================*/
+		$scope.setConectores = function(stationId){
+			console.log('set conetores');
+			console.log(stationId);
+			for(var i=0; i<$scope.estaciones.length; i++){
+				if($scope.estaciones[i].id_estacion == stationId){
+					$scope.conectoresEstacion = $scope.estaciones[i].conectores;
+				}
+			}
+		}
+		/*=========================================================================*/
 		/*=========================================================================*/
 		}
 	]

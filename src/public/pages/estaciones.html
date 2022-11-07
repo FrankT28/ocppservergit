@@ -1,9 +1,9 @@
 <div data-ng-controller="estacionesController">
     <!--INICIA SECCION PARA LISTAR ESTACIONES-->
-    <div class="page-section-heading">
+    <div class="col-md-12">
             <button ng-if="verEstaciones==true" ng-click="agregarEstacion()" class="btn btn-primary">
                 <em class="fa fa-plus"></em> Agregar</button>
-            <button ng-if="verEstacion==true" class="btn btn-success" id="toStationsDetails" ng-click="agregarAestaciones()">
+            <button ng-if="verEstacion==true" class="btn btn-primary" id="toStationsDetails" ng-click="agregarAestaciones()">
                 <em class="fa fa-arrow-left"></em> Volver a estaciones</button>
             <button ng-if="verFormAgregarEstacion==true" ng-click="agregarAestaciones()" class="btn btn-primary">
                 <em class="fa fa-hand-o-left"></em> Volver a estacion</button>
@@ -12,7 +12,7 @@
             <button ng-if="verTransacciones==true" ng-click="volverDetallesEstacion()" class="btn btn-success">
                 <em class="fa fa-hand-o-left"></em> Volver</button>-->
     </div>
-    <div ng-if="verEstaciones==true" >
+    <div ng-if="verEstaciones==true" class="col-md-12">
         <div class="panel panel-default">
             <!-- Progress table -->
             <div class="table-responsive">
@@ -60,63 +60,63 @@
     </div>
     <!--TERMINA SECCION PARA LISTAR ESTACIONES-->
     
-    
-
     <!--INICIA PAGINA PARA DETALLES DE UNA ESTACION-->
-    <div ng-if="verEstacion==true" class="panel panel-default">
-        <!-- Tabbable Widget -->
-        <div class="tabbable tabs-primary">
-            <!-- Tabs -->
-            <ul class="nav nav-tabs text-center">
-                <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
-                <li><a href="#color-profile" data-toggle="tab" ng-click="editarEstacion(estacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
-                <li><a href="#color-messages" data-toggle="tab"><i class="fa fa-fw fa-envelope"></i> Operaciones OCPP</a></li>
-                <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(estacion.id_estacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
-            </ul>
-            <!-- // END Tabs -->
+    <div ng-if="verEstacion==true" class="col-md-12">
+        <div class="panel panel-default">
+            <!-- Tabbable Widget -->
+            <div class="tabbable tabs-primary">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs text-center">
+                    <li class="active"><a href="#color-home" data-toggle="tab"><i class="fa fa-fw fa-home"></i> Info</a></li>
+                    <li><a href="#color-profile" data-toggle="tab" ng-click="editarEstacion(estacion)"><i class="fa fa-fw fa-pencil"></i> Editar</a></li>
+                    <li><a href="#color-messages" data-toggle="tab"><i class="fa fa-fw fa-envelope"></i> Operaciones OCPP</a></li>
+                    <li><a href="#color-settings" data-toggle="tab" ng-click="listarTransacciones(estacion.id_estacion, 0)"><i class="fa fa-fw fa-car"></i> Transacciones</a></li>
+                </ul>
+                <!-- // END Tabs -->
 
-            <!-- Panes -->
-            <div class="tab-content">
-                <div id="color-home" class="tab-pane active">
-                    <div class="panel panel-body">
-                        <div class="card-header text-center">
-                            <h3 style="font-family: sans-serif;"> {{estacion.nombreEstacion}}</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-2 text-center">
-                                    <img src="/images/estaciones/logoEstacion.png" 
-                                    width="200px" height="400px" style="border: 1px solid; padding: 1px">
-                                </div>
-                                <div class="col-md-9 text-center">
-                                    <div id="id_estacion_edit" hidden="true"></div>
-                                    <div class="card" style="margin-bottom: 20px">
-                                        <div class="card-header">
-                                            Detalles
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 text-center p-3">
-                                                <b>Código:</b> <span style="padding-right: 30px">{{estacion.codigoEstacion}}</span>
-                                                <b>Nombre:</b><span style="padding: 3px">{{estacion.nombreEstacion}}</span>
-                                            </div>
-                                        </div>
+                <!-- Panes -->
+                <div class="tab-content">
+                    <div id="color-home" class="tab-pane active">
+                        <div class="panel panel-body">
+                            <div class="card-header text-center">
+                                <h3 style="font-family: sans-serif;"> {{estacion.nombreEstacion}}</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2 text-center">
+                                        <img src="/images/estaciones/logoEstacion.png" 
+                                        width="200px" height="400px" style="border: 1px solid; padding: 1px">
                                     </div>
-                                    <div class="card" style="margin-bottom: 20px;">
-                                        <div class="card-header">
-                                            Caracteristicas Técnicas
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 text-center p-3">
-                                                <b>N° conectores:</b>  <label>{{estacion.cantidadConectores}}</label><br>
-                                                <b>Cargas Simultaneas: </b> <label>{{estacion.cargasSimultaneas}} </label><br>
-                                                <b>Potencia Mínima: </b> <label>{{estacion.potenciaMinima}} </label><br>
-                                                <b>Potencia Máxima:  </b> <label>{{estacion.potenciaMaxima}}</label><br>
+                                    <div class="col-md-9 text-center">
+                                        <div id="id_estacion_edit" hidden="true"></div>
+                                        <div class="card" style="margin-bottom: 20px">
+                                            <div class="card-header">
+                                                Detalles
                                             </div>
-                                            <div class="col-md-6 text-center p-3">
-                                                <b>Voltaje Mínimo:   </b> <label>{{estacion.voltajeMinimo}}</label><br>
-                                                <b>Voltaje Máximo:   </b> <label>{{estacion.voltajeMaximo}}</label><br>
-                                                <b>Corriente Mínima:</b>  <label>{{estacion.corrienteMinima}}</label><br>
-                                                <b>Corriente Máxima: </b> <label>{{estacion.corrienteMaxima}} </label><br>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center p-3">
+                                                    <b>Código:</b> <span style="padding-right: 30px">{{estacion.codigoEstacion}}</span>
+                                                    <b>Nombre:</b><span style="padding: 3px">{{estacion.nombreEstacion}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card" style="margin-bottom: 20px;">
+                                            <div class="card-header">
+                                                Caracteristicas Técnicas
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 text-center p-3">
+                                                    <b>N° conectores:</b>  <label>{{estacion.cantidadConectores}}</label><br>
+                                                    <b>Cargas Simultaneas: </b> <label>{{estacion.cargasSimultaneas}} </label><br>
+                                                    <b>Potencia Mínima: </b> <label>{{estacion.potenciaMinima}} </label><br>
+                                                    <b>Potencia Máxima:  </b> <label>{{estacion.potenciaMaxima}}</label><br>
+                                                </div>
+                                                <div class="col-md-6 text-center p-3">
+                                                    <b>Voltaje Mínimo:   </b> <label>{{estacion.voltajeMinimo}}</label><br>
+                                                    <b>Voltaje Máximo:   </b> <label>{{estacion.voltajeMaximo}}</label><br>
+                                                    <b>Corriente Mínima:</b>  <label>{{estacion.corrienteMinima}}</label><br>
+                                                    <b>Corriente Máxima: </b> <label>{{estacion.corrienteMaxima}} </label><br>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -124,13 +124,261 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
-                <div id="color-profile" class="tab-pane">
-                    <div ng-if="verFormEditarEstacion==true" class="panel panel-default"> 
-                        <div class="panel-body">
-                        <form class="form-horizontal" role="form">
+                    <!--INICIA SECCION PARA AGREGAR O EDITAR ESTACION-->
+                    <div id="color-profile" class="tab-pane">
+                        <div ng-if="verFormEditarEstacion==true" class="panel panel-default"> 
+                            <div class="panel-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
+                                    <div class="col-sm-9">
+                                        <input ng-model="formEstacion.codigoEstacion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.nombreEstacion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Ubicación</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.ubicacion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.cantidadConectores" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.potenciaMaxima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.potenciaMinima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.corrienteMaxima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.corrienteMinima" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.voltajeMaximo" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
+                                    <div class="col-sm-9">
+                                    <input ng-model="formEstacion.voltajeMinimo" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Comentario</label>
+                                    <div class="col-sm-9">
+                                    <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
+                            <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formEstacion.id_estacion)" class="btn btn-info">Actualizar</button>
+                            <button ng-click="volverEstaciones()" class="btn btn-info">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA SECCION PARA AGREGAR O EDITAR ESTACION-->
+
+                <!--INICIA SECCION PARA OPERACIONES OCPP-->
+                <div id="color-messages" class="tab-pane">
+                    <div class="card-body row" id="Cuadro_opciones">
+                        <div class="col-md-12">
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
+                            </div> -->
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="clearChargingProfile(1)" class="btn btn-success m-1 form-control">Limpiar Perfil de Carga</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="dataTransfer(1)" class="btn btn-danger m-1 form-control">Transferencia de Datos</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="getCompositeSchedule(1)" class="btn btn-info m-1 form-control">Obtener Horario Compuesto</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="getConfiguration(1)" class="btn btn-warning m-1 form-control">Obtener configuracion</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="getDiagnostics(1)" class="btn btn-warning m-1 form-control">Pedir diagnostico</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="remoteStartTransaction(1)" class="btn btn-success m-1 form-control">Iniciar Transaccion Remota</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="remoteStopTransaction(1)" class="btn btn-danger m-1 form-control">Detener Transaccion Remota</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="getLocalListVersion(1)" class="btn btn-info m-1 form-control">Obtener Version de Lista Local</button>
+                            </div>
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="reserveNow(1)" class="btn btn-info m-1 form-control">Reservar Ahora</button>
+                            </div> -->
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="reset(1)" class="btn btn-warning m-1 form-control">Resetear</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="sendLocalList(1)" class="btn btn-success m-1 form-control">Enviar Lista Local</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="setChargingProfile(1)" class="btn btn-danger m-1 form-control">Establecer Perfil de Carga</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="triggerMessage(1)" class="btn btn-danger m-1 form-control">Solicitar Operacion OCPP</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="buttons_unlockConnector()" class="btn btn-info m-1 form-control">Desbloquear Conector</button>
+                            </div>
+                            <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="updateFirmware(1)" class="btn btn-warning m-1 form-control">Actualizar Firmware</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                Opciones aqui   
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12 control-label">Respuesta de la estación</label>
+                                <div class="col-md-12">
+                                <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA SECCION PARA OPERACIONES OCPP-->
+                
+                <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
+                <div id="color-settings" class="tab-pane">
+                    <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
+                        <div ng-if="transacciones" class="card">
+                            <div class="card-header">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">    
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Id transacción</th>-->
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Conector</th>
+                                            <th>Código RFID</th>
+                                            <th>Energía inicio [Wh]</th>
+                                            <th>Energía fin [Wh]</th>
+                                            <th>Energía consumida [kWh]</th>
+                                            <th>Estado</th>
+                                            <th>Razón</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="transaccion in transacciones">
+                                            <!--<td>{{transaccion.id_transaccion}}</td>-->
+                                            <td>{{transaccion.fecha}}</td>
+                                            <td>{{transaccion.hora_inicio}}</td>
+                                            <td>{{transaccion.id_conector}}</td>
+                                            <td>{{transaccion.codigo_rfid}}</td>
+                                            <td>{{transaccion.energiaInicio}}</td>
+                                            <td>{{transaccion.energiaFin}}</td>
+                                            <td>{{transaccion.energiaConsumida}}</td>
+                                            <td id="status1">{{transaccion.estado}}</td>
+                                            <td>{{transaccion.razon}}</td>
+                                            <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
+                                            title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
+                                        </tr>   
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- // Progress table -->
+
+                            <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
+                                <ul class="pagination">
+                                <li class="disabled"><a href="#">&laquo;</a></li>
+                                <li ng-repeat="pagina in paginasTransacciones">
+                                    <a type="button" ng-click="listarTransacciones(estacion.id_estacion, pagina)">
+                                            {{pagina+1}}
+                                    </a>
+                                </li>
+                                <li><a href="#">&raquo;</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div ng-if="!transacciones" class="col-md-4 mx-auto">
+                            <div class="card card-body text-center">
+                                <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
+            </div>
+            <!-- // END Panes -->
+
+        </div>
+    </div>
+    <!-- // END Tabbable Widget -->
+
+        
+    </div>
+    <!--TERMINA PAGINA PARA DETALLES DE UNA ESTACION-->
+
+    <!--INICIA SECCION PARA AGREGAR ESTACION / ES UNA COPIA DE EDITAR ESTACION-->
+    <div class="col-md-12">
+        <div ng-if="verFormAgregarEstacion==true" class="panel panel-default"> 
+            <div class="panel-body">
+                <div class="wizard-container wizard-1" id="wizard-demo-1">
+                    <div data-scrollable-h>
+                        <ul class="wiz-progress">
+                            <li class="active">Info</li>
+                            <li>Conectores</li>
+                        </ul>
+                    </div>
+                    <form action="#" class="form-horizontal" data-toggle="wizard">
+                        <!--INICIA SECCION PARA INGRESAR LA INFORMACION PRINCIPAL DE LA ESTACION-->
+                        <fieldset class="step">
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
                                 <div class="col-sm-9">
@@ -156,12 +404,12 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
+                                <label for="inputEmail3" class="col-sm-3 control-label">Smart Charging</label>
                                 <div class="col-sm-9">
-                                <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
+                                <input ng-model="formEstacion.smartCharging" class="form-control">
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
                                 <div class="col-sm-9">
                                 <input ng-model="formEstacion.potenciaMaxima" class="form-control">
@@ -196,253 +444,82 @@
                                 <div class="col-sm-9">
                                 <input ng-model="formEstacion.voltajeMinimo" class="form-control">
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">Comentario</label>
                                 <div class="col-sm-9">
                                 <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="panel-footer text-right">
-                        <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>
-                        <button ng-if="accionPost=='editar'" ng-click="enviar(accionPost, formEstacion.id_estacion)" class="btn btn-info">Actualizar</button>
-                        <button ng-click="volverEstaciones()" class="btn btn-info">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-            <!--TERMINA SECCION PARA AGREGAR O EDITAR ESTACION-->
 
-            <!--INICIA SECCION PARA OPERACIONES OCPP-->
-            <div id="color-messages" class="tab-pane">
-                <div class="card-body row" id="Cuadro_opciones">
-                    <div class="col-md-12">
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="clearChargingProfile(1)" class="btn btn-success m-1 form-control">Limpiar Perfil de Carga</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="dataTransfer(1)" class="btn btn-danger m-1 form-control">Transferencia de Datos</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="getCompositeSchedule(1)" class="btn btn-info m-1 form-control">Obtener Horario Compuesto</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="getConfiguration(1)" class="btn btn-warning m-1 form-control">Obtener configuracion</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="getDiagnostics(1)" class="btn btn-warning m-1 form-control">Pedir diagnostico</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="remoteStartTransaction(1)" class="btn btn-success m-1 form-control">Iniciar Transaccion Remota</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="remoteStopTransaction(1)" class="btn btn-danger m-1 form-control">Detener Transaccion Remota</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="getLocalListVersion(1)" class="btn btn-info m-1 form-control">Obtener Version de Lista Local</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="reserveNow(1)" class="btn btn-info m-1 form-control">Reservar Ahora</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="reset(1)" class="btn btn-warning m-1 form-control">Resetear</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="sendLocalList(1)" class="btn btn-success m-1 form-control">Enviar Lista Local</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="setChargingProfile(1)" class="btn btn-danger m-1 form-control">Establecer Perfil de Carga</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="triggerMessage(1)" class="btn btn-danger m-1 form-control">Solicitar Operacion OCPP</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="buttons_unlockConnector()" class="btn btn-info m-1 form-control">Desbloquear Conector</button>
-                        </div>
-                        <div class="col-md-3" style="padding: 10px 10px">
-                              <button onclick="updateFirmware(1)" class="btn btn-warning m-1 form-control">Actualizar Firmware</button>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="col-md-12">
-                            Opciones aqui   
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-12 control-label">Respuesta de la estación</label>
                             <div class="col-md-12">
-                            <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
+                                <button type="button" class="wiz-prev btn btn-default">Previous</button>
+                                <button type="button" class="wiz-next btn btn-primary">Next</button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--TERMINA SECCION PARA OPERACIONES OCPP-->
-            
-            <!--INICIA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
-            <div id="color-settings" class="tab-pane">
-                <div ng-if="verTransacciones==true" class="panel panel-default" style="font-size: 0.85em;">
-                    <div ng-if="transacciones" class="card">
-                        <div class="card-header">
+                        </fieldset>
+                        <!--TERMINA SECCION PARA INGRESAR LA INFORMACION PRINCIPAL DE LA ESTACION-->
+
+                        <!--INICIA SECCION PARA AGREGAR LOS CONECTORES DE LA ESTACION-->
+                        <fieldset class="step">
+                            <div class="col-md-10">
+                                <label class="col-sm-4 control-label">ID conector</label>
+                                <label class="col-sm-4 control-label">Tipo</label>
+                            </div>
+                            <div class="col-md-10">
+                                <!-- <div class="col-sm-4">
+                                    <select class="form-control" ng-model="pago.id_forma_pago">
+                                        <option ng-repeat="formaPago in formasPago" ng-value="formaPago.id_forma_pago">{{formaPago.alias}}
+                                        </option>
+                                    </select>
+                                </div> -->
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" ng-model="conector.id_conector" >
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="form-control" ng-model="conector.nombre">
+                                        <option ng-repeat="tipoConector in tiposConectores" ng-value="tipoConector.nombre">{{tipoConector.nombre}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button ng-click="agregarConectorEstacion()" class="btn btn-info">Agregar</button>
+                            </div>
+
                             <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table v-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>ID conector</th>
+                                                <th>Conector</th>
+                                                <th class="text-right">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="responsive-table-body">
+                                            <tr ng-repeat="conectorEstacion in formEstacion.conectores">
+                                                <td width="10%">{{conectorEstacion.id_conector}}</td>
+                                                <td width="10%">{{conectorEstacion.nombre}}</td>
+                                                <td width="10%" class="text-right">
+                                                    <a class="btn btn-default btn-xs" 
+                                                        data-placement="top" title="Ver"><i class="fa fa-pencil"></i></a>
+                                                    <a ng-click="alertEliminarconectorEstacion(conectorEstacion)" class="btn btn-danger btn-xs" 
+                                                        data-placement="top" title="Eliminar"><i class="fa fa-times"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <table class="table">    
-                                <thead>
-                                    <tr>
-                                        <!--<th>Id transacción</th>-->
-                                        <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Conector</th>
-                                        <th>Código RFID</th>
-                                        <th>Energía inicio [Wh]</th>
-                                        <th>Energía fin [Wh]</th>
-                                        <th>Energía consumida [kWh]</th>
-                                        <th>Estado</th>
-                                        <th>Razón</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="transaccion in transacciones">
-                                        <!--<td>{{transaccion.id_transaccion}}</td>-->
-                                        <td>{{transaccion.fecha}}</td>
-                                        <td>{{transaccion.hora_inicio}}</td>
-                                        <td>{{transaccion.id_conector}}</td>
-                                        <td>{{transaccion.codigo_rfid}}</td>
-                                        <td>{{transaccion.energiaInicio}}</td>
-                                        <td>{{transaccion.energiaFin}}</td>
-                                        <td>{{transaccion.energiaConsumida}}</td>
-                                        <td id="status1">{{transaccion.estado}}</td>
-                                        <td>{{transaccion.razon}}</td>
-                                        <!--<td><a href="/home/transacciones/eliminar/{{transaccion.id_transaccion}}" class="btn"
-                                        title="eliminar"> <em class="fa fa-trash"></em></a></td>-->
-                                    </tr>   
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- // Progress table -->
 
-                        <div ng-if="totalTransacciones>transaccionesPorPagina" class="panel-footer padding-none text-center">
-                            <ul class="pagination">
-                            <li class="disabled"><a href="#">&laquo;</a></li>
-                            <li ng-repeat="pagina in paginasTransacciones">
-                                <a type="button" ng-click="listarTransacciones(estacion.id_estacion, pagina)">
-                                        {{pagina+1}}
-                                </a>
-                            </li>
-                            <li><a href="#">&raquo;</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div ng-if="!transacciones" class="col-md-4 mx-auto">
-                        <div class="card card-body text-center">
-                            <p>Aún no se ha realizado ninguna transacción en ninguna estación</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--TERMINA PAGINA PARA VER LAS TRANSACCIONES DE LA ESTACION-->
-        </div>
-        <!-- // END Panes -->
+                            <div class="col-md-12">
+                                <button type="button" class="wiz-prev btn btn-default">Previous</button>
+                                <button type="button" class="wiz-next btn btn-primary">Next</button>
+                            </div>
+                        </fieldset>
+                        <!--TERMINA SECCION PARA AGREGAR LOS CONECTORES DE LA ESTACION-->
 
-    </div>
-    <!-- // END Tabbable Widget -->
-
-        
-    </div>
-    <!--TERMINA PAGINA PARA DETALLES DE UNA ESTACION-->
-
-    <!--INICIA SECCION PARA AGREGAR ESTACION / ES UNA COPIA DE EDITAR ESTACION-->
-    <div id="color-profile" class="tab-pane">
-        <div ng-if="verFormAgregarEstacion==true" class="panel panel-default"> 
-            <div class="panel-body">
-                <form class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Código</label>
-                        <div class="col-sm-9">
-                            <input ng-model="formEstacion.codigoEstacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Nombre</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.nombreEstacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Ubicación</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.ubicacion" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">N° Conectores</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.cantidadConectores" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Cargas Simultáneas</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.cargasSimultaneas" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Potencia Máxima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.potenciaMaxima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Potencia Mínima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.potenciaMinima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Corriente Máxima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.corrienteMaxima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Corriente Mínima</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.corrienteMinima" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Máximo</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.voltajeMaximo" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-3 control-label">Voltaje Mínimo</label>
-                        <div class="col-sm-9">
-                        <input ng-model="formEstacion.voltajeMinimo" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">Comentario</label>
-                        <div class="col-sm-9">
-                        <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
-                        </div>
-                    </div>
-                </form>
+                    </form>
             </div>
             <div class="panel-footer text-right">
                 <button ng-if="accionPost=='agregar'" ng-click="enviar(accionPost, '')" class="btn btn-info">Enviar</button>

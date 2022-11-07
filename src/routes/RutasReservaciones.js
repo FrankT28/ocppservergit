@@ -18,7 +18,7 @@ router.get('/home/reservaciones/archivo', async(req, res) => {
 });
 */
 
-/********************************************************************************************/
+/********************************************************************************************
 async function estadoreservacion(id){
 	let sql = "SELECT estado_est_espanol FROM estados_reservaciones WHERE id_estado_est=?";
 	let result = await pool.query(sql, [id]);
@@ -33,15 +33,26 @@ router.get('/home/reservaciones/informacion', async(req, res) => {
 	totalreservaciones = totalreservaciones[0].total;
 	data.totalreservaciones = totalreservaciones;
 
-	let sql2 = "SELECT * FROM reservaciones es, estado_reservacion ee WHERE es.id_reservacion!=0 AND es.id_reservacion=ee.id_reservacion;"; 
+	//let sql2 = "SELECT * FROM reservaciones re INNER JOIN tarjetas ta ON re.id_tag=ta.id_tarjeta INNER JOIN estaciones es ON re.id_estacion=es.id_estacion INNER JOIN conectores co ON re.id_conector=co.id_conector;"; 
+	let sql2 = "SELECT * FROM reservaciones re INNER JOIN estaciones es ON re.id_estacion=es.id_estacion INNER JOIN conectores co ON re.id_conector=co.id_local AND re.id_estacion=co.id_estacion ORDER BY id_reservacion DESC;"; 
 	let reservaciones = await pool.query(sql2); 
-	for(var i=0; i<reservaciones.length; i++){
-		reservaciones[i].estado = await estadoreservacion(reservaciones[i].id_estado_est);
-	}
+	
 	data.reservaciones = reservaciones;
+	data.lastReservationId = await getLastReservationId();
 	data.success = true;
 	res.send(data);
 });
+
+/********************************************************************************************/
+async function getLastReservationId(){
+	let sql = "SELECT id_reservacion FROM reservaciones ORDER BY id_reservacion DESC LIMIT 1;";
+	let result = await pool.query(sql); 
+	var id_reservacion = 0;
+	if(result.length>0){
+		id_reservacion = result[0].id_reservacion;
+	}
+	return id_reservacion+1;
+}
 
 /*router.get('/home/reservaciones/agregar', (req, res) => {
 	res.render('reservacionesAgregar.hbs', {'menu': 'si'}); 
@@ -49,25 +60,19 @@ router.get('/home/reservaciones/informacion', async(req, res) => {
 
 /********************************************************************************************/
 router.post('/home/reservaciones/agregar', async(req, res) => {
-	var data = {};
+	let data = {};
 	console.log('llama a reservaciones agregar')
 	console.log(req.body)
-	var ce = req.body.codigoreservacion;
-	var ns = req.body.nombrereservacion;
-	var ubi = req.body.ubicacion;
-	var cc = req.body.cantidadConectores;
-	var cs = req.body.cargasSimultaneas;
-
-	var pmax = req.body.potenciaMaxima
-	var pmin = req.body.potenciaMinima
-	var cmax = req.body.corrienteMaxima
-	var cmin = req.body.corrienteMinima
-	var vmax = req.body.voltajeMaximo
-	var vmin = req.body.voltajeMinimo
-	var comentario = req.body.comentario
-
-	var insert = 'INSERT INTO reservaciones VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?,?);';
-	const subirreservacion = await pool.query(insert, [ce, ns, ubi, cc, cs, pmin, pmax, vmin, vmax, cmin, cmax, 3, cs ]);
+	let id_tarjeta = req.body.id_tarjeta; 
+	let id_estacion = req.body.id_estacion;
+	let id_conector = req.body.id_conector;
+	let expiry_date = req.body.expiry_date;
+	let comentario = req.body.comentario
+	
+	console.log('expiry_date');
+	console.log(expiry_date);
+	let sql = 'INSERT INTO reservaciones VALUES (null,?,?,?,?,0);';
+	await pool.query(sql, [id_tarjeta, id_estacion, id_conector, expiry_date]);
 
 	
 	if(comentario.length>0){
@@ -83,13 +88,12 @@ router.post('/home/reservaciones/agregar', async(req, res) => {
 });
 
 /********************************************************************************************/
-router.get('/home/reservaciones/eliminar/:id', async(req, res) => {
-	var data = {};
-	var ide = req.params.id;
-	console.log('se pide eliminar: ' + ide);
-	var delet = 'DELETE FROM reservaciones ';
-	var where = 'WHERE id_reservacion="' + ide + '";';
-	await pool.query(delet + where);
+router.get('/home/reservaciones/eliminar/:id_reservacion', async(req, res) => {
+	let data = {};
+	let id_reservacion = req.params.id_reservacion;
+	console.log('se pide eliminar: ' + id_reservacion);
+	let sql = 'DELETE FROM reservaciones WHERE id_reservacion=?;';
+	await pool.query(sql, [id_reservacion]);
 	data.success = true;
 	res.send(data);
 });
@@ -104,6 +108,34 @@ router.get('/home/reservaciones/info/:id', async(req, res) => {
 	console.log(datosreservacion);
 	res.render('reservacionesInformacion.hbs', {datosreservacion: datosreservacion[0], 'menu': 'si', 'info': true});
 });
+
+/********************************************************************************************/
+router.get('/home/reservaciones/tarjetas/', async(req, res) => {
+	let data = {};
+	let sql = "SELECT * FROM tarjetas";
+	let result = await pool.query(sql);
+	data.tarjetas = result;
+	data.success = true;
+	res.send(data);  
+})
+/********************************************************************************************/
+router.get('/home/reservaciones/estaciones/', async(req, res) => {
+	let data = {};
+	let sql = "SELECT * FROM estaciones";
+	let result = await pool.query(sql);
+	for( var i=0; i<result.length; i++){
+		result[i].conectores = await getConectores(result[i].id_estacion);
+	}
+	data.estaciones = result;
+	data.success = true;
+	res.send(data);  
+})
+
+async function getConectores(id_estacion){
+	let sql = "SELECT * FROM conectores WHERE id_estacion=?;";
+	let result = await pool.query(sql, [id_estacion]);
+	return result;
+}
 
 /********************************************************************************************/
 router.get('/home/reservaciones/transacciones/:id/:desde/:cuantos', async(req, res) => {
