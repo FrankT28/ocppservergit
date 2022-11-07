@@ -366,9 +366,11 @@ function sockets(server){
                                 console.log(CallResult);
                                 stationClient.write(funciones.constructReply(CallResult, opCode));
                                 if(true){//IF TRUE SIGNIFICA QUE EL MENSAJE FUE ENVIADO CORRECTAMENTE A LA ESTACION
-                                    let id_registro = PayloadMessage.lastReservationId;
                                     let operacion = PayloadMessage.operacion;
-                                    await addMessageSent([stationId, uniqueId, id_registro, operacion]);
+                                    if(operacion=='ReserveNow'){
+                                        let id_registro = PayloadMessage.lastReservationId;
+                                        await addMessageSent([stationId, uniqueId, id_registro, operacion]);
+                                    }
                                 }
                             }else{
                                 clientenav = clientes.get(0);
