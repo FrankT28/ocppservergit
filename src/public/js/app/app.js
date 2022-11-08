@@ -6729,6 +6729,7 @@ require('./_timeline');
         'login',
         'pages.estaciones',
         'pages.reservaciones',
+        'pages.smartCharging',
         'pages.tarjetas',
         'pages.clientes',
         'pages.transacciones',
@@ -6805,6 +6806,11 @@ require('./_timeline');
                         url: '/reservaciones',
                         templateUrl: 'pages/reservaciones.html?v=1',
                         //controller: 'reservacionesController'
+                    })
+                    .state('pages.smartCharging', {
+                        url: '/smartCharging',
+                        templateUrl: 'pages/smartCharging.html?v=1',
+                        //controller: 'smartChargingController'
                     })
                     .state('pages.tarjetas', {
                         url: '/tarjetas',

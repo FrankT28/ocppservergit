@@ -94,6 +94,7 @@ app.use(require('./routes/RutasTarjetas.js'));
 app.use(require('./routes/RutasClientes.js'));
 app.use(require('./routes/RutasEstaciones.js'));   
 app.use(require('./routes/RutasReservaciones.js')); 
+app.use(require('./routes/RutasSmartCharging.js')); 
 app.use(require('./routes/RutasTransacciones.js'));
  
 app.set('port', process.env.PORT || 3000);
