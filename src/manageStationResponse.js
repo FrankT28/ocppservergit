@@ -18,8 +18,10 @@ async function confirmReserveNow(id_registro, payload){
 async function update(response, payload){
     console.log('response');
     console.log(response);
-    let operacion = response.operacion;
-    let id_registro = response.id_registro;
+    if(response){
+        let operacion = response.operacion;
+        let id_registro = response.id_registro;
+    }
 
     if(operacion=='ReserveNow'){
         await confirmReserveNow(id_registro, payload);
