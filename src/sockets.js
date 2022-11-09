@@ -409,7 +409,7 @@ function sockets(server){
                         clienteNav = clientes.get(0);
                         if (clienteNav){
                             console.log('Se envia notificacion de ping al navegador: ')
-                            clienteNav.write(funciones.constructReply(textnav, 1));
+                            clienteNav.write(funciones.constructReply(textnav, 1));  
                         }
 
                         //LUEGO ACTUALIZAMOS LA TABLA PING ESTACION CON LA FECHA Y HORA ACTUAL
