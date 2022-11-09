@@ -10,10 +10,10 @@ async function authorizeResponse(payload){
     crfid = payload.idTag;
     let sql = 'SELECT ta.id_tarjeta, ea.alias FROM tarjetas ta INNER JOIN estados_autorizacion ea on ta.id_estado_autorizacion=ea.id_estado_autorizacion where codigo_rfid=?;';
     let result = await pool.query(sql, [crfid]);
-    let datosTarjeta = result[0];
-    let estado = datosTarjeta.alias;
  
-    if (datosTarjeta){
+    if (datosTarjeta.length>0){
+        let datosTarjeta = result[0];
+        let estado = datosTarjeta.alias;
         payloadResponse = {'idTagInfo': {"status": estado}}
         // if (datosTarjeta.estado=='Accepted'){
         //     payloadResponse =  {"idTagInfo": {"status": "Accepted"}};
