@@ -217,75 +217,84 @@
                 <div id="color-messages" class="tab-pane">
                     <div class="card-body row" id="Cuadro_opciones">
                         <div class="col-md-12">
+                            <div class="col-md-4" style="padding: 10px 10px">
+                                <h4 class="text-center">Profile</h4>
+                                <button  ng-click="cambiarOCPPOperations(1)" class="btn btn-warning form-control" style="padding: 10px 10px">Core</button>
+                                <button  ng-click="cambiarOCPPOperations(2)" class="btn btn-info form-control" style="padding: 10px 10px">Smart Charging</button>
+                                <button  ng-click="cambiarOCPPOperations(3)" class="btn btn-danger form-control" style="padding: 10px 10px">Local List</button>
+                            </div>
+                            <div ng-if="mostrarCoreOperations=='SI'" class="col-md-4" style="padding: 10px 10px">
+                                <h4 class="text-center">Operation</h4>
+                                <button  ng-click="changeConfiguration(1)" class="btn btn-warning form-control" style="padding: 10px 10px">ChangeConfiguration</button>
+                                <button  ng-click="buttons_changeAvailability()" class="btn btn-info form-control" style="padding: 10px 10px">ChangeAvailability</button>
+                                <button  ng-click="getConfiguration(1)" class="btn btn-warning form-control" style="padding: 10px 10px">GetConfiguration</button>
+                                <button  ng-click="remoteStartTransaction(1)" class="btn btn-success form-control" style="padding: 10px 10px">RemoteStartTransaction</button>
+                                <button  ng-click="remoteStopTransaction(1)" class="btn btn-danger form-control" style="padding: 10px 10px">RemoteStopTransaction</button>
+                                <button  ng-click="buttons_unlockConnector()" class="btn btn-info form-control" style="padding: 10px 10px">UnlockConnector</button>
+                            </div>
+                            <div ng-if="mostrarSmartChargingOperations=='SI'" class="col-md-4" style="padding: 10px 10px">
+                                <h4 class="text-center">Operation</h4>
+                                <button  ng-click="buildOcppMessage('ClearChargingProfile')" class="btn btn-success form-control" style="padding: 10px 10px">ClearChargingProfile</button>
+                                <button  ng-click="buildOcppMessage('GetCompositeSchedule')" class="btn btn-info form-control" style="padding: 10px 10px">GetCompositeSchedule</button>
+                                <button  ng-click="buildOcppMessage('SetChargingProfile')" class="btn btn-danger form-control" style="padding: 10px 10px">SetChargingProfile</button>
+                            </div>
+                            <div ng-if="mostrarLocalListOperations=='SI'" class="col-md-4" style="padding: 10px 10px">
+                                <h4 class="text-center">Operation</h4>
+                                <button  ng-click="buildOcppMessage('GetLocalListVersion')" class="btn btn-info form-control" style="padding: 10px 10px">GetLocalListVersion</button>
+                                <button  ng-click="buildOcppMessage('SendLocalList')" class="btn btn-success form-control" style="padding: 10px 10px">SendLocalList</button>
+                                <button  ng-click="sss()" class="btn btn-success form-control"  style="padding: 10px 10px"  ></button>
+                            </div>
+                            <div class="col-md-4" style="padding: 10px 10px">
+                                <h4 class="text-center">Connector</h4>
+                                <button ng-repeat="conector in estacion.conectores" ng-click="setConector(conector.id_local)" 
+                                    class="btn btn-info form-control">{{conector.nombre}}</button>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label">Message to Send</label>
+                                    <textarea ng-model="formMessageOcpp.texto" class="form-control" rows="5"></textarea>
+                                </div>
+                                <button ng-click="sendOcppMessage()" class="btn btn-info pull-right">Send</button>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-12 control-label">Response From Station</label>
+                                    <div class="col-md-12">
+                                    <textarea id="responseFromStation" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="cancelReservation(1)" class="btn btn-danger m-1 form-control">Cancelar Reservacion</button>
-                            </div> -->
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="buttons_changeAvailability()" class="btn btn-info m-1 form-control">Cambiar Disponibilidad</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="changeConfiguration(1)" class="btn btn-warning m-1 form-control">Cambiar Configuración</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="clearCache(1)" class="btn btn-success m-1 form-control">Limpiar Caché</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="clearChargingProfile(1)" class="btn btn-success m-1 form-control">Limpiar Perfil de Carga</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="dataTransfer(1)" class="btn btn-danger m-1 form-control">Transferencia de Datos</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="getCompositeSchedule(1)" class="btn btn-info m-1 form-control">Obtener Horario Compuesto</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="getConfiguration(1)" class="btn btn-warning m-1 form-control">Obtener configuracion</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
+                            </div> -->
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
+                                <button onclick="dataTransfer(1)" class="btn btn-danger m-1 form-control">DataTransfer</button>
+                            </div> -->
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="getDiagnostics(1)" class="btn btn-warning m-1 form-control">Pedir diagnostico</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="remoteStartTransaction(1)" class="btn btn-success m-1 form-control">Iniciar Transaccion Remota</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="remoteStopTransaction(1)" class="btn btn-danger m-1 form-control">Detener Transaccion Remota</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="getLocalListVersion(1)" class="btn btn-info m-1 form-control">Obtener Version de Lista Local</button>
-                            </div>
+                            </div> -->
                             <!-- <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="reserveNow(1)" class="btn btn-info m-1 form-control">Reservar Ahora</button>
                             </div> -->
-                            <div class="col-md-3" style="padding: 10px 10px">
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="reset(1)" class="btn btn-warning m-1 form-control">Resetear</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="sendLocalList(1)" class="btn btn-success m-1 form-control">Enviar Lista Local</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="setChargingProfile(1)" class="btn btn-danger m-1 form-control">Establecer Perfil de Carga</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
+                            </div> -->
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="triggerMessage(1)" class="btn btn-danger m-1 form-control">Solicitar Operacion OCPP</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
-                                <button onclick="buttons_unlockConnector()" class="btn btn-info m-1 form-control">Desbloquear Conector</button>
-                            </div>
-                            <div class="col-md-3" style="padding: 10px 10px">
+                            </div> -->
+                            <!-- <div class="col-md-3" style="padding: 10px 10px">
                                 <button onclick="updateFirmware(1)" class="btn btn-warning m-1 form-control">Actualizar Firmware</button>
-                            </div>
+                            </div> -->
                         </div>
-                        <div class="col-md-12">
-                            <div class="col-md-12">
-                                Opciones aqui   
-                            </div>
+                        <!-- <div class="col-md-12">
                             <div class="form-group">
                                 <label class="col-md-12 control-label">Respuesta de la estación</label>
                                 <div class="col-md-12">
                                 <textarea ng-model="formEstacion.comentario" class="form-control" rows="5"></textarea>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <!--TERMINA SECCION PARA OPERACIONES OCPP-->

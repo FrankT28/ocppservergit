@@ -53,6 +53,7 @@ function ClearChargingProfileRequest(payload){
 function DataTransferRequest(payload){
     payloadRequest = {};
     return [payloadRequest];
+    
 }
 
 /*=============================================================================================*/

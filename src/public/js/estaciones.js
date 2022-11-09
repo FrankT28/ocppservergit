@@ -58,6 +58,8 @@
 		}
 		/*=========================================================================*/
 		$scope.detallesEstacion = function(estacion){
+			console.log('estacion');
+			console.log(estacion);
 			$scope.estacion = estacion;
 			$scope.verEstaciones = false;
 			$scope.verEstacion = true;
@@ -116,6 +118,151 @@
 			}
 			return p.join('&');
 		};
+		/*=========================================================================*/
+		$scope.mostrarCoreOperations = 'SI';
+		$scope.cambiarOCPPOperations = function(id){
+			if(id==1){
+				$scope.mostrarCoreOperations = 'SI';
+				$scope.mostrarSmartChargingOperations = 'NO';
+				$scope.mostrarLocalListOperations = 'NO';
+			} else if(id==2){
+				$scope.mostrarCoreOperations = 'NO';
+				$scope.mostrarSmartChargingOperations = 'SI';
+				$scope.mostrarLocalListOperations = 'NO';
+			} else if(id==3){
+				$scope.mostrarCoreOperations = 'NO';
+				$scope.mostrarSmartChargingOperations = 'NO';
+				$scope.mostrarLocalListOperations = 'SI';
+			}
+		}
+		/*=========================================================================*/
+		$scope.buildOcppMessage = function(operation){
+			console.log('build odpp message');
+			console.log(operation);
+			$scope.formMessageOcpp = {};
+			$scope.formMessageOcppJson = {};
+			$scope.operation = operation;
+			//let stationId = $scope.estacion.id_estacion;
+			if(operation=='SetChargingProfile'){
+				$scope.SetChargingProfileMessage();
+				//$scope.formMessageOcpp = JSON.stringify({"tipo": "SetChargingProfile", "stationId": stationId});
+			}else if(operation=='ClearChargingProfile'){
+				$scope.ClearChargingProfileMessage();
+			}else if(operation=='GetCompositeSchedule'){
+				$scope.GetCompositeScheduleMessage();
+			}else if(operation=='GetLocalListVersion'){
+				$scope.GetLocalListVersionMessage();
+			}else if(operation=='SendLocalList'){
+				$scope.SendLocalListMessage();
+			}
+		}
+		/*=========================================================================*/
+		$scope.SetChargingProfileMessage = function(){
+			$scope.formMessageOcppJson.texto = {
+				"connectorId": 1,
+				"csChargingProfiles": {
+					"chargingProfileId": 2,
+					//"transactionId": 1,
+					"stackLevel": 1,
+					"chargingProfilePurpose": "TxDefaultProfile",
+					"chargingProfileKind": "Relative",
+					//"recurrencyKind": "Daily",
+					//"validFrom": '2022-03-06T17:10:00.000Z',
+					//"validTo": '2022-03-16T17:20:00.000Z',
+					"chargingSchedule": {
+						//"duration": 100,
+						//"startSchedule": '2022-03-6T10:00:00.000Z',
+						"chargingRateUnit": "A",
+						"chargingSchedulePeriod": [
+							{"startPeriod": 0, 
+							 "limit": 10, 
+							"numberPhases": 3},
+							//{"startPeriod": 1, "limit": 2, "numberPhases": 3}
+						],
+						"minChargingRate": 6
+					}
+				}
+			}
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+		}
+		/*=========================================================================*/
+		$scope.ClearChargingProfileMessage = function(){
+			$scope.formMessageOcppJson.texto = {
+				"id": 1,
+				"connectorId": 1,
+				"chargingProfilePurpose": "TxDefault",
+				"stackLevel": 1
+			}
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+		}
+		/*=========================================================================*/
+		$scope.GetCompositeScheduleMessage = function(){
+			$scope.formMessageOcppJson.texto = {
+				"connectorId": 1, 
+				"duration": 0,
+				'chargingRateUnit': 'A'
+			}
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+		}
+		/*=========================================================================*/
+		$scope.GetLocalListVersionMessage = function(){
+			$scope.formMessageOcppJson.texto = {}
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+		}
+		/*=========================================================================*/
+		$scope.SendLocalListMessage = function(){
+			$scope.formMessageOcppJson.texto = {
+				"listVersion": 1,
+				"localAuthorizationList": [
+					{
+						"idTag": "7240E49A",
+						"idTagInfo": 
+							{
+								"expiryDate": "2022-02-29T11:10:00.000Z",
+								"status": "Accepted"
+							}
+					}
+				],
+				"updateType": "Differential"
+			}
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+		}
+		/*=========================================================================*/
+		$scope.setConector = function(id_conector){
+			if($scope.operation=='SetChargingProfile' || $scope.operation=='GetCompositeSchedule'){
+				$scope.formMessageOcppJson.texto.connectorId = id_conector;
+			}else if($scope.operation=='ClearChargingProfile'){
+				$scope.formMessageOcppJson.texto.connectorId = id_conector;
+			}
+			// else if($scope.operation=='GetLocalListVersion'){
+			// 	$scope.formMessageOcppJson.texto.connectorId = id_conector;
+			// }
+			$scope.formMessageOcpp.texto = JSON.stringify($scope.formMessageOcppJson.texto);
+			console.log($scope.formMessageOcppJson);
+		}
+		/*=========================================================================*/
+		$scope.sendOcppMessage = function(){ 
+			console.log('$scope.formMessageOcpp antes de enviar por ws');
+			$scope.formMessageOcpp.tipo = $scope.operation;
+			$scope.formMessageOcpp.stationId = $scope.estacion.id_estacion;
+			$scope.formMessageOcpp.texto = JSON.parse($scope.formMessageOcpp.texto);
+			console.log($scope.formMessageOcpp); 
+			ws.send(JSON.stringify($scope.formMessageOcpp));
+		}
+		/*=========================================================================*/
+		ws.addEventListener('message', event => {
+			let message = event.data;
+			console.log('Mensaje desde el servidor:', message);
+			try {
+				var parsedMessage = JSON.parse(message);
+			} catch (error) {
+				console.error('No se pudo parsear a JSON el mensaje');
+			}
+			document.getElementById('responseFromStation').innerHTML = parsedMessage.texto;
+		});
+		// $scope.responseFromStation = rfs;
+		// console.log('$scope.responseFromStation');
+		// console.log($scope.responseFromStation);
 		/*=========================================================================*/
 		$scope.enviar = function(accion, id){
 			if($scope.accionPost=='editar'){

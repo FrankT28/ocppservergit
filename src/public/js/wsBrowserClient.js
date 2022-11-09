@@ -6,7 +6,7 @@ ws.addEventListener('open', () => {
     console.log('Conectado al servidor a traves de ws')
 });
 
-/*=============================================================================================*/
+/*=============================================================================================*
 ws.addEventListener('message', event => {
     let message = event.data;
     console.log('Mensaje desde el servidor:', message);

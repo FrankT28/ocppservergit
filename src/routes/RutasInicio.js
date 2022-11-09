@@ -15,7 +15,7 @@ router.get('/home/usuarios/informacion/', async(req, res) =>{
 	let usuarios = await pool.query(sql);
 	data.usuarios = usuarios;
 	console.log('usuarios');
-	console.log(usuarios);
+	console.log(usuarios); 
 	res.send(data);
 }) 
 

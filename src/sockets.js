@@ -159,7 +159,7 @@ async function generateUniqueId(length) {
         console.log(result);
         pasa = await compareUniqueId(result);
     }
-    console.log('ya paso');
+    //console.log('ya paso');
     return result;
 }
 
@@ -346,33 +346,42 @@ function sockets(server){
                         else{
                             console.log('Se ha recibido un mensaje desde navegador!')
                             console.log(message);
+                            //console.log(JSON.parse(message));
+                            
                             var stationId = message.stationId;
-                            var stationClient = clientes.get(stationId);  
+                            var stationClient = clientes.get(stationId);
                             let action = message.tipo;
                             if(stationClient!=undefined){
-                                let messageString = JSON.stringify(message);
-                                console.log('station client si esta definido: ');
                                 let uniqueId = await generateUniqueId(32);
+                                if(action=='ReserveNow'){
+                                    console.log('station client si esta definido: ');
 
-                                //uniqueId = uniqueId.toString();
-                                Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
-                                PayloadResponse = Respuestas[0];
-                                PayloadResponseNav = Respuestas[1];
-                                PayloadResponseApk = Respuestas[2];
-                                PayloadMessage = Respuestas[3];
+                                    //uniqueId = uniqueId.toString();
+                                    Respuestas = await ocppServer.processOcppRequestFromBrowser(message);
+                                    PayloadResponse = Respuestas[0];
+                                    PayloadResponseNav = Respuestas[1];
+                                    PayloadResponseApk = Respuestas[2];
+                                    PayloadMessage = Respuestas[3];
 
-                                let CallResult = [2, uniqueId, action, PayloadResponse]; 
-                                console.log('Request a enviar al punto de carga: ');
-                                console.log(CallResult);
-                                stationClient.write(funciones.constructReply(CallResult, opCode));
-                                if(true){//IF TRUE SIGNIFICA QUE EL MENSAJE FUE ENVIADO CORRECTAMENTE A LA ESTACION
-                                    let operacion = PayloadMessage.operacion;
-                                    if(operacion=='ReserveNow'){
-                                        let id_registro = PayloadMessage.lastReservationId;
-                                        await addMessageSent([stationId, uniqueId, id_registro, operacion]);
+                                    let CallResult = [2, uniqueId, action, PayloadResponse]; 
+                                    console.log('Request a enviar al punto de carga: ');
+                                    console.log(CallResult);
+                                    stationClient.write(funciones.constructReply(CallResult, opCode));
+                                    if(true){//IF TRUE SIGNIFICA QUE EL MENSAJE FUE ENVIADO CORRECTAMENTE A LA ESTACION
+                                        if(action=='ReserveNow'){
+                                            let operacion = PayloadMessage.operacion;
+                                            let id_registro = PayloadMessage.lastReservationId;
+                                            await addMessageSent([stationId, uniqueId, id_registro, operacion]);
+                                        }
                                     }
+                                }else{
+                                    PayloadResponse = message.texto;
+                                    let CallResult = [2, uniqueId, action, PayloadResponse]; 
+                                    stationClient.write(funciones.constructReply(CallResult, opCode));
+
                                 }
-                            }else{
+
+                            }else{ 
                                 clientenav = clientes.get(0);
                                 var Response = {
                                     'texto': 'No hay una estacion conectada',

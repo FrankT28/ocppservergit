@@ -71,12 +71,19 @@ router.get('/home/estaciones/informacion', async(req, res) => {
 		fechaFormatoYmd = formatearFechaYMD(estaciones[i].fecha_ping);
 		//console.log('fechaFormatoYmd: ' + fechaFormatoYmd);
 		estaciones[i].conexion = getEstadoConexion(fechaFormatoYmd, estacion.hora_ping);
+		estaciones[i].conectores = await getConectoresEstacion(estacion.id_estacion);
 	}
 	data.estaciones = estaciones;
 	data.success = true;
 	res.send(data);
 });
 
+/********************************************************************************************/
+async function getConectoresEstacion(id_estacion){
+	let sql = "SELECT id_local, nombre FROM conectores WHERE id_estacion=?;";
+	let result = await pool.query(sql, [id_estacion]);
+	return result;
+}
 /********************************************************************************************/
 router.get('/home/estaciones/listar_tipos_conectores', async(req, res) => {
 	var data = {};
