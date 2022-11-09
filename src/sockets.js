@@ -311,7 +311,7 @@ function sockets(server){
                             let payload = message[2];
                             let regAndope = await updateStateMessage(uniqueID);
                             console.log('regandope');
-                            console.log(regAndope);
+                            console.log(regAndope); 
                             await manageStationResponse.update(regAndope, payload);
                             clientenav = clientes.get(0);
                             console.log('Se ha recibido un MessageTypeId igual a 3!');
